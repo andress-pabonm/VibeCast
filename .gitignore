@@ -1,0 +1,23 @@
+# Ignorar la carpeta de compilación
+/build/
+
+# Ignorar archivos de compilación generados
+*.o
+*.out
+*.exe
+*.a
+*.so
+*.dll
+
+# Archivos de respaldo o temporales
+*~
+*.swp
+*.swo
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Configuración de IDEs (si usas alguno como VSCode o CLion)
+.vscode/
+.idea/
