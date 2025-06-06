@@ -2,9 +2,7 @@
 #define UTILS_H
 
 // #include <stdbool.h>   // Para los validadores
-#include <stdio.h>     // Para scanf y getchar
 #include <stdlib.h>    // Para system()
-#include <stdarg.h>    // Para la función scan
 
 // ---------------------------
 // Macros útiles
@@ -14,15 +12,7 @@
 #define flush() while (getchar() != '\n') continue
 
 // scanf seguido de flush para evitar basura en el buffer
-static inline int scan(const char *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    int r = vscanf(fmt, args);
-    va_end(args);
-    flush();
-    return r;
-}
-
+static inline int scan(const char *fmt, ...);
 
 // Limpia la pantalla
 #ifdef _WIN32

@@ -9,7 +9,7 @@
  * @param src Pointer to the value to copy.
  * @return Pointer to the newly allocated memory, or NULL on failure.
  */
-void *mem_alloc_copy(size_t size, const void *src);
+static inline void *mem_alloc_copy(size_t size, const void *src);
 
 // Macro to simplify usage: alloc(int, &x)
 #define alloc(type, value_ptr) mem_alloc_copy(sizeof(type), (value_ptr))

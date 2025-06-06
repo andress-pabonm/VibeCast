@@ -1,4 +1,0 @@
-#ifndef VIBECAST_RENDER_H
-#define VIBECAST_RENDER_H
-
-#endif // VIBECAST_RENDER_H

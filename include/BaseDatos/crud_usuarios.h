@@ -11,4 +11,4 @@ Lista leer(Usuario, char *);
 void actualizar(Usuario, Usuario *);
 void eliminar(Usuario, Usuario *);
 
-#endif // CURD_USUARIOS_H
+#endif // CRUD_USUARIOS_H
