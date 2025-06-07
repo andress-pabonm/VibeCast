@@ -1,6 +1,6 @@
 #include <BaseDatos/dbmgr.h>
 
-static sqlite3 *base_datos = NULL; // Conexión con la base de datos
+static sqlite3 *base_datos = NULL; // Conexión con la base de datos
 
 void VibeCast_InitDB()
 {
@@ -52,3 +52,5 @@ size_t VibeCast_CargarCanciones(void **datos)
     /* Código para cargar las canciones */
     return 0;
 }
+
+

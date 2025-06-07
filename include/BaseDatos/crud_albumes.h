@@ -6,8 +6,8 @@
 // Declaración de funciones:
 
 Album *crear(Album, char *nombre, char *fecha, Lista *canciones);
-Lista leer(Album, char *);
+Album *leer(Album, char *);
 void actualizar(Album, Album *);
-void eliminar(Album, Album *);
+bool eliminar(Album, Album *);
 
 #endif // CRUD_ALBUMES_H

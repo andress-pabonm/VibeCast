@@ -2,6 +2,8 @@
 #define CRUD_H
 
 #include "estructuras.h";
+#include "liberadores.h";
+#include <stdbool.h>
 
 // Macros para facilitar la declaración, definición y llamada a las funciones CRUD:
 

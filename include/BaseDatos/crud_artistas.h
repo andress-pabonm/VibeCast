@@ -6,8 +6,8 @@
 // Declaración de funciones:
 
 Artista *crear(Artista, char *nombre);
-Lista leer(Artista, char *);
+Artista *leer(Artista, char *);
 void actualizar(Artista, Artista *);
-void eliminar(Artista, Artista *);
+bool eliminar(Artista, Artista *);
 
 #endif // CRUD_ARTISTAS_H

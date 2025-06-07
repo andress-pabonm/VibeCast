@@ -6,8 +6,8 @@
 // Declaración de funciones:
 
 Cancion *crear(Cancion, char *nombre, Artista *artista, int duracion, char *archivo);
-Lista leer(Cancion, char *);
+Cancion *leer(Cancion, char *);
 void actualizar(Cancion, Cancion *);
-void eliminar(Cancion, Cancion *);
+bool eliminar(Cancion, Cancion *);
 
 #endif // CRUD_CANCIONES_H

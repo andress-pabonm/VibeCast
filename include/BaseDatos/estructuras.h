@@ -38,10 +38,10 @@ struct Reproduccion {
 // Representa un usuario de la plataforma
 struct Usuario {
 	char *email;          // Email único del usuario
-	char *nombre;         // Nombre real
-	char *pais;           // País de origen
-	char *nickname;       // Alias público
 	char *password;       // Contraseña (hash recomendada en producción)
+	char *nombre;         // Nombre real
+	char *nickname;       // Alias público
+	char *pais;           // País de origen
 	Plan plan;            // Plan actual del usuario
 	Historial historial;  // Historial de reproducciones
 	Lista playlists;      // Lista de Playlist*

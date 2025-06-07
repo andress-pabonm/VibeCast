@@ -92,3 +92,7 @@ void VibeCast_CargarDatos()
     /* Una vez creadas las estructuras,  */
     /* ... */
 }
+
+Usuario *VibeCast_BuscarUsuario() {
+    buscarNodo(ABB, &usuarios, NULL, NULL);
+}

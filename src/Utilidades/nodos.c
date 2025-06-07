@@ -79,18 +79,33 @@ void eliminarNodo(Lista, Lista *lista, NodoLista *objetivo)
  * Libera todos los nodos de la lista.
  * Establece el inicio en NULL después de limpiar.
  */
-void liberar(Lista, Lista *lista)
+void liberar(Lista, Lista *lista, freefn_t freevalue)
 {
     if (!lista)
         return;
 
     NodoLista *actual = lista->inicio;
-    while (actual)
+
+    if (freevalue)
     {
-        NodoLista *tmp = actual;
-        actual = actual->siguiente;
-        free(tmp);
+        while (actual)
+        {
+            NodoLista *tmp = actual;
+            actual = actual->siguiente;
+            freevalue(tmp->valor);
+            free(tmp);
+        }
     }
+    else
+    {
+        while (actual)
+        {
+            NodoLista *tmp = actual;
+            actual = actual->siguiente;
+            free(tmp);
+        }
+    }
+
     lista->inicio = NULL;
 }
 
@@ -128,13 +143,21 @@ void *eliminarNodo(Pila, Pila *pila)
 /*
  * Libera todos los nodos de la pila.
  */
-void liberar(Pila, Pila *pila)
+void liberar(Pila, Pila *pila, freefn_t freevalue)
 {
     if (!pila)
         return;
 
-    while (pila->cima)
-        eliminarNodo(Pila, pila);
+    if (freevalue)
+    {
+        while (pila->cima)
+            freevalue(eliminarNodo(Pila, pila));
+    }
+    else
+    {
+        while (pila->cima)
+            eliminarNodo(Pila, pila);
+    }
 }
 
 // =======================
@@ -177,13 +200,21 @@ void *eliminarNodo(Cola, Cola *cola)
 /*
  * Libera todos los nodos de la cola.
  */
-void liberar(Cola, Cola *cola)
+void liberar(Cola, Cola *cola, freefn_t freevalue)
 {
     if (!cola)
         return;
 
-    while (cola->inicio)
-        eliminarNodo(Cola, cola);
+    if (freevalue)
+    {
+        while (cola->inicio)
+            freevalue(eliminarNodo(Cola, cola));
+    }
+    else
+    {
+        while (cola->inicio)
+            eliminarNodo(Cola, cola);
+    }
 }
 
 // =======================
@@ -259,23 +290,25 @@ void eliminarNodo(ABB, ABB *abb, NodoABB *objetivo, cmpfn_t cmp)
     free(objetivo);
 }
 
-void liberarRecursivo(NodoABB *nodo)
+void liberarRecursivo(NodoABB *nodo, freefn_t freevalue)
 {
     if (!nodo)
-    return;
-    liberarRecursivo(nodo->izq);
-    liberarRecursivo(nodo->der);
+        return;
+    liberarRecursivo(nodo->izq, freevalue);
+    liberarRecursivo(nodo->der, freevalue);
+    if (freevalue)
+        freevalue(nodo->valor);
     free(nodo);
 }
 
 /*
  * Libera todos los nodos del árbol de manera recursiva.
  */
-void liberar(ABB, ABB *abb)
+void liberar(ABB, ABB *abb, freefn_t freevalue)
 {
     if (!abb)
         return;
 
-    liberarRecursivo(abb->raiz);
+    liberarRecursivo(abb->raiz, freevalue);
     abb->raiz = NULL;
 }

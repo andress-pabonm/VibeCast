@@ -1,6 +1,21 @@
 #ifndef NODOS_H
 #define NODOS_H
 
+/**
+ * Tipo para liberar el espacio en memoria de los valores de los nodos
+ * 
+ * Por ejemplo:
+ * 
+ * Lista canciones = {...};
+ * freefn_t freeCancion = &eliminarCancion;
+ * 
+ * for (NodoLista nodo in canciones) {
+ *      freeCancion(nodo.valor);
+ *      free(nodo);
+ * }
+ */
+typedef void (*freefn_t)(void *);
+
 #include "memmgr.h"
 #include "utils.h"  // Asegura que "cast" esté definido
 
@@ -80,22 +95,22 @@ typedef struct {
 void insertarNodoLista(Lista *, NodoLista *, cmpfn_t);
 NodoLista *buscarNodoLista(Lista *, void *, cmpfn_t);
 void eliminarNodoLista(Lista *, NodoLista *);
-void liberarLista(Lista *);
+void liberarLista(Lista *, freefn_t);
 
 // Pila
 void insertarNodoPila(Pila *, NodoPila *);
 void *eliminarNodoPila(Pila *);
-void liberarPila(Pila *);
+void liberarPila(Pila *, freefn_t);
 
 // Cola
 void insertarNodoCola(Cola *, NodoCola *);
 void *eliminarNodoCola(Cola *);
-void liberarCola(Cola *);
+void liberarCola(Cola *, freefn_t);
 
 // Árbol binario de búsqueda
 void insertarNodoABB(ABB *, NodoABB *, cmpfn_t);
 NodoABB *buscarNodoABB(ABB *, void *, cmpfn_t);
 void eliminarNodoABB(ABB *, NodoABB *, cmpfn_t);
-void liberarABB(ABB *);
+void liberarABB(ABB *, freefn_t);
 
 #endif // NODOS_H
