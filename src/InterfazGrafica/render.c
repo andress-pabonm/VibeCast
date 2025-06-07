@@ -42,36 +42,50 @@ void VibeCast_DestroyVideo()
     /* También se destruirían otros recursos iniciados en este archivo */
 }
 
-// Funciones para renderizar elementos visuales
-
-void VibeCast_RenderCampoTexto(const CampoTexto *campoTexto)
+void VibeCast_GetRenderSize(int *w, int *h)
 {
-    if (!campoTexto)
-        return;
+    SDL_GetRenderOutputSize(renderer, w, h);
 }
 
-void VibeCast_RenderBoton(const Boton *boton)
+void VibeCast_SetRenderScale(float x_scale, float y_scale)
 {
-    if (!boton)
-        return;
+    SDL_SetRenderScale(renderer, x_scale, y_scale);
 }
 
-void VibeCast_RenderTexto(const Texto *texto)
+/* Función para denderizad/dibujar un objeto visual */
+void VibeCast_Render(ObjetoVisual *obj)
 {
-    if (!texto)
-        return;
+    if (!obj)
+        return; // No hay objeto
 
-    int w = 0, h = 0;
-    float x, y;
-    const float scale = 1.0f;
+    /* Dibujo el fondo */
+    if (obj->cuadro.w && obj->cuadro.h)
+    {
+        SDL_SetRenderDrawColor(renderer, obj->bg_color.r, obj->bg_color.g, obj->bg_color.b, obj->bg_color.a);
+        SDL_RenderFillRect(renderer, &obj->cuadro);
+    }
 
-    /* Center the message and scale it up */
-    SDL_GetRenderOutputSize(renderer, &w, &h);
-    SDL_SetRenderScale(renderer, scale, scale);
-    x = ((w / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE * SDL_strlen(texto->texto)) / 2;
-    y = ((h / scale) - SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE) / 2;
+    /* Dibujo el borde */
+    if (obj->border)
+    {
+        SDL_FRect borde = obj->cuadro;
+        SDL_SetRenderDrawColor(renderer, obj->bd_color.r, obj->bd_color.g, obj->bd_color.b, obj->bd_color.a);
+        for (int i = 0; i < obj->border; i++)
+        {
+            SDL_RenderRect(renderer, &borde);
 
-    /* Draw the message */
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderDebugText(renderer, x, y, texto->texto);
+            /* Hacer más pequeño el cuadro del borde */
+            borde.x += 1;
+            borde.y += 1;
+            borde.w -= 2;
+            borde.h -= 2;
+        }
+    }
+
+    /* Dibujo el texto */
+    if (obj->text)
+    {
+        SDL_SetRenderDrawColor(renderer, obj->fg_color.r, obj->fg_color.g, obj->fg_color.b, obj->fg_color.a);
+        SDL_RenderDebugText(renderer, obj->cuadro.x, obj->cuadro.y, obj->text);
+    }
 }

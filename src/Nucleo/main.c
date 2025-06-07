@@ -13,7 +13,6 @@
 // #include <InterfazGrafica/menu.h>
 
 #include <InterfazGrafica/interfaces.h>
-InterfazID interfaz;
 
 /* Esta función se ejecuta una vez al iniciar */
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
@@ -39,7 +38,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
         return SDL_APP_FAILURE;
     }
 
-    interfaz = LOGIN; // Iniciar con el login
+    InterfazID *interfaz = SDL_malloc(sizeof(InterfazID));
+    *interfaz = LOGIN;
+
+    *appstate = interfaz; // Para pasar la interfaz a las otras funciones
 
     return SDL_APP_CONTINUE;
 }
@@ -50,12 +52,12 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
     if (event->type == SDL_EVENT_QUIT)
         return SDL_APP_SUCCESS; // Se cerró la ventana
 
-    switch (interfaz)
+    switch (*cast(InterfazID *, appstate))
     {
     case LOGIN:
-        return VibeCast_LoginEventHandler(event);
-    // case MENU:
-    //     return VibeCast_MenuEventHandler(event);
+        return VibeCast_LoginEventHandler(appstate, event);
+        // case MENU:
+        //     return VibeCast_MenuEventHandler(event);
     }
 
     return SDL_APP_CONTINUE;
@@ -64,10 +66,10 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 /* Esta función se ejecuta una vez por cuadro. Es el bucle principal del programa */
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
-    switch (interfaz)
+    switch (*cast(InterfazID *, appstate))
     {
     case LOGIN:
-        return VibeCast_Login(&interfaz);
+        return VibeCast_Login(appstate);
     }
 
     return SDL_APP_CONTINUE;
