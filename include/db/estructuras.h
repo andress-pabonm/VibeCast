@@ -1,7 +1,7 @@
 #ifndef ESTRUCTURAS_DB_H
 #define ESTRUCTURAS_DB_H
 
-#include <Utilidades/nodos.h> // Para Lista, Pila y Cola
+#include <utils/nodos.h> // Para Lista, Pila y Cola
 
 // Estructuras para la base de datos de música tipo Spotify
 

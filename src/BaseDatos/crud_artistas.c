@@ -1,1 +1,0 @@
-#include <BaseDatos/crud_artistas.h>

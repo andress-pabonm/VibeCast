@@ -1,5 +1,5 @@
-#include <InterfazGrafica/render.h>
-#include <InterfazGrafica/objetos_visuales.h>
+#include <video/render.h>
+#include <SDL3/SDL.h>
 
 static SDL_Window *window = NULL;
 static SDL_Renderer *renderer = NULL;
@@ -53,7 +53,7 @@ void VibeCast_SetRenderScale(float x_scale, float y_scale)
 }
 
 /* Función para denderizad/dibujar un objeto visual */
-void VibeCast_Render(ObjetoVisual *obj)
+void VibeCast_Render(const ObjetoVisual *obj)
 {
     if (!obj)
         return; // No hay objeto

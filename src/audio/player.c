@@ -1,4 +1,5 @@
 #include <audio/player.h>
+#include <SDL3/SDL.h>
 
 /* Variables utilizadas para el audio */
 static SDL_AudioStream *stream = NULL; // Flujo de salida para audio (como stdout)
@@ -6,18 +7,16 @@ static SDL_AudioSpec spec;             // Características del sonido para el di
 static Uint8 *wav_data = NULL;         // Para guardar la data de un WAV
 static Uint32 wav_data_len = 0;        // Longitud de la data de un WAV
 
-bool VibeCast_InitAudio()
+void VibeCast_InitAudio()
 {
     if (!stream)
     {
         stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL, NULL, NULL);
         VibeCast_ResumeAudio();
     }
-
-    return stream ? true : false;
 }
 
-void VibeCast_PlayAud(const char *filename)
+void VibeCast_PlayAudio(const char *filename)
 {
     if (!stream || !filename)
         return;

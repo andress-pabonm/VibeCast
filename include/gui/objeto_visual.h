@@ -1,14 +1,15 @@
-#ifndef VIBECAST_OBJETOS_VISUALES_H
-#define VIBECAST_OBJETOS_VISUALES_H
+#ifndef VIBECAST_OBJETO_VISUAL_H
+#define VIBECAST_OBJETO_VISUAL_H
 
 #include <SDL3/SDL.h>
-#include <InterfazGrafica/colores.h>
+
 typedef enum
 {
     TEXT_ALIGN_LEFT,   // Alinear texto a la izquierda
     TEXT_ALIGN_CENTER, // Alinear texto al centro
     TEXT_ALIGN_RIGHT   // Alinear texto a la derecha
 } TextAlign;
+
 typedef struct
 {
     SDL_FRect cuadro; // Posición y tamaño del objeto
@@ -22,8 +23,6 @@ typedef struct
     char *text;           // Texto del objeto
 } ObjetoVisual;
 
-typedef ObjetoVisual CampoTexto; // Para entrada de texto
-typedef ObjetoVisual Boton;      // Un simple botón
-typedef ObjetoVisual Texto;      // Un texto plano
+typedef ObjetoVisual Boton;
 
-#endif // VIBECAST_OBJETOS_VISUALES_H
+#endif // VIBECAST_OBJETO_VISUAL_H

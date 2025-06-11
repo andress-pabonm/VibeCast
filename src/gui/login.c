@@ -1,5 +1,13 @@
-#include <InterfazGrafica/login.h>
+#include <ui/interfaces.h>
+#include <video/render.h>
+#include <SDL3/SDL.h>
 #include <stdbool.h>
+
+#define COLOR(color, opacity) \
+    (SDL_Color) { color, opacity }
+
+#define OPACO 255
+#define TRANSPARENTE 0
 
 /* Para saber si está inicializado */
 static bool initialized = false;
@@ -39,7 +47,7 @@ static Boton btnInvitado;
 /* ------------------------------------------------ */
 
 /* Aquí inicializo los elementos de mi login */
-void init()
+static void init()
 {
     if (initialized)
         return; // Ya se inicializó el login
@@ -89,7 +97,7 @@ void init()
 }
 
 /* Función para actualizar los objetos de la ventana login */
-void update()
+static void update()
 {
     /* Por ejemplo, puedo decir que el botón vaya cambiando su tamaño según el tamaño de la ventana */
     /* Cambiar tamaño botones según tamaño ventana */
@@ -114,7 +122,7 @@ void update()
 }
 
 /* En esta función se renderizan los elementos */
-void render()
+static void render()
 {
     /* Dibujar elementos visuales */
     /* Mostrar/renderizar los objetos visuales */
@@ -128,7 +136,7 @@ void render()
     VibeCast_ShowScreen(); // Mostrar los cambios
 }
 
-SDL_AppResult VibeCast_LoginEventHandler(InterfazID *interfaz, SDL_Event *event)
+SDL_AppResult VibeCast_LoginEventHandler(VibeCast_InterfazID *interfaz, SDL_Event *event)
 {
     /* En esta función se manejaría los eventos para el login */
     /* Verificar si pulsó un boton del login */
@@ -138,7 +146,7 @@ SDL_AppResult VibeCast_LoginEventHandler(InterfazID *interfaz, SDL_Event *event)
 
 /* Función que se llamará para mostrar la ventana de login */
 /* También puede incluir la lógica que involucra el login */
-SDL_AppResult VibeCast_Login(InterfazID *interfaz)
+SDL_AppResult VibeCast_Login(VibeCast_InterfazID *id)
 {
     if (!initialized)
         init(); // Inicializar el login

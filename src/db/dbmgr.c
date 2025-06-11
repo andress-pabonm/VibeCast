@@ -1,4 +1,4 @@
-#include <BaseDatos/dbmgr.h>
+#include <db/dbmgr.h>
 
 static sqlite3 *base_datos = NULL; // Conexión con la base de datos
 

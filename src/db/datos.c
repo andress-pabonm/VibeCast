@@ -1,13 +1,6 @@
 /* Aquí se cargan los datos desde la base datos y se los organiza en las diferentes estructuras. */
 
-#include <BaseDatos/estructuras.h>
-#include <BaseDatos/dbmgr.h>
-#include <Utilidades/nodos.h>
-
-#include <BaseDatos/crud_usuarios.h>
-#include <BaseDatos/crud_artistas.h>
-#include <BaseDatos/crud_albumes.h>
-#include <BaseDatos/crud_canciones.h>
+#include <db/estructuras.h>
 
 /**
  * 1. Cargar toda la información a la vez (usuarios, artistas, álbumes y canciones)
@@ -77,7 +70,7 @@ void VibeCast_CargarDatos()
         // NodoLista *nodo = nuevoNodo(Lista, album);
         // insertarNodo(Lista, &albumes, nodo, NULL);
     }
-    
+
     // Para canciones
     for (size_t i = 0; i < cantidad_canciones; i++)
     {
@@ -93,6 +86,8 @@ void VibeCast_CargarDatos()
     /* ... */
 }
 
-Usuario *VibeCast_BuscarUsuario() {
+Usuario *VibeCast_BuscarUsuario()
+{
     buscarNodo(ABB, &usuarios, NULL, NULL);
+    return NULL;
 }
