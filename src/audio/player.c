@@ -23,17 +23,17 @@ void VibeCast_PlayAudio(const char *filename)
 
     char *wav_path = NULL;
     /* La ruta completa del ar chivo */
-    SDL_asprintf(&wav_path, "%s%s", SDL_GetBasePath(), filename); /* allocate a string of the full file path */
+    SDL_asprintf(&wav_path, "%s%s", SDL_GetBasePath(), filename);
 
     /* Cargar el WAV */
     if (!SDL_LoadWAV(wav_path, &spec, &wav_data, &wav_data_len))
     {
-        SDL_Log("Couldn't load .wav file: %s", SDL_GetError());
-        SDL_free(wav_path); /* done with this string. */
+        SDL_Log("No se pudo cargar el archivo .wav: %s", SDL_GetError());
+        SDL_free(wav_path);
         return;
     }
 
-    SDL_free(wav_path); /* done with this string. */
+    SDL_free(wav_path);
 
     /* Cargar el formato del audio */
     if (!SDL_SetAudioStreamFormat(stream, NULL, &spec))

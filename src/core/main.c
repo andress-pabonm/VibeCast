@@ -14,12 +14,12 @@
 /* Esta función se ejecuta una vez al iniciar */
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 {
-    // SDL_InitFlags flags = SDL_INIT_AUDIO | SDL_INIT_VIDEO;
+    SDL_InitFlags flags = SDL_INIT_AUDIO | SDL_INIT_VIDEO;
 
-    // if (!SDL_Init(flags)) {
-    //     SDL_Log("Error: No se pudo inicializar SDL: %s", SDL_GetError());
-    //     return SDL_APP_FAILURE;
-    // }
+    if (!SDL_Init(flags)) {
+        SDL_Log("Error: No se pudo inicializar SDL: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
 
     /* Abrir dispositivo de audio */
     /* Abrir dispositivo de video */
