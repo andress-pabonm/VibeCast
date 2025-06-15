@@ -5,77 +5,68 @@
 
 // Estructuras para la base de datos de música tipo Spotify
 
+// Representa a un usuario de la aplicación
 typedef struct Usuario {
-	char *correo;     
+	char *correo; 
 	char *contrasenia;  
 	char *nombre;        
 	char *nombreUsuario;  
-	char *pais;        
-	Plan plan;          
-	Historial historial;  
-	Lista playlists;   
-	Lista amigos;      
-	Artista *perfilArtista; 
+	char *pais;
+	struct Playlist playlists;
+	struct Historial historial; 
+	struct Amigos amigos;
+	enum Plan plan;            
 }Usuario;
 
-// Tipos de plan disponibles
-typedef enum Plan {
-	PLAN_FREEMIUM,  // Con anuncios
-	PLAN_PREMIUM    // Sin anuncios
-}Plan;
+// Lista de canciones personalizadas por un usuario
+typedef struct Playlist {
+	char *nombrePlaylist;
+	char *fechaCreacion; // Formato DD-MM-YYYY
+	struct Cancion canciones;  
+}Playlist;
 
-// Historial de un usuario (canciones escuchadas, tiempo, anuncios)
+typedef struct Cancion {
+	char *nombreCancion;
+	struct Artista artista;
+	int duracion;  
+	char *genero;  
+	char *fechaLanzamiento; //Formato DD-MM-YYYY
+	int popularidad;  // Cuantas veces se guardo en una playlist
+	int reproducciones; // Cantidad de reproducciones
+	char *archivo;  //Ruta donde se encuentra el archivo de la canción
+}Cancion;
+
+// Representa a un creador o interprete musical
+typedef struct Artista {
+	char *nombreArtista;  // Nombre del artista
+	Playlist albumes;     // Albunes del artista
+	//Es de tipo playlist porque un artista puede tiene nombre del album, fecha de lanzamiento y canciones
+}Artista;
+
+// Historial de un usuario
 typedef struct Historial {
-	Pila reproducciones;   // Pila de Reproduccion*
+	Cancion canciones;   // Pila de Reproduccion
 	int tiempoEscuchado;   // Tiempo total en segundos
 	int cantidadAnuncios;  // Cantidad de anuncios escuchados
 }Historial;
 
-// Representa una reproducción individual
-typedef struct Reproduccion {
-	Cancion *cancion;  // Canción reproducida
-	char *fecha;       // Fecha de reproducción (formato YYYY-MM-DD)
-}Reproduccion;
-
-// Lista de canciones personalizadas por un usuario
-typedef struct Playlist {
-	char *nombre;      // Nombre de la playlist
-	Lista canciones;   // Lista de Cancion*
-}Playlist;
-
-// Representa a un artista musical
-typedef struct Artista {
-	char *nombre;      // Nombre artístico
-	Lista albumes;     // Lista de Album*
-}Artista;
-
-// Representa un álbum musical
-typedef struct Album {
-	char *nombre;      // Nombre del álbum
-	char *fecha;       // Fecha de lanzamiento
-	Lista canciones;   // Lista de Cancion*
-}Album;
-
-// Representa una canción individual
-typedef struct Cancion {
-	Artista *artista;     // Creador o intérprete principal
-	char *nombre;         // Título de la canción
-	int duracion;         // Duración en segundos
-	char *archivo;        // Ruta al archivo de audio
-	int popularidad;      // Índice de popularidad
-	int reproducciones;   // Número total de reproducciones
-}Cancion;
-
-// Cola de reproducción que combina canciones y anuncios
-typedef struct ColaReproduccion {
-	Cola canciones;   // Cola de Cancion*
-	Cola anuncios;    // Cola de Anuncio*
-}colaReproduccion;
+// Tipos de plan disponibles
+typedef enum Plan {
+	planFree,  // Con anuncios
+	planPremium    // Sin anuncios
+}Plan;
 
 // Representa un anuncio publicitario
 typedef struct Anuncio {
 	char *anunciante;  // Empresa o anunciante
-	char *texto;       // Mensaje del anuncio
+	char *mensaje;       // Mensaje del anuncio
+	int duracion;       // Duración del anuncio en segundos
 }Anuncio;
+
+typedef struct Amigos {
+	char nicknameAmigo; // Nombre de usuario del amigo
+	Playlist playlistAmigo; // Playlist del amigo
+	int cantidadAmigos; // Cantidad de amigos
+}Amigos;
 
 #endif // ESTRUCTURAS_DB_H
