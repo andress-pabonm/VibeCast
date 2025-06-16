@@ -20,7 +20,7 @@ struct Artista {
 
 struct Cancion {
 	char *nombreCancion;
-	Artista *artista;
+	Artista artista;
 	int duracion;  
 	char *genero;  
 	char fechaLanzamiento[11]; // Formato DD-MM-YYYY
@@ -51,7 +51,7 @@ enum Plan {
 
 struct Amigos {
 	char *nicknameAmigo; // Nombre de usuario del amigo
-	Playlist *playlistAmigo; // Playlist del amigo
+	Playlist playlistAmigo; // Playlist del amigo
 	int cantidadAmigos; // Cantidad de amigos
 };
 
@@ -62,7 +62,7 @@ struct Usuario {
 	char *nombre;        
 	char *nombreUsuario;  
 	char *pais;
-	Playlist *playlists;
+	Playlist playlists;
 	Historial historial; 
 	Amigos amigos;
 	Plan plan;            
