@@ -15,12 +15,12 @@ typedef struct Anuncio Anuncio;
 
 struct Artista {
 	char *nombreArtista; // Nombre del artista
-	Playlist *album; // Lista de álbumes del artista
+	Lista albumes; // Lista de álbumes del artista
 };
 
 struct Cancion {
 	char *nombreCancion;
-	Artista artista;
+	Artista *artista;
 	int duracion;  
 	char *genero;  
 	char fechaLanzamiento[11]; // Formato DD-MM-YYYY
@@ -38,7 +38,7 @@ struct Playlist {
 
 // Historial de un usuario
 struct Historial {
-	Cancion canciones;   // Pila de Reproduccion
+	Pila canciones;   // Pila de Reproduccion
 	int tiempoEscuchado;   // Tiempo total en segundos
 	int cantidadAnuncios;  // Cantidad de anuncios escuchados
 };
@@ -49,22 +49,26 @@ enum Plan {
 	planPremium    // Sin anuncios
 };
 
-struct Amigos {
-	char *nicknameAmigo; // Nombre de usuario del amigo
-	Playlist playlistAmigo; // Playlist del amigo
-	int cantidadAmigos; // Cantidad de amigos
-};
+// En realidad esta estructura amigos no es necesaria, ya que la lista de amigos contiene punteros a usuarios
+// struct Amigos {
+// 	char *nicknameAmigo; // Nombre de usuario del amigo
+// 	Lista playlistsAmigo; // Playlist del amigo
+// 	int cantidadAmigos; // Cantidad de amigos
+// };
 
 // Representa a un usuario de la aplicación
 struct Usuario {
 	char *correo; 
 	char *contrasenia;  
-	char *nombre;        
-	char *nombreUsuario;  
+	char *nombre;         // Nombre real (puede haber varios usuarios con el mismo nombre)
+	char *nombreUsuario;  // Nombre único de usuario (puede utilizarse para iniciar sesión)
 	char *pais;
-	Playlist playlists;
+	Lista playlists;
 	Historial historial; 
-	Amigos amigos;
+
+	// Amigos amigos; // Esta linea se reemplaza por:
+	Lista amigos; // Una lista de usuarios (amigos).
+	
 	Plan plan;            
 };
 
