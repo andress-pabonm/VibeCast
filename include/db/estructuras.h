@@ -4,90 +4,79 @@
 #include <utils/nodos.h> // Para Lista, Pila y Cola
 
 // Estructuras para la base de datos de música tipo Spotify
-
-typedef struct Usuario Usuario;
-typedef enum Plan Plan;
-typedef struct Historial Historial;
-typedef struct Reproduccion Reproduccion;
-typedef struct Playlist Playlist;
-typedef struct Cancion Cancion;
+typedef struct Usuario Usuario; 
+typedef struct Playlist Playlist; 
+typedef struct Cancion Cancion; 
 typedef struct Artista Artista;
-typedef struct Album Album;
-typedef struct ColaReproduccion ColaReproduccion;
+typedef struct Historial Historial;
+typedef enum Plan Plan;
+typedef struct Amigos Amigos; 
 typedef struct Anuncio Anuncio;
 
-// Tipos de plan disponibles
-enum Plan {
-	PLAN_FREEMIUM,  // Con anuncios
-	PLAN_PREMIUM    // Sin anuncios
+struct Artista {
+	char *nombreArtista; // Nombre del artista
+	Lista albumes; // Lista de álbumes del artista
 };
 
-// Historial de un usuario (canciones escuchadas, tiempo, anuncios)
-struct Historial {
-	Pila reproducciones;   // Pila de Reproduccion*
-	int tiempoEscuchado;   // Tiempo total en segundos
-	int cantidadAnuncios;  // Cantidad de anuncios escuchados
-};
-
-// Representa una reproducción individual
-struct Reproduccion {
-	Cancion *cancion;  // Canción reproducida
-	char *fecha;       // Fecha de reproducción (formato YYYY-MM-DD)
-};
-
-// Representa un usuario de la plataforma
-struct Usuario {
-	char *email;          // Email único del usuario
-	char *password;       // Contraseña (hash recomendada en producción)
-	char *nombre;         // Nombre real
-	char *nickname;       // Alias público
-	char *pais;           // País de origen
-	Plan plan;            // Plan actual del usuario
-	Historial historial;  // Historial de reproducciones
-	Lista playlists;      // Lista de Playlist*
-	Lista amigos;         // Lista de Usuario*
-	Artista *perfilArtista; // Si tiene perfil como artista
+struct Cancion {
+	char *nombreCancion;
+	Artista *artista;
+	int duracion;  
+	char *genero;  
+	char fechaLanzamiento[11]; // Formato DD-MM-YYYY
+	int popularidad;  // Cuantas veces se guardo en una playlist
+	int reproducciones; // Cantidad de reproducciones
+	char *archivo;  //Ruta donde se encuentra el archivo de la canción
 };
 
 // Lista de canciones personalizadas por un usuario
 struct Playlist {
-	char *nombre;      // Nombre de la playlist
-	Lista canciones;   // Lista de Cancion*
+	char *nombrePlaylist;
+	char fechaCreacion[11]; // Formato DD-MM-YYYY
+	Cancion canciones;  
 };
 
-// Representa a un artista musical
-struct Artista {
-	char *nombre;      // Nombre artístico
-	Lista albumes;     // Lista de Album*
+// Historial de un usuario
+struct Historial {
+	Pila canciones;   // Pila de Reproduccion
+	int tiempoEscuchado;   // Tiempo total en segundos
+	int cantidadAnuncios;  // Cantidad de anuncios escuchados
 };
 
-// Representa un álbum musical
-struct Album {
-	char *nombre;      // Nombre del álbum
-	char *fecha;       // Fecha de lanzamiento
-	Lista canciones;   // Lista de Cancion*
+// Tipos de plan disponibles
+enum Plan {
+	planFree,  // Con anuncios
+	planPremium    // Sin anuncios
 };
 
-// Representa una canción individual
-struct Cancion {
-	Artista *artista;     // Creador o intérprete principal
-	char *nombre;         // Título de la canción
-	int duracion;         // Duración en segundos
-	char *archivo;        // Ruta al archivo de audio
-	int popularidad;      // Índice de popularidad
-	int reproducciones;   // Número total de reproducciones
-};
+// En realidad esta estructura amigos no es necesaria, ya que la lista de amigos contiene punteros a usuarios
+// struct Amigos {
+// 	char *nicknameAmigo; // Nombre de usuario del amigo
+// 	Lista playlistsAmigo; // Playlist del amigo
+// 	int cantidadAmigos; // Cantidad de amigos
+// };
 
-// Cola de reproducción que combina canciones y anuncios
-struct ColaReproduccion {
-	Cola canciones;   // Cola de Cancion*
-	Cola anuncios;    // Cola de Anuncio*
+// Representa a un usuario de la aplicación
+struct Usuario {
+	char *correo; 
+	char *contrasenia;  
+	char *nombre;         // Nombre real (puede haber varios usuarios con el mismo nombre)
+	char *nombreUsuario;  // Nombre único de usuario (puede utilizarse para iniciar sesión)
+	char *pais;
+	Lista playlists;
+	Historial historial; 
+
+	// Amigos amigos; // Esta linea se reemplaza por:
+	Lista amigos; // Una lista de usuarios (amigos).
+	
+	Plan plan;            
 };
 
 // Representa un anuncio publicitario
 struct Anuncio {
 	char *anunciante;  // Empresa o anunciante
-	char *texto;       // Mensaje del anuncio
+	char *mensaje;       // Mensaje del anuncio
+	int duracion;       // Duración del anuncio en segundos
 };
 
 #endif // ESTRUCTURAS_DB_H
