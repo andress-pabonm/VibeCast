@@ -1,6 +1,6 @@
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f0f0f0;
+    background-color: #e0e0e0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -10,10 +10,12 @@ body {
 
 .login-container {
     background-color: white;
-    padding: 20px;
+    padding: 40px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
+    width: 100%;
+    max-width: 400px;
 }
 
 h1 {
@@ -37,20 +39,32 @@ input[type="password"] {
 }
 
 button {
-    background-color: #5c67f2;
+    background-color: #6200ea;
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     margin-top: 10px;
+    width: 100%;
 }
 
 button:hover {
-    background-color: #4a54e1;
+    background-color: #4a00d8;
 }
 
 #respuesta {
     margin-top: 20px;
     color: #333;
+}
+
+a {
+    display: block;
+    margin-top: 20px;
+    color: #6200ea;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }
