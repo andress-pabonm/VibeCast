@@ -6,6 +6,7 @@
 **Lenguaje:** C  
 **Instructora:** Ing. Elina Ávila  
 **Fecha de Entrega:** 18 de julio de 2025  
+**Repositorio GitHub:** [https://github.com/andress-pabonm/VibeCast](https://github.com/andress-pabonm/VibeCast)
 
 ---
 
@@ -127,6 +128,13 @@
 - Cualquier integrante puede ser consultado por la docente
 - Evaluación interna entre compañeros
 - **La mejor solución gana 10 puntos extra para el examen final**
+
+---
+
+## 🔗 Repositorio
+
+Puedes acceder al código fuente completo en GitHub:  
+👉 [https://github.com/andress-pabonm/VibeCast](https://github.com/andress-pabonm/VibeCast)
 
 ---
 
