@@ -21,3 +21,6 @@ Thumbs.db
 # Configuración de IDEs (si usas alguno como VSCode o CLion)
 .vscode/
 .idea/
+
+# Archivo de configuración especial para VibeCast
+/include/VibeCastConfig.h

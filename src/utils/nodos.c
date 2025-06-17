@@ -1,4 +1,5 @@
 #include <utils/nodos.h>
+#include <stdlib.h>
 
 static Nodo *nuevoNodo(void *value_ptr)
 {
@@ -17,6 +18,18 @@ static Nodo *nuevoNodo(void *value_ptr)
 // =======================
 // Funciones para Lista
 // =======================
+
+void forEachIn(Lista, Lista *lista, opfn_t op)
+{
+    int i = 0;
+    Nodo *nodo = lista->head;
+
+    while (nodo && op(i, nodo->value_ptr))
+    {
+        i++;
+        nodo = nodo->der;
+    }
+}
 
 bool insertarNodo(Lista, Lista *lista, void *value_ptr, cmpfn_t cmp)
 {
@@ -327,4 +340,46 @@ bool liberar(ABB, ABB *abb, freefn_t free_value)
     abb->root = NULL;
 
     return true;
+}
+
+/* PreOrder */
+static bool ABB_PreOrder(int depth, Nodo *root, opfn_t op)
+{
+    return !root ||                                   // Cuando llegue a NULL retorna true para continuar
+           !op(depth, root->value_ptr) ||             // Primero evalúa la raiz
+           !ABB_PreOrder(depth + 1, root->izq, op) || // Luego evalúa la rama izquierda
+           ABB_PreOrder(depth + 1, root->der, op);    // Y por último la rama derecha
+}
+
+void forEachIn(ABB_PreOrder, ABB *abb, opfn_t op)
+{
+    ABB_PreOrder(0, abb->root, op);
+}
+
+/* InOrder */
+static bool ABB_InOrder(int depth, Nodo *root, opfn_t op)
+{
+    return !root ||                                   // Cuando llegue a NULL retorna true para continuar
+           !ABB_PreOrder(depth + 1, root->izq, op) || // Primero evalúa la rama izquierda
+           !op(depth, root->value_ptr) ||             // Luego evalúa la raiz
+           ABB_PreOrder(depth + 1, root->der, op);    // Y por último evalúa la rama derecha
+}
+
+void forEachIn(ABB_InOrder, ABB *abb, opfn_t op)
+{
+    ABB_InOrder(0, abb->root, op);
+}
+
+/* PostOrder */
+static bool ABB_PostOrder(int depth, Nodo *root, opfn_t op)
+{
+    return !root ||                                   // Cuando llegue a NULL retorna true para continuar
+           !ABB_PreOrder(depth + 1, root->izq, op) || // Primero evalúa la rama izquierda
+           !ABB_PreOrder(depth + 1, root->der, op) || // Luego evalú la rama derecha
+           op(depth, root->value_ptr);                // Y por último evalúa la raiz
+}
+
+void forEachIn(ABB_PostOrder, ABB *abb, opfn_t op)
+{
+    ABB_PostOrder(0, abb->root, op);
 }

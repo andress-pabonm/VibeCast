@@ -1,30 +1,63 @@
-cmake_minimum_required(VERSION 3.16)
-project(VibeCast)
+cmake_minimum_required(VERSION 4.0)
+project(VibeCast VERSION 1.0)
 
-# Buscar recursivamente todos los archivos .c dentro de src/
-file(GLOB_RECURSE SOURCES
-    ${CMAKE_SOURCE_DIR}/src/*.c
+file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c")
+
+set(EXECUTABLE_NAME ${PROJECT_NAME})
+set(VIBECAST_UI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ui")
+
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.h.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/${PROJECT_NAME}Config.h"
 )
 
-# set the output directory for built objects.
-# This makes sure that the dynamic library goes into the build directory automatically.
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
+include(FetchContent)
 
-# This assumes the SDL source is available in vendored/SDL
-add_subdirectory(vendored/SDL EXCLUDE_FROM_ALL)
+# ──────────────────────────────────────────────
+# Webview - Para la interfaz gráfica
+FetchContent_Declare(
+  webview
+  GIT_REPOSITORY https://github.com/webview/webview.git
+  GIT_TAG 0.12.0
+)
+FetchContent_MakeAvailable(webview)
 
-# This assumes the SQLite source is available in vendored/SQLite
-add_subdirectory(vendored/SQLite)
+# ──────────────────────────────────────────────
+# PCRE2 - Para expresiones regulares
+# FetchContent_Declare(
+#   pcre2
+#   GIT_REPOSITORY https://github.com/PCRE2Project/pcre2.git
+#   GIT_TAG pcre2-10.45
+# )
+# FetchContent_MakeAvailable(pcre2)
 
-# Crear el ejecutable con el mismo nombre que el proyecto
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/vendored/sqlite")
 
-# Incluir los archivos .h en include/
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/include)
+add_executable(${EXECUTABLE_NAME} ${SOURCES})
 
-# Link to the actual SDL3 library.
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
+target_link_libraries(
+    ${EXECUTABLE_NAME}
+    PRIVATE sqlite3 webview::core_static
+)
 
-# Link to the actual sqlite3 library.
-target_link_libraries(${PROJECT_NAME} PRIVATE sqlite3)
+target_include_directories(
+    ${EXECUTABLE_NAME}
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
+
+# install(
+#     TARGETS ${EXECUTABLE_NAME}
+#     DESTINATION bin
+# )
+# install(
+#     FILES "${PROJECT_BINARY_DIR}/TutorialConfig.h"
+#     DESTINATION include
+# )
+
+include(InstallRequiredSystemLibraries)
+# set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/License.txt")
+set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+set(CPACK_GENERATOR "ZIP")
+set(CPACK_SOURCE_GENERATOR "ZIP")
+include(CPack)

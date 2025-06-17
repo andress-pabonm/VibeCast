@@ -1,72 +1,51 @@
-#define SDL_MAIN_USE_CALLBACKS 1 /* Usar los callbacks en lugar de main() */
+#define MAIN_USE_CALLBACKS
+#define WINMAIN
+#include <core/main.h>
 
-/* Incluye las librerias de SDL */
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h> // Para los callbacks
+#include <VibeCastConfig.h> // Configuración de VibeCast
+
+#include <sqlite3.h>         // Para la base de datos
+#include <webview/webview.h> // Para la interfaz gráfica
 
 #include <stdio.h>
 
-#include <utils/utils.h>
+void handle_message(const char *seq, const char *req, void *arg);
 
-#include <ui/interfaces.h>
-#include <ui/login.h>
-
-/* Esta función se ejecuta una vez al iniciar */
-SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
+AppResult AppInit(void **appstate, int argc, char *argv[])
 {
-    // SDL_InitFlags flags = SDL_INIT_AUDIO | SDL_INIT_VIDEO;
+    puts("Aplicación inicializada.");
 
-    // if (!SDL_Init(flags)) {
-    //     SDL_Log("Error: No se pudo inicializar SDL: %s", SDL_GetError());
-    //     return SDL_APP_FAILURE;
-    // }
-
-    /* Abrir dispositivo de audio */
-    /* Abrir dispositivo de video */
-
-    VibeCast_InterfazID *id = alloc(VibeCast_InterfazID, NULL);
-    *id = LOGIN;
-    *appstate = id; // Para pasar el id de la interfaz a las otras funciones
-
-    return SDL_APP_CONTINUE;
+    return APP_CONTINUE; // Continuar con la ejecución
 }
 
-/* Esta función es llamada cuando ocurre un nuevo evento (mouse, teclado, etc) */
-SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
+AppResult AppIterate(void *appstate)
 {
-    if (event->type == SDL_EVENT_QUIT)
-        return SDL_APP_SUCCESS; // Se cerró la ventana
+    // Código de ejemplo
 
-    switch (*cast(VibeCast_InterfazID *, appstate))
-    {
-    case LOGIN:
-        puts("Login event");
-        break;
+    webview_t w = webview_create(0, NULL);            // Crear la ventana
+    webview_set_title(w, "VibeCast");                 // Establecer el título de la ventana
+    webview_set_size(w, 480, 320, WEBVIEW_HINT_NONE); // Establecer el tamaño de la ventana
 
-    default:
-        return SDL_APP_FAILURE;
-    }
+    webview_bind(w, "enviarMensaje", handle_message, w); // Para enlazar la función que maneja mensajes enviados desde JavaScript
 
-    return SDL_APP_CONTINUE;
+    // webview_set_html(w, "Thanks for using webview!"); // Para poner un hetml directamente
+    webview_navigate(w, "file://" VIBECAST_UI_DIR "/index.html");
+
+    webview_run(w);     // Ejecutar la ventana (bucle principal de la ventana)
+    webview_destroy(w); // Destruir la ventana
+
+    return APP_SUCCESS; // Finalizar ejecución
 }
 
-/* Esta función se ejecuta una vez por cuadro. Es el bucle principal del programa */
-SDL_AppResult SDL_AppIterate(void *appstate)
+void AppQuit(void *appstate, AppResult appresult)
 {
-    switch (*cast(VibeCast_InterfazID *, appstate))
-    {
-    case LOGIN:
-        return VibeCast_LoginUI(appstate);
-
-    default:
-        return SDL_APP_FAILURE;
-    }
-
-    return SDL_APP_CONTINUE;
+    puts("Ejecución finalizada.");
 }
 
-/* Esta función se llama una vez al finalizar la ejecución */
-void SDL_AppQuit(void *appstate, SDL_AppResult result)
+void handle_message(const char *seq, const char *req, void *arg)
 {
-    SDL_free(appstate);
+    printf("Mensaje recibido desde JS: %s\n", req);
+    char response[256];
+    snprintf(response, sizeof(response), "{\"status\": \"Recibido: %s\"}", req);
+    webview_return((webview_t)arg, seq, 0, response);
 }

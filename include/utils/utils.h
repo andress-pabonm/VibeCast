@@ -2,7 +2,6 @@
 #define UTILS_H
 
 #include <stdbool.h>
-
 #include <stdlib.h> // Para system()
 
 // ---------------------------
@@ -26,11 +25,8 @@ int scan(const char *fmt, ...);
 
 // Limpia stdin y luego limpia la pantalla
 #define waitAndClear() \
-    do                 \
-    {                  \
-        flush();       \
-        clear();       \
-    } while (0)
+    flush();           \
+    clear()
 
 // ---------------------------
 // Macro de casting compuesto
@@ -39,10 +35,15 @@ int scan(const char *fmt, ...);
 // Ejemplo: cast(Punto, .x = 5, .y = 10)
 #define cast(type, ...) ((type){__VA_ARGS__})
 
-typedef int (*cmpfn_t)(void *, void *);
-
-typedef bool (*freefn_t)(void *);
-
+/**
+ * Función para mostrar un menú en stdout y solicitar la opción elegida de stdin.
+ *
+ * @param title: Título del menú.
+ * @param opcc: Cantidad de opciones.
+ * @param opcv: Arreglo con los strings de las opciones.
+ *
+ * @return Número que representa la opción elegida. Puede retornar números <0 o >opcc.
+ */
 int menu(const char title[], int opcc, const char *opcv[]);
 
 /**
@@ -55,12 +56,5 @@ void *mem_alloc_copy(size_t size, const void *src);
 
 // Macro to simplify usage: alloc(int, &x)
 #define alloc(type, value_ptr) mem_alloc_copy(sizeof(type), (value_ptr))
-
-// Macros para llamadas a funciones polimórficas por tipo
-#define cmpfn(type, ...) cmp##type(__VA_ARGS__)
-#define validar(type, ...) validar##type(__VA_ARGS__)
-
-// Declaración de funciones de validación por tipo
-// (Se implementan por separado en otro archivo, por ejemplo: validarInt, validarFloat, etc.)
 
 #endif // UTILS_H
