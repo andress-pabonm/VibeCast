@@ -25,7 +25,7 @@
 - Paula Sacoto  
 - Kirman Sánchez  
 - Paul Solórzano  
-- Fabiola Vicuña  
+- Rocio Vicuña  
 
 ---
 
