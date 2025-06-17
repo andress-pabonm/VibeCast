@@ -1,17 +1,21 @@
-<!DOCTYPE html5>
-
+<!DOCTYPE html>
 <html lang="es">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VibeCast</title>
-
     <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <h1>VibeCast</h1>
-    <button onclick="enviar()">Enviar mensaje a C</button>
-    <p id="respuesta"></p>
+</head>
+<body>
+    <div class="login-container">
+        <h1>VibeCast</h1>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Usuario" required />
+            <input type="password" id="password" placeholder="Contraseña" required />
+            <button type="submit">Iniciar Sesión</button>
+        </form>
+        <p id="respuesta"></p>
+    </div>
     <script src="app.js"></script>
-  </body>
+</body>
 </html>

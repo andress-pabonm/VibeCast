@@ -13,7 +13,7 @@ void handle_message(const char *seq, const char *req, void *arg);
 
 AppResult AppInit(void **appstate, int argc, char *argv[])
 {
-    puts("Aplicación inicializada.");
+    puts("Aplicación inicializada");
 
     return APP_CONTINUE; // Continuar con la ejecución
 }
@@ -39,7 +39,7 @@ AppResult AppIterate(void *appstate)
 
 void AppQuit(void *appstate, AppResult appresult)
 {
-    puts("Ejecución finalizada.");
+    puts("Ejecución finalizada");
 }
 
 void handle_message(const char *seq, const char *req, void *arg)
