@@ -24,8 +24,8 @@
 - Michael Revelo  
 - Paula Sacoto  
 - Kirman Sánchez  
-- Paul Solorzano  
-- Fabila Vicuña  
+- Paul Solórzano  
+- Fabiola Vicuña  
 
 ---
 
