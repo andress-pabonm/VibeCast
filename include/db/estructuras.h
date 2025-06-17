@@ -21,7 +21,7 @@ struct Artista {
 struct Cancion {
 	char *nombreCancion;
 	Artista *artista;
-	int duracion;  
+	float duracion;  
 	char *genero;  
 	char fechaLanzamiento[11]; // Formato DD-MM-YYYY
 	int popularidad;  // Cuantas veces se guardo en una playlist

@@ -30,6 +30,7 @@ AppResult AppIterate(void *appstate)
 
     // webview_set_html(w, "Thanks for using webview!"); // Para poner un hetml directamente
     webview_navigate(w, "file://" VIBECAST_UI_DIR "/index.html");
+    webview_navigate(w, "file://C:/Users/Jostin/OneDrive/Desktop/Universidad/Tercer ciclo/Programacion 2/VibeCast/ui/Menu/menu.html"); // Navegacion del menu
 
     webview_run(w);     // Ejecutar la ventana (bucle principal de la ventana)
     webview_destroy(w); // Destruir la ventana

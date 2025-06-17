@@ -49,7 +49,6 @@ void AppQuit(void *appstate, AppResult appresult);
 /**
  * Función principal de cualquier programa de C.
  */
-int main(int argc, char *argv[]);
 
 #ifdef MAIN_USE_CALLBACKS
 
@@ -76,8 +75,7 @@ int main(int argc, char *argv[])
 
 #include <windows.h>
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-                   LPSTR lpCmdLine, int nCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     (void)hInstance;
     (void)hPrevInstance;
