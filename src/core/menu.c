@@ -9,6 +9,7 @@
 //Hablar la logica de crear cancion por cancion siendo admin
 
 //Cada vez que el usuario quiera crear una playlist, se le pedira el nombre de la playlist
+//Poder eliminar play list, osea elimincar cancion por cancion y de ahi la playlist, liberar memoria de la playlist y de las canciones
 void crearPlaylist(const char *nombrePlaylist, const char *fechaCreacion, Lista *canciones)
 {
     if (!nombrePlaylist || !fechaCreacion || !canciones)
@@ -26,8 +27,8 @@ void crearPlaylist(const char *nombrePlaylist, const char *fechaCreacion, Lista 
     }
 
     nuevaPlaylist -> nombrePlaylist = strdup(nombrePlaylist); //Varialbe q se veria desde el html y el js
-    nuevaPlaylist->fechaCreacion[0] = '\0'; //xd con el salto de linea
-    strncat(nuevaPlaylist->fechaCreacion, fechaCreacion, sizeof(nuevaPlaylist->fechaCreacion) - 1); //fecha cogia del computador
+    //nuevaPlaylist -> fechaCreacion[0] = '\0'; //xd con el salto de linea
+    strncat(nuevaPlaylist -> fechaCreacion, fechaCreacion, sizeof(nuevaPlaylist->fechaCreacion) - 1); //fecha cogia del computador
     //nuevaPlaylist->canciones = *canciones; //apunto a una sola cancion desea por el usuario, depende si el usuario quiere agregar canciones a la playlist o no 
 
     insertarNodo(Lista, &nuevaPlaylist->canciones, nuevaPlaylist, NULL); // Inserta la nueva playlist en la lista de canciones preguntar bien como es la llamada de las funciones
@@ -35,6 +36,7 @@ void crearPlaylist(const char *nombrePlaylist, const char *fechaCreacion, Lista 
     // Aquí podrías agregar la nueva playlist a una lista global o base de datos
 } 
 
+//Eliminar cancion si no esta en playlist
 void agregarCancion(const char *nombrePlaylist) //Escoge la playlist en tema grafico
 {
     if (!nombrePlaylist)
@@ -49,12 +51,13 @@ void agregarCancion(const char *nombrePlaylist) //Escoge la playlist en tema gra
     // Ejemplo de cómo podrías buscar la playlist y agregar la canción
     Playlist *playlist = buscarNodo(nombrePlaylist); // Implementa esta función según tu lógica
 
-    if (playlist)
+    if(playlist)
     {
         
         playlist->canciones.head = NULL; // Aqui logica de q la playlist a apunta a una cancion
+        //Agregar cancion y a null
 
-
+        //Ver por parte grafica como se agrega la cancion
     }
     else
     {

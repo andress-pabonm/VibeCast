@@ -4,22 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VibeCast</title>
-    <!-- <link rel="stylesheet" href="style.css" /> -->
+    <link rel="stylesheet" href="menuStyles.css" />
 </head>
 <body>
-    <div class="login-container">
-        <h1>VibeCast</h1>
+    <div class="container">
+        <header>
+            <button id="inicio">Perfil</button>
+            <input type="text" id="navegacion" placeholder="Navegación" />
+        </header>
+        <main>
+            <aside class="playlists">
+                <h3>Playlists del usuario</h3>
+                <!-- Playlists se cargarán dinámicamente -->
+            </aside>
+            <section class="database-songs">
+                <h3>Canciones de la base de datos</h3>
+                <!-- Canciones se cargarán dinámicamente -->
+            </section>
+            <aside class="friends">
+                <h3>Amigos del usuario</h3>
+                <!-- Amigos se cargarán dinámicamente -->
+            </aside>
+            <aside class="friend-songs">
+                <h3>Recomendaciones canciones amigos</h3>
+                <!-- Canciones se cargarán dinámicamente -->
+            </aside>
+        </main>
     </div>
-
-    <section>
-
-    </section>
-
-    <div style="background-color: yellowgreen; display:inline">
-        <a href="https://www.youtube.com/watch?v=ZRtdQ81jPUQ" style="font-size: 3cm;">pablo</a>
-    </div>
-
-    
-   <!-- <script src="app.js"></script> --> 
+    <script src="menuApp.js"></script>
 </body>
 </html>

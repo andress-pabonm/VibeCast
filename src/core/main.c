@@ -28,13 +28,8 @@ AppResult AppIterate(void *appstate)
     webview_bind(w, "enviarMensaje", handle_message, w); // Para enlazar la función que maneja mensajes enviados desde JavaScript
 
     // webview_set_html(w, "Thanks for using webview!"); // Para poner un hetml directamente
-<<<<<<< HEAD
-    webview_navigate(w, "file://" VIBECAST_UI_DIR "/index.html");
-    //webview_navigate(w, "file://C:/Users/Jostin/OneDrive/Desktop/Universidad/Tercer ciclo/Programacion 2/VibeCast/ui/Menu/menu.html"); //Se navegar al menu, ahi ya tendira validaciones
-=======
-    // webview_navigate(w, INTERFAZ("/index.html"));
-    webview_navigate(w, INTERFAZ("Menu/menu.html")); // Se navegar al menu, ahi ya tendira validaciones
->>>>>>> 8de88fc5aa7a03545e436793651a9b5ec00f8cdf
+    //webview_navigate(w, "file://" VIBECAST_UI_DIR "/index.html");
+    webview_navigate(w, "file://C:/Users/Jostin/OneDrive/Desktop/Universidad/Tercer ciclo/Programacion 2/VibeCast/ui/Menu/menu.html"); //Se navegar al menu, ahi ya tendira validaciones
 
     webview_run(w);     // Ejecutar la ventana (bucle principal de la ventana)
     webview_destroy(w); // Destruir la ventana
