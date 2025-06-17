@@ -5,6 +5,8 @@
 // #include <sqlite3.h>         // Para la base de datos
 #include <webview/webview.h> // Para la interfaz gráfica
 
+#include <ui/interfaces.h>
+
 #include <stdio.h>
 
 void handle_message(const char *seq, const char *req, void *arg);
@@ -28,7 +30,7 @@ AppResult AppIterate(void *appstate)
 
     // webview_set_html(w, "Thanks for using webview!"); // Para poner un hetml directamente
     // webview_navigate(w, INTERFAZ("/index.html"));
-    webview_navigate(w, INTERFAZ("/Menu/menu.html")); // Se navegar al menu, ahi ya tendira validaciones
+    webview_navigate(w, INTERFAZ("Menu/menu.html")); // Se navegar al menu, ahi ya tendira validaciones
 
     webview_run(w);     // Ejecutar la ventana (bucle principal de la ventana)
     webview_destroy(w); // Destruir la ventana

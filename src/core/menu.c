@@ -3,10 +3,10 @@
 #include <string.h>
 
 #include <db/estructuras.h>
-#include <utils/nodos.h>
+// #include <utils/nodos.h> // Ya está incluido en estructuras.h
 #include <ui/interfaces.h>
 
-agregar_cancion(Lista *lista, const char *nombre, const char *artista, float duracion, const char *genero, const char *fecha, int popularidad, int reproducciones, const char *archivo){
+bool agregar_cancion(Lista *lista, const char *nombre, const char *artista, float duracion, const char *genero, const char *fecha, int popularidad, int reproducciones, const char *archivo){
     Cancion *nueva_cancion = malloc(sizeof(Cancion));
 
     if (!nueva_cancion) return false;

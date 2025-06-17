@@ -1,7 +1,10 @@
 #ifndef VIBECAST_INTERFACES_H
 #define VIBECAST_INTERFACES_H
 
+#include <stdbool.h>
+
 #include <VibeCastConfig.h>
+#include <db/estructuras.h>
 
 /**
  * Macro para facilitar la llamada a los archivos .html
