@@ -106,8 +106,8 @@ bool insertarNodo(ABB, ABB *abb, void *value_ptr, cmpfn_t cmp);
 Nodo **buscarNodo(ABB, ABB *abb, void *value_ptr, cmpfn_t cmp);
 bool eliminarNodo(ABB, ABB *abb, void *value_ptr, cmpfn_t cmp);
 bool liberar(ABB, ABB *abb, freefn_t free_value);
-void forEachIn(ABB_PreOrder, ABB *abb, opfn_t op);
-void forEachIn(ABB_InOrder, ABB *abb, opfn_t op);
-void forEachIn(ABB_PostOrder, ABB *abb, opfn_t op);
+void forEachIn(ABB_PreOrder, ABB *abb, opfn_t op); //inicio izquierda derecha
+void forEachIn(ABB_InOrder, ABB *abb, opfn_t op); //izquierda raiz derecha
+void forEachIn(ABB_PostOrder, ABB *abb, opfn_t op); //izquierda derecha raiz
 
 #endif // NODOS_H

@@ -6,25 +6,58 @@
 #include <utils/nodos.h>
 #include <ui/interfaces.h>
 
-agregar_cancion(Lista *lista, const char *nombre, const char *artista, float duracion, const char *genero, const char *fecha, int popularidad, int reproducciones, const char *archivo){
-    Cancion *nueva_cancion = malloc(sizeof(Cancion));
+//Hablar la logica de crear cancion por cancion siendo admin
 
-    if (!nueva_cancion) return false;
+//Cada vez que el usuario quiera crear una playlist, se le pedira el nombre de la playlist
+void crearPlaylist(const char *nombrePlaylist, const char *fechaCreacion, Lista *canciones)
+{
+    if (!nombrePlaylist || !fechaCreacion || !canciones)
+    {
+        printf("Error: Parámetros inválidos para crear la playlist\n");
+        return;
+    }
 
-    nueva_cancion->nombreCancion = strdup("idol");
-    nueva_cancion->artista = malloc(sizeof(Artista)); //Inicializar el artista
-    strcpy(nueva_cancion->artista->nombreArtista, "Yoasobi");
-    nueva_cancion->duracion = 3.33;
-    nueva_cancion->genero = strdup("sepadios");
-    strncpy(nueva_cancion->fechaLanzamiento, "nose", sizeof(nueva_cancion->fechaLanzamiento));
-    nueva_cancion->popularidad = 2;
-    nueva_cancion->reproducciones = 8000;
-    nueva_cancion->archivo = strdup("canciones/idol.mp3");
+    Playlist *nuevaPlaylist = malloc(sizeof(Playlist));
 
-    // Insertar la canción en la lista
-    insertarNodo(Lista, lista, nueva_cancion, NULL);
+    if (!nuevaPlaylist)
+    {
+        printf("Error: No se pudo asignar memoria para la nueva playlist\n");
+        return;
+    }
 
-    printf("Canción '%s' de '%s' agregada correctamente.\n", nueva_cancion->nombreCancion, nueva_cancion->artista->nombreArtista);
+    nuevaPlaylist -> nombrePlaylist = strdup(nombrePlaylist); //Varialbe q se veria desde el html y el js
+    nuevaPlaylist->fechaCreacion[0] = '\0'; //xd con el salto de linea
+    strncat(nuevaPlaylist->fechaCreacion, fechaCreacion, sizeof(nuevaPlaylist->fechaCreacion) - 1); //fecha cogia del computador
+    //nuevaPlaylist->canciones = *canciones; //apunto a una sola cancion desea por el usuario, depende si el usuario quiere agregar canciones a la playlist o no 
 
-    return true;
+    insertarNodo(Lista, &nuevaPlaylist->canciones, nuevaPlaylist, NULL); // Inserta la nueva playlist en la lista de canciones preguntar bien como es la llamada de las funciones
+
+    // Aquí podrías agregar la nueva playlist a una lista global o base de datos
+} 
+
+void agregarCancion(const char *nombrePlaylist) //Escoge la playlist en tema grafico
+{
+    if (!nombrePlaylist)
+    {
+        printf("Error: Parámetros inválidos para agregar la canción\n");
+        return;
+    }
+
+    // Aquí deberías buscar la playlist por nombre y luego agregar la canción a esa playlist
+    // Por simplicidad, asumimos que la playlist ya existe y se encuentra en una lista global o base de datos
+
+    // Ejemplo de cómo podrías buscar la playlist y agregar la canción
+    Playlist *playlist = buscarNodo(nombrePlaylist); // Implementa esta función según tu lógica
+
+    if (playlist)
+    {
+        
+        playlist->canciones.head = NULL; // Aqui logica de q la playlist a apunta a una cancion
+
+
+    }
+    else
+    {
+        printf("Error: Playlist '%s' no encontrada\n", nombrePlaylist);
+    }
 }

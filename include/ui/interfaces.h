@@ -3,5 +3,6 @@
 
 /* Aquí van las declaraciones de las funciones principales de cada interfaz */
 
-bool agregar_cancion(Lista *lista, const char *nombre, const char *artista, float duracion, const char *genero, const char *fecha, int popularidad, int reproducciones, const char *archivo);
+void crearPlaylist(const char *nombrePlaylist, const char *fechaCreacion, Lista *caniones);
+bool agregarCancion(const char *nombrePlaylist, const char *nombreCancion);
 #endif // VIBECAST_INTERFACES_H
