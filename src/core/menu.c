@@ -6,12 +6,7 @@
 // #include <utils/nodos.h> // Ya está incluido en estructuras.h
 #include <ui/interfaces.h>
 
-<<<<<<< HEAD
 //Hablar la logica de crear cancion por cancion siendo admin
-=======
-bool agregar_cancion(Lista *lista, const char *nombre, const char *artista, float duracion, const char *genero, const char *fecha, int popularidad, int reproducciones, const char *archivo){
-    Cancion *nueva_cancion = malloc(sizeof(Cancion));
->>>>>>> 8de88fc5aa7a03545e436793651a9b5ec00f8cdf
 
 //Cada vez que el usuario quiera crear una playlist, se le pedira el nombre de la playlist
 void crearPlaylist(const char *nombrePlaylist, const char *fechaCreacion, Lista *canciones)
