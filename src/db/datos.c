@@ -1,7 +1,5 @@
-/* Aquí se cargan los datos desde la base datos y se los organiza en las diferentes estructuras. */
-
-#include <db/estructuras.h>
-#include <stddef.h>
+#include <db/datos.h>
+#include <db/dbmgr.h>
 
 /**
  * 1. Cargar toda la información a la vez (usuarios, artistas, álbumes y canciones)
@@ -14,7 +12,12 @@
  * sería de realizar primero el paso 4 y luego el 3, creo.
  */
 
-// static ABB usuarios = {NULL};
-// static ABB artistas = {NULL};
-// static Lista albumes = {NULL};
-// static Lista canciones = {NULL};
+static ABB usuarios = {NULL};
+static ABB artistas = {NULL};
+static Lista albumes = {NULL};
+static Lista canciones = {NULL};
+
+bool VibeCast_LoadData()
+{
+    return true; // Datos cargados correctamente
+}
