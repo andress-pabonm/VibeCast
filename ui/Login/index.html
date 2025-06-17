@@ -1,22 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VibeCast</title>
-    <link rel="stylesheet" href="style.css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión | VibeCast</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="login-container">
-        <h1>VibeCast</h1>
-        <form id="loginForm">
-            <input type="text" id="username" placeholder="Usuario" required />
-            <input type="password" id="password" placeholder="Contraseña" required />
-            <button type="submit">Iniciar Sesión</button>
+    <div class="login-container fade-in">
+        <div class="logo">
+            <i class="fas fa-music logo-icon"></i>
+            <h1 class="logo-title">VibeCast</h1>
+        </div>
+        
+        <p class="slogan">Viva el sexo lesbico</p>
+
+        <form id="loginForm" class="login-form">
+            <div class="input-group">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" id="username" class="form-input" placeholder="Usuario" required>
+            </div>
+            
+            <div class="input-group">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" id="password" class="form-input" placeholder="Contraseña" required>
+                <i class="fas fa-eye toggle-password"></i>
+            </div>
+
+            <button type="submit" class="login-btn">
+                <span>Iniciar Sesión</span>
+                <i class="fas fa-arrow-right btn-icon"></i>
+            </button>
         </form>
-        <p id="respuesta"></p>
-        <a class="registro" href="../Registro/registro.html">Regístrate</a>
+
+        <div class="footer-links">
+            <a href="#" class="link forgot-password">¿Olvidaste tu contraseña?</a>
+            <p>¿No tienes cuenta? <a href="../Registro/registro.html" class="link register-link">Regístrate</a></p>
+        </div>
     </div>
+
     <script src="app.js"></script>
 </body>
 </html>
