@@ -1,11 +1,11 @@
 :root {
-  --spider-morado: #8d2de2;
-  --spider-corrupto: #5e1dc7;
-  --spider-azul: #4cc9f0;
-  --spider-azul-oscuro: #4361ee;
-  --spider-negro: #1a1a1a;
-  --spider-blanco: #f1faee;
-  --spider-detalle: #a8dadc;
+  --morado: #8d2de2;
+  --corrupto: #5e1dc7;
+  --azul: #4cc9f0;
+  --azul-oscuro: #4361ee;
+  --negro: #1a1a1a;
+  --blanco: #f1faee;
+  --detalle: #a8dadc;
   
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s ease;
@@ -21,12 +21,12 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, var(--spider-negro), var(--spider-corrupto));
+  background: linear-gradient(135deg, var(--negro), var(--corrupto));
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--spider-blanco);
+  color: var(--blanco);
   padding: 1rem;
   line-height: 1.6;
 }
@@ -40,18 +40,11 @@ body {
   max-width: 400px;
   text-align: center;
   backdrop-filter: blur(5px);
-  border: 1px solid var(--spider-morado);
-  box-shadow: 0 0 25px var(--spider-morado);
+  border: 1px solid var(--morado);
+  box-shadow: 0 0 25px var(--morado);
   min-width: 300px;
   min-height: 450px; 
   overflow: auto;
-}
-
-
-
-@keyframes spiderPulse {
-  0%, 100% { box-shadow: 0 0 15px var(--spider-morado); }
-  50% { box-shadow: 0 0 30px var(--spider-azul); }
 }
 
 /* ========== LOGO Y TÍTULO ========== */
@@ -60,12 +53,12 @@ body {
   align-items: center;
   justify-content: center;
   margin-bottom: 1.5rem;
-  filter: drop-shadow(0 0 5px var(--spider-azul)); 
+  /*filter: drop-shadow(0 0 10px var(--azul)); */
 }
 
 .logo-icon {
   font-size: 2.5rem;
-  color: var(--spider-azul);
+  color: var(--azul);
   margin-right: 0.75rem;
   animation: swing 3s infinite alternate;
 }
@@ -76,7 +69,7 @@ body {
 }
 
 .logo-title {
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: 600;
   background: linear-gradient(to right, rgba(141, 45, 226, 0.9), rgba(67, 97, 238, 0.7));
   -webkit-background-clip: text;
@@ -88,7 +81,7 @@ body {
 .slogan {
   font-size: 0.9rem;
   margin-bottom: 2rem;
-  color: var(--spider-detalle);
+  color: var(--detalle);
   opacity: 0.9;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -109,7 +102,7 @@ body {
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--spider-morado);
+  color: var(--morado);
   font-size: 1rem;
   z-index: 2;
 }
@@ -118,24 +111,24 @@ body {
   width: 100%;
   padding: 0.75rem 0.75rem 0.75rem 2.5rem;
   background: rgba(26, 26, 26, 0.7);
-  border: 2px solid var(--spider-morado);
+  border: 2px solid var(--morado);
   border-radius: 10px;
   font-size: 0.95rem;
   transition: all var(--transition-normal);
-  color: var(--spider-blanco);
+  color: var(--blanco);
   position: relative;
 }
 
-.form-input::placeholder {
-  color: var(--spider-detalle);
+/*.form-input::placeholder {
+  color: var(--detalle);
   opacity: 0.7;
-}
+}*/
 
 .form-input:focus {
   outline: none;
   background: rgba(26, 26, 26, 0.9);
-  border-color: var(--spider-azul);
-  box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.3);
+  border-color: var(--azul);
+  /*box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.3);*/
 }
 
 .toggle-password {
@@ -144,20 +137,20 @@ body {
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  color: var(--spider-morado);
+  color: var(--morado);
   transition: color var(--transition-fast);
   z-index: 2;
 }
 
 .toggle-password:hover {
-  color: var(--spider-azul);
+  color: var(--azul);
 }
 
 /* ========== BOTÓN ========== */
 .login-btn {
   width: 100%;
   padding: 0.875rem;
-  color: var(--spider-blanco);
+  color: var(--blanco);
   border: none;
   border-radius: 10px;
   font-size: 1rem;
@@ -172,7 +165,9 @@ body {
   overflow: hidden;
   text-transform: uppercase;
   letter-spacing: 1px;
-  background: linear-gradient(45deg, var(--spider-morado), var(--spider-azul-oscuro));
+  /*background: var(--morado);*/
+  /*background: var(--azul-oscuro); escoger bien los colores de fondo*/
+  background: linear-gradient(45deg, var(--morado), var(--azul-oscuro));
   box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
 }
 
@@ -184,13 +179,15 @@ body {
   width: 100%;
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(76, 201, 240, 0.4), transparent);
-  transition: var(--transition-slow);
+  /*transition: var(--transition-slow); ver si se pone esta transicion*/
 }
 
 .login-btn:hover {
   transform: translateY(-3px);
-  background: linear-gradient(45deg, var(--spider-azul-oscuro), var(--spider-morado));
-  box-shadow: 0 8px 25px var(--spider-azul);
+  /*background: var(--morado);*/
+  /*background: var(--azul-oscuro); escoger bien los colores de fondo*/
+  background: linear-gradient(45deg, var(--azul-oscuro), var(--morado));
+  box-shadow: 0 8px 25px var(--azul);
 }
 
 .login-btn:hover::before {
@@ -199,7 +196,7 @@ body {
 
 .btn-icon {
   transition: transform var(--transition-normal);
-  color: var(--spider-azul);
+  color: var(--azul);
 }
 
 .login-btn:hover .btn-icon {
@@ -213,7 +210,7 @@ body {
 }
 
 /*.link { esto es de me olvide la contraseña
-  color: var(--spider-detalle);
+  color: var(--detalle);
   text-decoration: none;
   display: block;
   margin-bottom: 1rem;
@@ -228,27 +225,19 @@ body {
   left: 0;
   width: 0;
   height: 1px;
-  background: var(--spider-azul);
+  background: var(--azul);
   transition: width var(--transition-normal);
 } */
 
-.link:hover {
-  color: var(--spider-azul);
-}
-
-.link:hover::after {
-  width: 100%;
-}
-
 .register-link {
-  color: var(--spider-morado);
+  color: var(--morado);
   font-weight: 600;
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
 .register-link:hover {
-  color: var(--spider-azul);
+  color: var(--azul);
 }
 
 /* ========== ANIMACIONES ========== */
