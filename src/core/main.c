@@ -1,3 +1,5 @@
+#include <VibeCastConfig.h>
+
 #define MAIN_USE_CALLBACKS
 #define WINMAIN
 #include <core/main.h>
