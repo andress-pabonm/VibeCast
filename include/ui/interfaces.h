@@ -22,6 +22,6 @@ typedef enum
 
 bool iniciar_sesion(const char *data);
 bool crear_cuenta(const char *data);
-bool cerrar_sesion(const char *data);
+bool cerrar_sesion();
 
 #endif // VIBECAST_INTERFACES_H

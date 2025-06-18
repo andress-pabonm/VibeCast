@@ -119,39 +119,3 @@ void func(CloseDB)
         db = NULL;
     }
 }
-
-size_t VibeCast_CargarUsuarios(void **datos)
-{
-    if (!base_datos) // Si no hay una conexión con la base de datos
-        return 0;    // No se pueden cargar los datos
-
-    /* Código para cargar los usuarios */
-    return 0;
-}
-
-size_t VibeCast_CargarArtistas(void **datos)
-{
-    if (!base_datos) // Si no hay una conexión con la base de datos
-        return 0;    // No se pueden cargar los datos
-
-    /* Código para cargar los artistas */
-    return 0;
-}
-
-size_t VibeCast_CargarAlbumes(void **datos)
-{
-    if (!base_datos) // Si no hay una conexión con la base de datos
-        return 0;    // No se pueden cargar los datos
-
-    /* Código para cargar los álbumes */
-    return 0;
-}
-
-size_t VibeCast_CargarCanciones(void **datos)
-{
-    if (!base_datos) // Si no hay una conexión con la base de datos
-        return 0;    // No se pueden cargar los datos
-
-    /* Código para cargar las canciones */
-    return 0;
-}

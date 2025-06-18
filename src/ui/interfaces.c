@@ -1,7 +1,8 @@
 #include <ui/interfaces.h>
 #include <utils/utils.h>
 
-#include <pcre2posix.h> // Para expresiones regulares
+#define PCRE2_CODE_UNIT_WIDTH 8
+#include <pcre2.h> // Para expresiones regulares
 #include <json.h>
 
 static Usuario *usuario = NULL;

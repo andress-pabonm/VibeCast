@@ -1,5 +1,6 @@
 #include <db/datos.h>
 #include <db/dbmgr.h>
+#include <utils/utils.h>
 
 /**
  * 1. Cargar toda la información a la vez (usuarios, artistas, álbumes y canciones)

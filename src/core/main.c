@@ -37,7 +37,7 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
     webview_set_size(w, 480, 640, WEBVIEW_HINT_FIXED); // Establecer el tamaño de la ventana
 
     Interfaz interfaz = LOGIN;
-    *appstate = alloc(Interfaz, interfaz);
+    *appstate = alloc(Interfaz, &interfaz);
     if (!*appstate)
     {
         puts("Fallo al inicializar la interfaz.");
