@@ -42,6 +42,9 @@ body {
   backdrop-filter: blur(5px);
   border: 1px solid var(--spider-morado);
   box-shadow: 0 0 25px var(--spider-morado);
+  min-width: 300px;
+  min-height: 450px; 
+  overflow: auto;
 }
 
 
@@ -209,7 +212,7 @@ body {
   font-size: 0.85rem;
 }
 
-.link {
+/*.link { esto es de me olvide la contraseña
   color: var(--spider-detalle);
   text-decoration: none;
   display: block;
@@ -218,7 +221,7 @@ body {
   position: relative;
 }
 
-.link::after {
+.link::after { y esto una linea xd
   content: '';
   position: absolute;
   bottom: -2px;
@@ -227,7 +230,7 @@ body {
   height: 1px;
   background: var(--spider-azul);
   transition: width var(--transition-normal);
-}
+} */
 
 .link:hover {
   color: var(--spider-azul);
