@@ -1,6 +1,9 @@
 #include <ui/interfaces.h>
 #include <utils/utils.h>
 
+#include <pcre2posix.h> // Para expresiones regulares
+#include <json.h>
+
 static Usuario *usuario = NULL;
 
 bool iniciar_sesion(const char *data)
@@ -18,7 +21,7 @@ bool iniciar_sesion(const char *data)
     return true; // Sesión iniciada correctamente
 }
 
-bool registrar_usuario(const char *data)
+bool crear_cuenta(const char *data)
 {
     // TODO 1: Obtener los datos desde (data) (JSON)
     // TODO 2: Validar que todos los campos estén definidos

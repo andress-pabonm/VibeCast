@@ -6,6 +6,11 @@
 
 #include <stdbool.h>
 
+typedef enum
+{
+    LOGIN
+} Interfaz;
+
 /**
  * Macro para facilitar la llamada a los archivos .html
  * Utilizas la ruta relativa al directorio ui donde están las .html
@@ -14,5 +19,9 @@
 #define INTERFAZ(nombre) "file://" path_to("ui/" nombre)
 
 /* Aquí van las declaraciones de las funciones principales de cada interfaz */
+
+bool iniciar_sesion(const char *data);
+bool crear_cuenta(const char *data);
+bool cerrar_sesion(const char *data);
 
 #endif // VIBECAST_INTERFACES_H
