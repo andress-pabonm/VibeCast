@@ -1,2 +1,3 @@
 #define path_to(dir) "@CMAKE_CURRENT_SOURCE_DIR@/" dir
-#define func(name, ...) @PROJECT_NAME@_##name(__VA_ARGS__)
+#define PREFIX(name) @PROJECT_NAME@_##name
+#define func(name, ...) PREFIX(name)(__VA_ARGS__)

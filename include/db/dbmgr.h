@@ -1,23 +1,43 @@
 #ifndef VIBECAST_DBMGR_H
 #define VIBECAST_DBMGR_H
 
-/**
- * 1. Inicializar base de datos (establecer la conexión con la base de datos)
- * 2. Cerrar la conexión con la base de datos
- *
- * 3. Función para cargar todos los usuarios
- * 4. Función para cargar todos los artistas
- * 5. Función para cargar todos los albumes
- * 6. Función para cargar todas las canciones
- *
- * Nota: Estaba pensando en cómo cargar el historial,
- * aún no tengo una idea clara, tendría que entender
- * cómo funciona la base de datos
- */
+#include <VibeCastConfig.h>
+#include <sqlite3.h>
+#include <stdbool.h>
 
-void VibeCast_InitDB();  // Abrir base de datos
-void VibeCast_CloseDB(); // Cerrar base de datos
+typedef int (*select_handler_t)(void *arg, int argc, char **argv, char **fields);
+#define new_select_handler(name) int name(void *arg, int argc, char **argv, char **fields)
 
-/* Estas funciones idealmente cargarían los datos en la variable (datos) y devolverían la cantidad de registros */
+#define stringify(...) #__VA_ARGS__
+
+#define C(table_name, table_fields, ...) "INSERT INTO " table_name " (" table_fields ")" \
+                                         " VALUES (" stringify(__VA_ARGS__) ")"
+#define R(table_fields, table_name, ...) "SELECT " table_fields " FROM " table_name " " stringify(__VA_ARGS__)
+#define U(table_name, condition, ...) "UPDATE " table_name " SET " stringify(__VA_ARGS__) " WHERE " condition
+#define D(table_name, condition) "DELETE FROM " table_name " WHERE " condition
+
+// Abrir base de datos
+bool func(InitDB, const char *db_name, char **errmsg);
+
+// Cerrar base de datos
+void func(CloseDB);
+
+// Función para obtener la cantidad de usuarios registrados
+int userCount();
+
+// Función para hacer un nuevo registro
+bool nuevo_registro(const char *table_name, const char *table_fields, const char *values, char **errmsg);
+
+// Función para seleccionar registros
+bool obtener_registros(const char *table_fields, const char *table_name, const char *condition, select_handler_t handler, void *arg, char **errmsg);
+
+// Función para actualizar registros
+bool actualizar_registros(const char *table_name, const char *values, const char *condition, char **errmsg);
+
+// Función para eliminar registros
+bool eliminar_registros(const char *table_name, const char *condition, char **errmsg);
+
+// Función par aliberar la memoria de un mensaje de error
+void free_errmsg(char *errmsg);
 
 #endif // VIBECAST_DBMGR_H

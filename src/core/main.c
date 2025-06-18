@@ -4,24 +4,34 @@
 #define WINMAIN
 #include <core/main.h>
 
+#include <db/dbmgr.h>
 #include <utils/utils.h>
 #include <ui/interfaces.h>
 
 #include <webview/webview.h> // Para la interfaz gráfica
+#include <json.h>            // Para recibir las peticiones desde JS
 #include <stdio.h>           // Mientras se prueba la aplicación.
 
-#define stringify(expr) #expr
 #define JSON(...) stringify({__VA_ARGS__})
 
-void handle_message(const char *id, const char *req, void *arg);
+typedef void (*message_handler_t)(const char *id, const char *req, void *arg);
+#define new_message_handler(name) void name(const char *id, const char *req, void *arg)
+
+new_message_handler(handle_message);
 
 static webview_t w = NULL;
 
 AppResult AppInit(void **appstate, int argc, char *argv[])
 {
+    if (!func(InitDB, ":memory:", NULL))
+    {
+        puts("Hubo un error al inicializar la base de datos.");
+        return APP_FAILURE;
+    }
+
     if (!func(LoadData))
     {
-        puts("No se pudo cargar los datos.");
+        puts("Hubo un error al cargar los datos.");
         return APP_FAILURE;
     }
 
@@ -70,28 +80,13 @@ void AppQuit(void *appstate, AppResult appresult)
     puts("Ejecución finalizada");
 }
 
-void handle_message(const char *id, const char *req, void *arg)
+new_message_handler(handle_message)
 {
     printf("req: %s\n", req);
 
-    bool status = false;
+    // TODO 1: Obtener el tipo de petición que se está haciendo
+    // TODO 2: Según el tipo de petición, invocar a las diferentes funciones
+    // TODO 3: Enviar un mensaje de respuesta a JS
 
-    switch (*cast(Interfaz *, arg))
-    {
-    case LOGIN:
-        status = iniciar_sesion(req);
-        break;
-
-    default:
-        puts("Interfaz no implementada.");
-    }
-
-    char response[256];
-
-    if (status)
-        strcpy(response, JSON("status" : "OK"));
-    else
-        strcpy(response, JSON("status" : "FAIL"));
-
-    webview_return(w, id, 0, response);
+    webview_return(w, id, 0, JSON("status" : "OK"));
 }

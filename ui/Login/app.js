@@ -80,8 +80,15 @@ function simulateLogin(email, password) {
   //   showSuccess("¡Bienvenido de vuelta!");
   // }, 1500);
 
-  window.enviarMensaje(`${email} ${password}`)
-  .then((res) => {
+  const req = {
+    type: "login",
+    data: {
+      email: email,
+      password: password,
+    },
+  };
+
+  window.enviarMensaje(JSON.stringify(req)).then((res) => {
     loginBtn.innerHTML = originalText;
     loginBtn.disabled = false;
     showSuccess("¡Bienvenido de vuelta!");
