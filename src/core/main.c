@@ -12,6 +12,13 @@
 #include <json.h>            // Para recibir las peticiones desde JS
 #include <stdio.h>           // Mientras se prueba la aplicación.
 
+// Definir tamaños mínimos y máximos
+#define MIN_WIDTH 320 
+#define MIN_HEIGHT 480
+#define INIT_WIDTH 480
+#define INIT_HEIGHT 640
+
+#define stringify(expr) #expr
 #define JSON(...) stringify({__VA_ARGS__})
 
 typedef void (*message_handler_t)(const char *id, const char *req, void *arg);
@@ -35,7 +42,7 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
         return APP_FAILURE;
     }
 
-    w = webview_create(1, NULL); // Crear la ventan
+    w = webview_create(1, NULL); // Crear la ventana
     if (!w)
     {
         puts("No se pudo crear la ventana.");
@@ -44,7 +51,9 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
 
     // Configuraciones iniciales de la ventana
     webview_set_title(w, "VibeCast");                  // Establecer el título de la ventana
-    webview_set_size(w, 480, 640, WEBVIEW_HINT_FIXED); // Establecer el tamaño de la ventana
+    webview_set_size(w, 480, 640, WEBVIEW_HINT_NONE); // Establecer el tamaño de la ventana
+    // Configurar límites de tamaño
+    //webview_set_minsize(w, MIN_WIDTH, MIN_HEIGHT); no funciona xd
 
     Interfaz interfaz = LOGIN;
     *appstate = alloc(Interfaz, &interfaz);

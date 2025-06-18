@@ -1,6 +1,4 @@
-/**
- * SPIDER-VERSE LOGIN - FUNCIONALIDAD
- *
+/*
  * Manejo del formulario de login
  * Efectos interactivos
  * Validación básica
