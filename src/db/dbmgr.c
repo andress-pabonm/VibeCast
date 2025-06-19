@@ -4,6 +4,7 @@
 // Conexión con la base de datos
 static sqlite3 *db = NULL;
 
+// Función para crear tablas
 static int create_table(const char *table_name, const char *table_fields, char **errmsg)
 {
     char *sql = sqlite3_mprintf("CREATE TABLE IF NOT EXISTS %s (%s)", table_name, table_fields);
