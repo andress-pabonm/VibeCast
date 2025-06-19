@@ -30,7 +30,7 @@ static webview_t w = NULL;
 
 AppResult AppInit(void **appstate, int argc, char *argv[])
 {
-    if (!func(InitDB, ":memory:", NULL))
+    if (!func(InitDB, "data.db", NULL))
     {
         puts("Hubo un error al inicializar la base de datos.");
         return APP_FAILURE;
@@ -41,13 +41,13 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
             "Usuarios",
             "email, password, username, nickname, pais, plan, nombre_artista",
             stringify(
-                "ejemplo@vibecast.com",
-                "ejemploPassword",
-                "ejemploUsername",
-                "ejemploNickname",
-                "EC",
+                "rociovc@gmail.com",
+                "abduzcan",
+                "rocio",
+                "rocioxdxdlol",
+                "Afganistan",
                 0,
-                "ejemploArtista"),
+                "rociovcoficial1645"),
             NULL))
     {
         puts("Registro de ejemplo exitoso.");
