@@ -36,7 +36,7 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
         return APP_FAILURE;
     }
 
-    // Aquí se carga un registro de pruebo
+    // Aquí se carga un registro de prueba
     if (nuevo_registro(
             "Usuarios",
             "email, password, username, nickname, pais, plan, nombre_artista",

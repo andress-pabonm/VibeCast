@@ -43,6 +43,9 @@ struct Album
 // Estructura para representar una canción
 struct Cancion
 {
+	// Identificador de la canción
+	int id;
+	
 	// Álbum al que pertenece la canción
 	Album *album;
 	// Título de la canción
@@ -91,7 +94,7 @@ struct Reproduccion
 	// Canción reproducida
 	Cancion *cancion;
 	// Fecha de la reproducción
-	char fecha[11];
+	char fechaEscuchado[11];
 };
 
 // Tipo de dato para representar los planes disponibles
@@ -108,11 +111,9 @@ enum Plan
 struct Anuncio
 {
 	// Nombre del anunciante
-	char *anunciante;
+	Usuario *anunciante;
 	// URL del anuncio
 	char *url;
-	// Duración del anuncio en caso de ser un audio
-	// float duracion;
 };
 
 // Estructura para representar un usuario

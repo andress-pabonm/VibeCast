@@ -118,7 +118,7 @@ bool func(InitDB, const char *db_name, char **errmsg)
         "id INTEGER PRIMARY KEY AUTOINCREMENT, "
         "username TEXT NOT NULL, "
         "id_cancion INTEGER NOT NULL, "
-        "fecha TEXT NOT NULL, "
+        "fecha_escuchado TEXT NOT NULL, "
         "FOREIGN KEY(username) REFERENCES Usuarios(username), "
         "FOREIGN KEY(id_cancion) REFERENCES Canciones(id)",
         errmsg);
@@ -186,12 +186,12 @@ bool nuevo_registro(const char *table_name, const char *table_fields, const char
     return rc == SQLITE_OK;
 }
 
-bool obtener_registros(const char *table_fields, const char *table_name, const char *condition, select_handler_t handler, void *arg, char **errmsg)
+bool obtener_registros(const char *table_name, const char *table_fields, const char *condition, select_handler_t handler, void *arg, char **errmsg)
 {
     char *sql = NULL;
     if (condition)
     {
-        sql = sqlite3_mprintf(R("%s", "%s", WHERE %s), table_fields, table_name, condition);
+        sql = sqlite3_mprintf(R("%s", "%s", WHERE %s), table_name, table_fields, condition);
     }
     else
     {

@@ -12,7 +12,7 @@ typedef int (*select_handler_t)(void *arg, int argc, char **argv, char **fields)
 
 #define C(table_name, table_fields, ...) "INSERT INTO " table_name " (" table_fields ")" \
                                          " VALUES (" stringify(__VA_ARGS__) ")"
-#define R(table_fields, table_name, ...) "SELECT " table_fields " FROM " table_name " " stringify(__VA_ARGS__)
+#define R(table_name, table_fields, ...) "SELECT " table_fields " FROM " table_name " " stringify(__VA_ARGS__)
 #define U(table_name, condition, ...) "UPDATE " table_name " SET " stringify(__VA_ARGS__) " WHERE " condition
 #define D(table_name, condition) "DELETE FROM " table_name " WHERE " condition
 
@@ -29,7 +29,7 @@ int userCount();
 bool nuevo_registro(const char *table_name, const char *table_fields, const char *values, char **errmsg);
 
 // Función para seleccionar registros
-bool obtener_registros(const char *table_fields, const char *table_name, const char *condition, select_handler_t handler, void *arg, char **errmsg);
+bool obtener_registros(const char *table_name, const char *table_fields, const char *condition, select_handler_t handler, void *arg, char **errmsg);
 
 // Función para actualizar registros
 bool actualizar_registros(const char *table_name, const char *values, const char *condition, char **errmsg);
