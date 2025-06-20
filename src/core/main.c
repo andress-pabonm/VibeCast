@@ -14,10 +14,10 @@
 #include <string.h>
 
 // Definir tamaños mínimos y máximos
-#define MIN_WIDTH 320
-#define MIN_HEIGHT 480
-#define INIT_WIDTH 480
-#define INIT_HEIGHT 640
+// #define MIN_WIDTH 320
+// #define MIN_HEIGHT 480
+// #define INIT_WIDTH 480
+// #define INIT_HEIGHT 640
 
 #define JSON(...) stringify({__VA_ARGS__})
 
@@ -26,15 +26,58 @@ typedef void (*message_handler_t)(const char *id, const char *req, void *arg);
 
 new_message_handler(handle_message);
 
-static webview_t w = NULL;
+typedef struct
+{
+    webview_t w;
+} AppState;
 
 AppResult AppInit(void **appstate, int argc, char *argv[])
 {
-    if (!func(InitDB, "data.db", NULL))
+    /* ======== Inicializar el estado de la aplicación ======== */
+
+    AppState *state = malloc(sizeof(AppState));
+    if (!state) // Si no se pudo reservar memoria para appstate
+        return APP_FAILURE;
+    *appstate = state;
+
+    /* ======== Inicializar la interfaz gráfica ======== */
+
+    // Crear la ventana
+    // state->w = webview_create(0, NULL); // Descomentar para quitar Debug Tools
+    state->w = webview_create(1, NULL); // Crea la ventana con opción para Debug (Inspecionar)
+    webview_t w = state->w;
+    HWND hwnd = webview_get_window(w); // Obtiene el controlador nativo de la ventana
+
+    // Configuración inicial de la ventana
+
+    // Tamaño de ña vemtama
+    SetWindowText(hwnd, "VibeCast");
+
+    // Posición, tamaño y características similares
+    SetWindowPos(hwnd, NULL, 200, 200, 1024, 768, SWP_NOZORDER | SWP_SHOWWINDOW);
+
+    // Icono de la ventana
+    // HICON hIcon = (HICON)LoadImage(NULL, "icono.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE);
+    // SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+
+    // Enlazar funciones para controlar la interfaz gráfica
+    webview_bind(w, "enviarMensaje", handle_message, *appstate);
+
+    // Idealmente habría que crear un controlador para cada interfaz
+    // De ese modo se facilitaría distinguir en qué interfaz estaría el usuario
+
+    // Ir a la primera interfaz
+    webview_navigate(w, INTERFAZ("Login/index.html"));
+
+    /* ======== Inicializar la base de datos ======== */
+
+    if (!func(InitDB, ":memory:", NULL))
     {
-        puts("Hubo un error al inicializar la base de datos.");
+        puts("Error al inicializar la base de datos.");
         return APP_FAILURE;
     }
+
+    /* ======== Insertar datos de prueba ======== */
 
     // Aquí se carga un registro de prueba
     if (nuevo_registro(
@@ -50,41 +93,20 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
                 "rociovcoficial1645"),
             NULL))
     {
-        puts("Registro de ejemplo exitoso.");
+        puts("Registro exitoso.");
     }
+    else
+    {
+        puts("Registro fallido.");
+    }
+
+    /* ======== Cargar los datos e inicializar las estructuras ======== */
 
     if (!func(LoadData))
     {
-        puts("Hubo un error al cargar los datos.");
+        puts("Error al cargar los datos.");
         return APP_FAILURE;
     }
-
-    w = webview_create(1, NULL); // Crear la ventana
-    if (!w)
-    {
-        puts("No se pudo crear la ventana.");
-        return APP_FAILURE;
-    }
-
-    // Configuraciones iniciales de la ventana
-    webview_set_title(w, "VibeCast");                 // Establecer el título de la ventana
-    webview_set_size(w, 480, 640, WEBVIEW_HINT_NONE); // Establecer el tamaño de la ventana
-    // Configurar límites de tamaño
-    // webview_set_minsize(w, MIN_WIDTH, MIN_HEIGHT); no funciona xd
-
-    Interfaz interfaz = LOGIN;
-    *appstate = alloc(Interfaz, &interfaz);
-    if (!*appstate)
-    {
-        puts("Fallo al inicializar la interfaz.");
-        return APP_FAILURE;
-    }
-
-    // Enlazar funciones para controlar la interfaz gráfica
-    webview_bind(w, "enviarMensaje", handle_message, *appstate);
-
-    // Iniciar la aplicación en esta interfaz
-    webview_navigate(w, INTERFAZ("Login/index.html"));
 
     puts("Aplicación inicializada correctamente.");
 
@@ -93,15 +115,20 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
 
 AppResult AppIterate(void *appstate)
 {
-    // Ejecutar la ventana (bucle principal de la ventana)
-    webview_run(w);
+    switch (webview_run(cast(AppState *, appstate)->w)) // Ejecutar el bucle principal de la ventana
+    {
+    case WEBVIEW_ERROR_OK: // No hubo errores
+        return APP_SUCCESS;
 
-    return APP_SUCCESS; // Finalizar ejecución
+    default: // Hubo un error
+        return APP_FAILURE;
+    }
 }
 
 void AppQuit(void *appstate, AppResult appresult)
 {
-    webview_destroy(w); // Destruir la ventana
+    webview_destroy(cast(AppState *, appstate)->w); // Destruir la ventana
+    free(appstate);
 
     puts("Ejecución finalizada");
 }
@@ -121,8 +148,13 @@ new_message_handler(handle_message)
     printf("req: %s\n", req);
 
     // TODO 1: Obtener el tipo de petición que se está haciendo
+
+    // Convertir un string a un objeto JSON
     struct json_object *array = json_tokener_parse(req);
+
+    // Extrae el primer elemento de la lista
     struct json_object *json_str_obj = json_object_array_get_idx(array, 0);
+
     const char *json_inner_str = json_object_get_string(json_str_obj);
     struct json_object *parsed_json = json_tokener_parse(json_inner_str);
 
@@ -148,7 +180,7 @@ new_message_handler(handle_message)
         const char *password_str = json_object_get_string(password);
 
         printf("%s %s\n", email_str, password_str);
-        
+
         char condition[256];
         snprintf(condition, sizeof(condition),
                  stringify(email = "%s"), email_str);
@@ -164,5 +196,5 @@ new_message_handler(handle_message)
 
     // TODO 3: Enviar un mensaje de respuesta a JS
 
-    webview_return(w, id, 0, JSON("status" : "OK"));
+    webview_return(cast(AppState *, arg)->w, id, 0, JSON("status" : "OK"));
 }
