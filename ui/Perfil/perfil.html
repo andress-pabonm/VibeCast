@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil | VibeCast</title>
+    <link rel="stylesheet" href="perfilStyles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="profile-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-music logo-icon"></i>
+                <h1 class="logo-title">VibeCast</h1>
+            </div>
+            
+            <nav class="menu">
+                <ul>
+                    <li><a href="../Inicio/index.html"><i class="fas fa-home"></i> Inicio</a></li>
+                    <li><a href="../Buscar/index.html"><i class="fas fa-search"></i> Buscar</a></li>
+                    <li><a href="../Biblioteca/index.html"><i class="fas fa-music"></i> Biblioteca</a></li>
+                    <li class="active"><a href="#"><i class="fas fa-user"></i> Perfil</a></li>
+                    <li><a href="../Siguiendo/index.html"><i class="fas fa-users"></i> Siguiendo</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="profile-header">
+                <div class="profile-info">
+                    <div class="profile-avatar">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Avatar de John Doe">
+                    </div>
+                    <div class="profile-details">
+                        <h1>John Doe</h1>
+                        <p class="followers">12.345 seguidores</p>
+                        <button class="edit-profile-btn">
+                            <i class="fas fa-pencil-alt"></i> Editar perfil
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <section class="about-section">
+                <h2>Acerca de</h2>
+                <p>Descripción del perfil que proporciona información sobre el usuario, su trayectoria, intereses, etc.</p>
+            </section>
+
+            <section class="content-tabs">
+                <div class="tabs">
+                    <button class="tab active" data-tab="songs">Canciones</button>
+                    <button class="tab" data-tab="albums">Álbumes</button>
+                    <button class="tab" data-tab="playlists">Listas</button>
+                </div>
+
+                <div class="tab-content active" id="songs">
+                    <table class="content-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Título</th>
+                                <th>Álbum</th>
+                                <th>Duración</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Example Song</td>
+                                <td>Sample Album</td>
+                                <td>3:56</td>
+                                <td><i class="fas fa-ellipsis-h"></i></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Example Song</td>
+                                <td>Sample Album</td>
+                                <td>4:20</td>
+                                <td><i class="fas fa-ellipsis-h"></i></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Example Song</td>
+                                <td>Sample Album</td>
+                                <td>3:37</td>
+                                <td><i class="fas fa-ellipsis-h"></i></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Example Song</td>
+                                <td>Sample Album</td>
+                                <td>4:08</td>
+                                <td><i class="fas fa-ellipsis-h"></i></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tab-content" id="albums">
+                    <!-- Contenido de álbumes -->
+                </div>
+
+                <div class="tab-content" id="playlists">
+                    <!-- Contenido de listas -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="perfilApp.js"></script>
+</body>
+</html>

@@ -87,7 +87,9 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
     // De ese modo se facilitaría distinguir en qué interfaz estaría el usuario
 
     // Ir a la primera interfaz
-    webview_navigate(w, INTERFAZ("Login/index.html"));
+    //webview_navigate(w, INTERFAZ("Login/index.html")); necesito ya ir viendo el modelo del menu y perfil
+
+    webview_navigate(w, INTERFAZ("Menu/menu.html"));
 
     /* ======== Inicializar la base de datos ======== */
 
