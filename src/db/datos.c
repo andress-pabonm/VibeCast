@@ -125,7 +125,7 @@ new_select_handler(cargarUsuarios)
         ptr_usuario->artista = ptr_artista;
 
         // Cargar álbumes
-        char *condition = sqlite3_mprintf(stringify(artista = "%s"), usuario.username);
+        char *condition = mprintf(stringify(artista = "%s"), usuario.username);
         obtener_registros("Albumes", "id, nombre_album, fecha_creacion", condition, cargarAlbumesPorArtista, ptr_artista, NULL);
         sqlite3_free(condition);
     }
@@ -146,7 +146,7 @@ new_select_handler(cargarAlbumesPorArtista)
     Album *ptr_album = alloc(Album, &album);
     insertarNodo(Lista, &album.artista->albumes, ptr_album, NULL);
 
-    char *condition = sqlite3_mprintf("id_album = %s", argv[0]);
+    char *condition = mprintf("id_album = %s", argv[0]);
     obtener_registros("Canciones", "*", condition, cargarCancionesPorAlbum, ptr_album, NULL);
     sqlite3_free(condition);
 
@@ -180,15 +180,15 @@ new_select_handler(cargarDatosPorUsuario)
 {
     Usuario *usuario = (*buscarNodo(ABB, &usuarios, argv[0], cmpUsuarioConUsername))->value_ptr;
 
-    char *condition = sqlite3_mprintf(stringify(usuario1 = "%s"), argv[0]);
+    char *condition = mprintf(stringify(usuario1 = "%s"), argv[0]);
     obtener_registros("Amigos", "usuario2", condition, cargarAmigosPorUsuario, &usuario->amigos, NULL);
     sqlite3_free(condition);
 
-    condition = sqlite3_mprintf(stringify(propietario = "%s"), argv[0]);
+    condition = mprintf(stringify(propietario = "%s"), argv[0]);
     obtener_registros("Playlists", "*", condition, cargarPlaylistsPorUsuario, &usuario->playlists, NULL);
     sqlite3_free(condition);
 
-    condition = sqlite3_mprintf(stringify(username = "%s"), argv[0]);
+    condition = mprintf(stringify(username = "%s"), argv[0]);
     obtener_registros("Historiales", "*", condition, cargarHistorialPorUsuario, &usuario->historial, NULL);
     sqlite3_free(condition);
 
@@ -214,7 +214,7 @@ new_select_handler(cargarPlaylistsPorUsuario)
     Playlist *ptr_playlist = alloc(Playlist, &playlist);
     insertarNodo(Lista, arg, ptr_playlist, NULL);
 
-    char *condition = sqlite3_mprintf("id_playlist = %s", argv[0]);
+    char *condition = mprintf("id_playlist = %s", argv[0]);
     obtener_registros("Playlist_Canciones", "id_cancion", condition, cargarCancionesPorPlaylist, &ptr_playlist->canciones, NULL);
     sqlite3_free(condition);
 
@@ -238,7 +238,7 @@ new_select_handler(cargarHistorialPorUsuario)
     sscanf(argv[1], "", &historial->tiempoEscuchado);
     sscanf(argv[2], "", &historial->cantidadAnuncios);
 
-    char *condition = sqlite3_mprintf(stringify(username = "%s"), argv[0]);
+    char *condition = mprintf(stringify(username = "%s"), argv[0]);
     obtener_registros("Reproducciones", "id_cancion, fecha_escuchado", condition, cargarReproduccionesPorHistorial, &historial->reproducciones, NULL);
     sqlite3_free(condition);
 
