@@ -92,11 +92,11 @@ new_select_handler(cargarUsuarios)
     Usuario usuario;
 
     // TODO 1: Copiar datos a la variable (usuario)
-    usuario.email = mem_alloc_copy(strlen(argv[0]) + 1, argv[0]);
-    usuario.password = mem_alloc_copy(strlen(argv[0]) + 1, argv[1]);
-    usuario.username = mem_alloc_copy(strlen(argv[0]) + 1, argv[2]);
-    usuario.nickname = mem_alloc_copy(strlen(argv[0]) + 1, argv[3]);
-    usuario.pais = mem_alloc_copy(strlen(argv[0]) + 1, argv[4]);
+    usuario.email = malloc_cpy(strlen(argv[0]) + 1, argv[0]);
+    usuario.password = malloc_cpy(strlen(argv[0]) + 1, argv[1]);
+    usuario.username = malloc_cpy(strlen(argv[0]) + 1, argv[2]);
+    usuario.nickname = malloc_cpy(strlen(argv[0]) + 1, argv[3]);
+    usuario.pais = malloc_cpy(strlen(argv[0]) + 1, argv[4]);
     sscanf(argv[5], "%d", &usuario.plan);
 
     usuario.amigos.head = NULL;
@@ -116,7 +116,7 @@ new_select_handler(cargarUsuarios)
     {
         // Cargar artista
         Artista artista;
-        artista.nombreArtista = mem_alloc_copy(strlen(argv[6] + 1), argv[6]);
+        artista.nombreArtista = malloc_cpy(strlen(argv[6] + 1), argv[6]);
         artista.albumes.head = NULL;
 
         Artista *ptr_artista = alloc(Artista, &artista);
@@ -139,7 +139,7 @@ new_select_handler(cargarAlbumesPorArtista)
     Album album;
 
     album.artista = arg;
-    album.nombreAlbum = mem_alloc_copy(strlen(argv[1]) + 1, argv[2]);
+    album.nombreAlbum = malloc_cpy(strlen(argv[1]) + 1, argv[2]);
     strcpy(album.fechaCreacion, argv[2]);
     album.canciones.head = NULL;
 
@@ -160,13 +160,13 @@ new_select_handler(cargarCancionesPorAlbum)
 
     sscanf(argv[0], "%d", &cancion.id);
     cancion.album = arg;
-    cancion.nombreCancion = mem_alloc_copy(strlen(argv[2]) + 1, argv[2]);
-    cancion.genero = mem_alloc_copy(strlen(argv[3]) + 1, argv[3]);
+    cancion.nombreCancion = malloc_cpy(strlen(argv[2]) + 1, argv[2]);
+    cancion.genero = malloc_cpy(strlen(argv[3]) + 1, argv[3]);
     strcpy(cancion.fechaLanzamiento, argv[4]);
     sscanf(argv[5], "%d", &cancion.popularidad);
     sscanf(argv[6], "%d", &cancion.reproducciones);
     sscanf(argv[7], "%f", &cancion.duracion);
-    cancion.url = mem_alloc_copy(strlen(argv[8]) + 1, argv[8]);
+    cancion.url = malloc_cpy(strlen(argv[8]) + 1, argv[8]);
 
     Cancion *ptr_cancion = alloc(Cancion, &cancion);
     insertarNodo(Lista, &cancion.album->canciones, ptr_cancion, NULL);
@@ -208,7 +208,7 @@ new_select_handler(cargarPlaylistsPorUsuario)
 {
     Playlist playlist;
 
-    playlist.nombrePlaylist = mem_alloc_copy(strlen(argv[1]) + 1, argv[1]);
+    playlist.nombrePlaylist = malloc_cpy(strlen(argv[1]) + 1, argv[1]);
     playlist.canciones.head = NULL;
 
     Playlist *ptr_playlist = alloc(Playlist, &playlist);
@@ -266,7 +266,7 @@ new_select_handler(cargarAnuncios)
     Anuncio anuncio;
 
     anuncio.anunciante = (*buscarNodo(ABB, &usuarios, argv[0], cmpUsuarioConUsername))->value_ptr;
-    anuncio.url = mem_alloc_copy(strlen(argv[1]) + 1, argv[1]);
+    anuncio.url = malloc_cpy(strlen(argv[1]) + 1, argv[1]);
 
     Anuncio *ptr_anuncio = alloc(Anuncio, &anuncio);
     insertarNodo(Cola, &anuncios, ptr_anuncio);
