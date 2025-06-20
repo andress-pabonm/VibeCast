@@ -1,5 +1,6 @@
 #include <db/dbmgr.h>
-#include <stdio.h>
+#include <sqlite3.h>
+// #include <stdio.h>
 
 // Conexión con la base de datos
 static sqlite3 *db = NULL;
@@ -168,17 +169,13 @@ static new_select_handler(getCount)
 int contar_registros(const char *table_name, char **errmsg)
 {
     int count = 0;
-
-    char *sql = sqlite3_mprintf(R("COUNT(*)", "%s"), table_name);
-
-    sqlite3_exec(db, R("COUNT(*)", "Usuarios"), getCount, &count, NULL);
-
+    obtener_registros(table_name, "COUNT(*)", NULL, getCount, &count, errmsg);
     return count;
 }
 
 bool nuevo_registro(const char *table_name, const char *table_fields, const char *values, char **errmsg)
 {
-    char *sql = sqlite3_mprintf(C("%s", "%s", %s), table_name, table_fields, values);
+    char *sql = sqlite3_mprintf("INSERT INTO %s (%s) VALUES (%s)", table_name, table_fields, values);
     if (!sql)
         return false;
     int rc = sqlite3_exec(db, sql, NULL, NULL, errmsg);
@@ -191,11 +188,11 @@ bool obtener_registros(const char *table_name, const char *table_fields, const c
     char *sql = NULL;
     if (condition)
     {
-        sql = sqlite3_mprintf(R("%s", "%s", WHERE %s), table_name, table_fields, condition);
+        sql = sqlite3_mprintf("SELECT %s FROM %s WHERE %s", table_fields, table_name, condition);
     }
     else
     {
-        sql = sqlite3_mprintf(R("%s", "%s"), table_fields, table_name);
+        sql = sqlite3_mprintf("SELECT %s FROM %s", table_fields, table_name);
     }
 
     if (!sql)
@@ -209,27 +206,27 @@ bool obtener_registros(const char *table_name, const char *table_fields, const c
 
 bool actualizar_registros(const char *table_name, const char *values, const char *condition, char **errmsg)
 {
-    char *sql = sqlite3_mprintf(U("%s", "%s", %s), table_name, condition, values);
+    char *sql = sqlite3_mprintf("UPDATE %s SET %s WHERE %s", table_name, values, condition);
 
     if (!sql)
         return false;
     int rc = sqlite3_exec(db, sql, NULL, NULL, errmsg);
-    
+
     sqlite3_free(sql);
-    
+
     return rc == SQLITE_OK;
 }
 
 bool eliminar_registros(const char *table_name, const char *condition, char **errmsg)
 {
-    char *sql = sqlite3_mprintf(D("%s", "%s"), table_name, condition);
+    char *sql = sqlite3_mprintf("DELETE FROM %s WHERE %s", table_name, condition);
 
     if (!sql)
         return false;
     int rc = sqlite3_exec(db, sql, NULL, NULL, errmsg);
 
     sqlite3_free(sql);
-    
+
     return rc == SQLITE_OK;
 }
 

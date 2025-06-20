@@ -2,19 +2,10 @@
 #define VIBECAST_DBMGR_H
 
 #include <VibeCastConfig.h>
-#include <sqlite3.h>
 #include <stdbool.h>
 
 typedef int (*select_handler_t)(void *arg, int argc, char **argv, char **fields);
 #define new_select_handler(name) int name(void *arg, int argc, char **argv, char **fields)
-
-#define stringify(...) #__VA_ARGS__
-
-#define C(table_name, table_fields, ...) "INSERT INTO " table_name " (" table_fields ")" \
-                                         " VALUES (" stringify(__VA_ARGS__) ")"
-#define R(table_name, table_fields, ...) "SELECT " table_fields " FROM " table_name " " stringify(__VA_ARGS__)
-#define U(table_name, condition, ...) "UPDATE " table_name " SET " stringify(__VA_ARGS__) " WHERE " condition
-#define D(table_name, condition) "DELETE FROM " table_name " WHERE " condition
 
 // Abrir base de datos
 bool func(InitDB, const char *db_name, char **errmsg);
