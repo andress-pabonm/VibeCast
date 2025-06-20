@@ -1,60 +1,63 @@
 #ifndef UTILS_H
-#define UTILS_H
+#define UTILS_H 1
 
-#include <stdbool.h>
-#include <stdlib.h> // Para system()
+#include <stddef.h> // Para size_t
 
-// ---------------------------
-// Macros útiles
-// ---------------------------
+/**
+ * Para asignar memoria en HEAP y copiar un valor en ella.
+ * @param size: Cantidad de bytes a asignar. Si es 0, no asignará memoria.
+ * @param value_ptr: Puntero al valor a copiar (puede ser NULL).
+ * @return Puntero al espacio en HEAP asignado.
+ * Ejemplo:
+ * malloc_cpy(sizeof("Hola"), "Hola");
+ * int num = 1;
+ * int *ptr_num = malloc_cpy(sizeof(num), &num);
+ */
+void *malloc_cpy(size_t size, void *value_ptr);
 
-// Limpia la entrada estándar después de un scanf
-#define flush()               \
-    while (getchar() != '\n') \
-    continue
+/**
+ * Para facilitar el uso de malloc_cpy() en ciertos casos.
+ * @param type: Tipo de dato para asignar memoria.
+ * @param value_ptr: Puntero al valor a copiar (puede ser NULL).
+ * Ejemplo:
+ * int num = 1;
+ * int *ptr_num = alloc(int, &num);
+ */
+#define alloc(type, value_ptr) malloc_cpy()
 
-// scanf seguido de flush para evitar basura en el buffer
-int scan(const char *fmt, ...);
+/**
+ * Para asignar memoria en HEAP y copiar un string con un formato y parámetros dados.
+ * @param fmt: Formato del string.
+ * @param ...: Argumentos para el formato.
+ * @return Puntero al espacio en HEAP.
+ */
+char *mprintf(const char *fmt, ...);
 
-// Limpia la pantalla
-#ifdef _WIN32
-#define clear() system("cls")
-#else
-#define clear() system("clear")
-#endif
-
-// Limpia stdin y luego limpia la pantalla
-#define waitAndClear() \
-    flush();           \
-    clear()
-
-// ---------------------------
-// Macro de casting compuesto
-// ---------------------------
-// Permite crear literales de tipo compuesto: cast(Type, campo1 = val1, campo2 = val2, ...)
-// Ejemplo: cast(Punto, .x = 5, .y = 10)
+/**
+ * Para convertir datos en un tipo dado.
+ * @param type: Tipo de dato de salida.
+ * @param ...: Valores a convertir.
+ * Ejemplos:
+ * int *ptr_num = &cast(int, 1);
+ * cast(mi_struct, .campo1 = valor1, .campo2 = valor2, ...)
+ */
 #define cast(type, ...) ((type){__VA_ARGS__})
 
 /**
- * Función para mostrar un menú en stdout y solicitar la opción elegida de stdin.
- *
- * @param title: Título del menú.
- * @param opcc: Cantidad de opciones.
- * @param opcv: Arreglo con los strings de las opciones.
- *
- * @return Número que representa la opción elegida. Puede retornar números <0 o >opcc.
+ * Para convertir en string múltiples expresiones.
+ * @param ...: Expresiones
+ * Ejemplo:
+ * stringify(hola, mundo) => "hola, mundo"
  */
-int menu(const char title[], int opcc, const char *opcv[]);
+#define stringify(...) #__VA_ARGS__
 
 /**
- * Allocates memory and copies the content of a given value.
- * @param size Number of bytes to allocate.
- * @param src Pointer to the value to copy.
- * @return Pointer to the newly allocated memory, or NULL on failure.
+ * Para unir dos expresiones.
+ * @param expr1: Primera expresión
+ * @param expr2: Segunda expresión
+ * Ejemplo:
+ * paste(hola, mundo) => holamundo
  */
-void *mem_alloc_copy(size_t size, const void *src);
-
-// Macro to simplify usage: alloc(int, &x)
-#define alloc(type, value_ptr) mem_alloc_copy(sizeof(type), (value_ptr))
+#define paste(expr1, expr2) expr1##expr2
 
 #endif // UTILS_H
