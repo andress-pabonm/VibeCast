@@ -9,22 +9,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.querySelector(".login-form");
   const passwordInput = document.getElementById("password");
   const togglePassword = document.querySelector(".toggle-password");
-  const loginContainer = document.querySelector(".login-container");
+  const registerBtn = document.querySelector(".register-btn")
 
-  // Efecto de aparición
-  loginContainer.classList.add("fade-in");
-
-  // Mostrar/ocultar contraseña
-  if (togglePassword && passwordInput) {
-    togglePassword.addEventListener("click", () => {
-      const isPassword = passwordInput.type === "password";
-      passwordInput.type = isPassword ? "text" : "password";
-      togglePassword.classList.toggle("fa-eye-slash", isPassword);
-      togglePassword.classList.toggle("fa-eye", !isPassword);
+  document.querySelectorAll('.toggle-password').forEach(btn => {
+    btn.addEventListener('click', function() {
+      // Encontrar el input asociado a este botón
+      const input = this.closest('.input-group').querySelector('input');
+      
+      // Cambiar el tipo de input
+      const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+      input.setAttribute('type', type);
+      
+      // Cambiar el icono
+      this.classList.toggle('fa-eye');
+      this.classList.toggle('fa-eye-slash');
     });
-  }
+  });
 
-  // Validación del formulario
+  //Validación del formulario
   if (loginForm) {
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -32,28 +34,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const email = loginForm.querySelector('input[type="email"]');
       const password = loginForm.querySelector('input[type="password"]');
 
-      // Validación básica
-      if (!email.value || !password.value) {
-        showError("Por favor, completa todos los campos");
-        return;
-      }
-
-      // Simular envío
       simulateLogin(email.value, password.value);
     });
   }
 
   // Efecto hover mejorado para botones
-  const buttons = document.querySelectorAll(".login-btn");
-  buttons.forEach((button) => {
-    button.addEventListener("mouseenter", () => {
-      button.style.transform = "translateY(-3px)";
-    });
-
-    button.addEventListener("mouseleave", () => {
-      button.style.transform = "translateY(0)";
-    });
-  });
+  if (registerBtn) {
+      // Efecto hover
+      registerBtn.addEventListener('mouseenter', () => {
+          registerBtn.style.transform = 'translateY(-3px)';
+      });
+      
+      registerBtn.addEventListener('mouseleave', () => {
+          registerBtn.style.transform = 'translateY(0)';
+      });
+  }
 });
 
 /**
@@ -89,7 +84,7 @@ function simulateLogin(email, password) {
   window.enviarMensaje(JSON.stringify(req)).then((res) => {
     loginBtn.innerHTML = originalText;
     loginBtn.disabled = false;
-    showSuccess("¡Bienvenido de vuelta!");
+    showSuccess("¡Bienvenido de vuelta!"); //vamos a poner esto?
   });
 }
 
@@ -142,5 +137,5 @@ function showSuccess(message) {
   setTimeout(() => {
     successElement.style.opacity = "0";
     setTimeout(() => successElement.remove(), 300);
-  }, 3000);
+  }, 3000); 
 }

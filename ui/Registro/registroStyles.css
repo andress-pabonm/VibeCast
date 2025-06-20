@@ -1,12 +1,12 @@
 :root {
-    --spider-morado: #8d2de2;
-    --spider-morado-oscuro: #5e1dc7;
-    --spider-azul: #4cc9f0;
-    --spider-azul-oscuro: #4361ee;
-    --spider-negro: #1a1a1a;
-    --spider-blanco: #f1faee;
-    --spider-detalle: #a8dadc;
-    --spider-error: #ff0a54;
+    --morado: #8d2de2;
+    --morado-oscuro: #5e1dc7;
+    --azul: #4cc9f0;
+    --azul-oscuro: #4361ee;
+    --negro: #1a1a1a;
+    --blanco: #f1faee;
+    --detalle: #a8dadc;
+    --error: #ff0a54;
     
     /* Transiciones */
     --transition-fast: 0.2s ease;
@@ -22,37 +22,38 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, var(--spider-negro), var(--spider-morado-oscuro));
+    background: linear-gradient(135deg, var(--negro), var(--morado-oscuro));
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: var(--spider-blanco);
+    color: var(--blanco);
     line-height: 1.6;
     padding: 1rem;
+    text-align: center;
 }
 
 /* Contenedor principal */
 .register-container {
     background: rgba(26, 26, 26, 0.9);
     border-radius: 20px;
-    box-shadow: 
-        0 10px 25px rgba(142, 45, 226, 0.3),
-        0 5px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 25px var(--morado), 0 5px 10px var(--negro);
     padding: 2.5rem;
     width: 100%;
     max-width: 500px;
     backdrop-filter: blur(8px);
-    border: 1px solid var(--spider-morado);
-    animation: spiderPulse 4s infinite ease-in-out;
+    border: 1px solid var(--morado);
+    /*animation: spiderPulse 4s infinite ease-in-out; discutir si hay q poner*/
+    min-width: 400px;
+    min-height: 550;
     position: relative;
-    overflow: hidden;
+    overflow: auto;
 }
 
-@keyframes spiderPulse {
+/*@keyframes spiderPulse {
     0%, 100% { box-shadow: 0 0 25px rgba(142, 45, 226, 0.3); }
     50% { box-shadow: 0 0 40px rgba(76, 201, 240, 0.3); }
-}
+} animaciones que cambian de color en el borde del registro */
 
 /* Encabezado */
 .logo {
@@ -60,12 +61,12 @@ body {
     align-items: center;
     justify-content: center;
     margin-bottom: 1rem;
-    filter: drop-shadow(0 0 5px var(--spider-azul));
+    /*filter: drop-shadow(0 0 5px var(--azul));*/
 }
 
-.logo-icon {
+/*.logo-icon {
     font-size: 2.5rem;
-    color: var(--spider-azul);
+    color: var(--azul);
     margin-right: 10px;
     animation: swing 3s infinite alternate;
 }
@@ -73,29 +74,29 @@ body {
 @keyframes swing {
     0% { transform: rotate(-10deg); }
     100% { transform: rotate(10deg); }
-}
+}*/
 
 .logo-title {
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: 600;
-    background: linear-gradient(to right, var(--spider-morado), var(--spider-azul-oscuro));
+    background: linear-gradient(to right, var(--morado), var(--azul-oscuro));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    text-shadow: 0 0 10px rgba(67, 97, 238, 0.2);
+    text-shadow: none;
 }
 
 .slogan {
     font-size: 0.9rem;
     margin-bottom: 2rem;
-    color: var(--spider-detalle);
+    color: var(--detalle);
     opacity: 0.9;
     text-transform: uppercase;
     letter-spacing: 1px;
     text-align: center;
 }
 
-/* Formulario */
+/* ========== FORMULARIO ========== */
 .register-form {
     margin-top: 1.5rem;
 }
@@ -103,13 +104,12 @@ body {
 .form-row {
     display: flex;
     gap: 15px;
-    margin-bottom: 1rem;
 }
 
-.form-row .input-group {
+/*.form-row .input-group {
     flex: 1;
     min-width: 0;
-}
+}*/
 
 .input-group {
     position: relative;
@@ -118,127 +118,59 @@ body {
 
 .input-icon {
     position: absolute;
-    left: 15px;
+    left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: var(--spider-morado);
+    color: var(--morado);
     font-size: 1rem;
     z-index: 2;
-    transition: var(--transition-fast);
 }
 
 .form-input {
     width: 100%;
-    padding: 12px 12px 12px 40px;
+    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
     background: rgba(30, 30, 30, 0.7);
-    border: 2px solid var(--spider-morado);
+    border: 2px solid var(--morado);
     border-radius: 10px;
     font-size: 0.95rem;
     transition: var(--transition-normal);
-    color: var(--spider-blanco);
-    font-family: 'Poppins', sans-serif;
+    color: var(--blanco);
+    position: relative;
 }
 
-.form-input::placeholder {
-    color: var(--spider-detalle);
+/*.form-input::placeholder {
+    color: var(--detalle);
     opacity: 0.6;
-}
+}*/
 
 .form-input:focus {
     outline: none;
-    border-color: var(--spider-azul);
-    box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.3);
+    border-color: var(--azul);
+    /*box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.3);*/
     background: rgba(30, 30, 30, 0.9);
-}
-
-.form-input:focus + .input-icon {
-    color: var(--spider-azul);
 }
 
 .toggle-password {
     position: absolute;
-    right: 15px;
+    right: 1rem;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    color: var(--spider-morado);
-    transition: var(--transition-fast);
+    color: var(--morado);
+    transition: color var(--transition-fast);
     z-index: 2;
 }
 
 .toggle-password:hover {
-    color: var(--spider-azul);
-}
-
-/* Términos y condiciones */
-.terms-group {
-    display: flex;
-    align-items: center;
-    margin: 1.5rem 0;
-    position: relative;
-}
-
-.terms-checkbox {
-    position: absolute;
-    opacity: 0;
-}
-
-.custom-checkbox {
-    position: relative;
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    background: rgba(30, 30, 30, 0.7);
-    border: 2px solid var(--spider-morado);
-    border-radius: 4px;
-    margin-right: 10px;
-    transition: var(--transition-fast);
-}
-
-.terms-checkbox:checked + .terms-label .custom-checkbox {
-    background: var(--spider-morado);
-    border-color: var(--spider-morado);
-}
-
-.terms-checkbox:checked + .terms-label .custom-checkbox::after {
-    content: '';
-    position: absolute;
-    left: 5px;
-    top: 1px;
-    width: 5px;
-    height: 10px;
-    border: solid var(--spider-blanco);
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-}
-
-.terms-label {
-    display: flex;
-    align-items: center;
-    color: var(--spider-detalle);
-    font-size: 0.85rem;
-    cursor: pointer;
-    user-select: none;
-}
-
-.link {
-    color: var(--spider-azul);
-    text-decoration: none;
-    transition: var(--transition-fast);
-    position: relative;
-}
-
-.link:hover {
-    color: var(--spider-blanco);
-    text-decoration: underline;
+    color: var(--azul);
 }
 
 /* Botón de registro */
 .register-btn {
     width: 100%;
     padding: 0.875rem;
-    background: linear-gradient(45deg, var(--spider-morado), var(--spider-azul-oscuro));
-    color: var(--spider-blanco);
+    background: linear-gradient(45deg, var(--morado), var(--azul-oscuro));
+    color: var(--blanco);
     border: none;
     border-radius: 10px;
     font-size: 1rem;
@@ -253,7 +185,15 @@ body {
     overflow: hidden;
     text-transform: uppercase;
     letter-spacing: 1px;
+    /*background: var(--morado);
+    background: var(--azul-oscuro); escoger bien los colores de fondo*/
     box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+}
+
+.register-btn:active {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 2px 10px rgba(67, 97, 238, 0.4) !important;
+    transition: transform 0.1s, box-shadow 0.1s;
 }
 
 .register-btn::before {
@@ -264,13 +204,15 @@ body {
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(76, 201, 240, 0.3), transparent);
-    transition: var(--transition-slow);
+    transition: var(--transition-slow); /* ver si se pone esta transicion */
 }
 
 .register-btn:hover {
-    background: linear-gradient(45deg, var(--spider-azul-oscuro), var(--spider-morado));
+    /* background: var(--morado);
+    background: var(--azul-oscuro); escoger bien los colores de fondo */
+    background: linear-gradient(45deg, var(--azul-oscuro), var(--morado));
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px var(--spider-azul);
+    box-shadow: 0 8px 25px var(--azul);
 }
 
 .register-btn:hover::before {
@@ -278,8 +220,10 @@ body {
 }
 
 .btn-icon {
+    margin-left: 1rem;
+    margin-bottom: 0.1rem;
     transition: var(--transition-normal);
-    color: var(--spider-azul);
+    color: var(--azul);
 }
 
 .register-btn:hover .btn-icon {
@@ -290,31 +234,36 @@ body {
 .login-link {
     margin-top: 1.5rem;
     font-size: 0.85rem;
-    text-align: center;
-    color: var(--spider-detalle);
+    color: var(--detalle);
+}
+
+.link {
+  color: var(--morado);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.link:hover {
+  color: var(--azul);
 }
 
 /* Validación */
 .input-group.error .form-input {
-    border-color: var(--spider-error);
+    border-color: var(--error);
     background: rgba(255, 10, 84, 0.1);
 }
 
 .input-group.error .input-icon {
-    color: var(--spider-error);
+    color: var(--error);
 }
 
-.input-group.success .form-input {
-    border-color: var(--spider-azul);
+/* ========== ANIMACIONES ========== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.error-message {
-    color: var(--spider-error);
-    font-size: 0.75rem;
-    margin-top: 5px;
-    display: none;
-}
-
-.input-group.error .error-message {
-    display: block;
-}
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+} 

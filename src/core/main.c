@@ -89,7 +89,7 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
                 "rocio",
                 "rocioxdxdlol",
                 "Afganistan",
-                0,
+                0, //esta pobre XD
                 "rociovcoficial1645"),
             NULL))
     {
