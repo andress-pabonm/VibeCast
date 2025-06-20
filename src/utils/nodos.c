@@ -1,9 +1,10 @@
 #include <utils/nodos.h>
+#include <utils/utils.h>
 #include <stdlib.h>
 
-static Nodo *nuevoNodo(void *value_ptr)
+Nodo *nuevoNodo(void *value_ptr)
 {
-    Nodo *nodo = value_ptr ? malloc(sizeof(Nodo)) : NULL;
+    Nodo *nodo = value_ptr ? malloc_cpy(sizeof(Nodo), NULL) : NULL;
 
     if (nodo)
     {
