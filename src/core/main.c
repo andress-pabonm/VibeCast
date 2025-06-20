@@ -16,8 +16,8 @@
 // Definir tamaños mínimos y máximos
 // #define MIN_WIDTH 320
 // #define MIN_HEIGHT 480
-// #define INIT_WIDTH 480
-// #define INIT_HEIGHT 640
+#define INIT_WIDTH 640
+#define INIT_HEIGHT 720
 
 #define JSON(...) stringify({__VA_ARGS__})
 
@@ -25,6 +25,25 @@ typedef void (*message_handler_t)(const char *id, const char *req, void *arg);
 #define new_message_handler(name) void name(const char *id, const char *req, void *arg)
 
 new_message_handler(handle_message);
+
+void centrar_ventana(HWND hwnd)
+{
+    RECT rect;
+    int anchoVentana, altoVentana;
+    int anchoPantalla = GetSystemMetrics(SM_CXSCREEN);
+    int altoPantalla = GetSystemMetrics(SM_CYSCREEN);
+
+    GetWindowRect(hwnd, &rect);
+    anchoVentana = rect.right - rect.left;
+    altoVentana = rect.bottom - rect.top;
+
+    // Calcular posición centrada
+    int x = (anchoPantalla - anchoVentana) / 2;
+    int y = (altoPantalla - altoVentana) / 2;
+
+    // Mover la ventana
+    SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
+}
 
 typedef struct
 {
@@ -50,15 +69,16 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
 
     // Configuración inicial de la ventana
 
-    // Tamaño de ña vemtama
+    // Título de la ventana
     SetWindowText(hwnd, "VibeCast");
 
     // Posición, tamaño y características similares
-    SetWindowPos(hwnd, NULL, 200, 200, 1024, 768, SWP_NOZORDER | SWP_SHOWWINDOW);
+    SetWindowPos(hwnd, NULL, 0, 0, INIT_WIDTH, INIT_HEIGHT, SWP_NOZORDER | SWP_SHOWWINDOW);
+    centrar_ventana(hwnd);
 
     // Icono de la ventana
-    // HICON hIcon = (HICON)LoadImage(NULL, "icono.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE);
-    // SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+    HICON hIcon = (HICON)LoadImage(NULL, path_to("assets/icon/favicon.ico"), IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE);
+    SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
 
     // Enlazar funciones para controlar la interfaz gráfica
     webview_bind(w, "enviarMensaje", handle_message, *appstate);
@@ -89,7 +109,7 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
                 "rocio",
                 "rocioxdxdlol",
                 "Afganistan",
-                0, //esta pobre XD
+                0, // esta pobre XD
                 "rociovcoficial1645"),
             NULL))
     {
