@@ -10,14 +10,16 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 2, title: "Imagine", artist: "John Lennon", duration: "3:04" },
             { id: 3, title: "Billie Jean", artist: "Michael Jackson", duration: "4:54" },
             { id: 4, title: "Sweet Child O'Mine", artist: "Guns N' Roses", duration: "5:56" },
-            { id: 4, title: "Sweet Child O'Mine", artist: "Guns N' Roses", duration: "5:56" },
-            { id: 4, title: "Sweet Child O'Mine", artist: "Guns N' Roses", duration: "5:56" },
-            { id: 4, title: "Sweet Child O'Mine", artist: "Guns N' Roses", duration: "5:56" },
+            { id: 5, title: "Sweet Child O'Mine", artist: "Guns N' Roses", duration: "5:56" },
+            { id: 6, title: "Sweet Child O'Mine", artist: "Guns N' Roses", duration: "5:56" },
+            { id: 7, title: "Sweet Child O'Mine", artist: "Guns N' Roses", duration: "5:56" },
         ],
         friends: [
             { id: 1, name: "María García" },
             { id: 2, name: "Carlos López" },
-            { id: 3, name: "Ana Martínez" }
+            { id: 3, name: "Ana Martínez" },
+            { id: 4, name: "Rocio xd"},
+            { id: 5, name: "Pableis"}
         ],
         recommendations: [
             { id: 1, title: "Dancing Queen", artist: "ABBA", friend: "María García", duration: "3:50" },
@@ -81,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const profileBtn = document.querySelector('.profile-btn');
     if (profileBtn) {
         profileBtn.addEventListener('click', () => {
-            window.location.href = '../Perfil/index.html';
+            window.location.href = '../Perfil/perfil.html';
         });
     }
 

@@ -140,6 +140,7 @@ body {
 
 .profile-btn {
     background: linear-gradient(45deg, var(--morado), var(--azul-oscuro));
+    color: var(--blanco);
     border: none;
     padding: 0.75rem 1.5rem;
     border-radius: 20px;
@@ -156,7 +157,7 @@ body {
 
 .profile-btn:active {
     transform: translateY(0px) !important;
-    transition: transform 0.1s;
+    transition: transform 0.1s; 
 }
 
 .profile-btn::before {
@@ -183,23 +184,21 @@ body {
   left: 100%;
 }
 
-.link {
-    text-decoration: none;
-    color: var(--blanco);
-}
-
 /* Content Grid */
 .content-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: 2fr 1fr;
     gap: 1.5rem;
+    height: calc(100vh - 150px);
 }
 
 .card-section {
     background-color: var(--gris-oscuro);
     border-radius: 10px;
     padding: 1.5rem;
-    /*transition: transform 0.3s ease;*/
+    max-height: 100%;
+    overflow-y: auto;
+    /* transition: transform 0.3s ease; */
 }
 
 /* .card-section:hover {
@@ -216,6 +215,13 @@ body {
 }
 
 /* Song List */
+
+.database-songs {
+    grid-row: span 2;
+    scrollbar-width: thin;
+    scrollbar-color: var(--morado) var(--gris-oscuro);
+}
+
 .song-list {
     display: flex;
     flex-direction: column;
@@ -255,6 +261,12 @@ body {
 }
 
 /* Friends List */
+
+.friends{
+    scrollbar-width: thin;
+    scrollbar-color: var(--morado) var(--gris-oscuro);
+}
+
 .friends-list {
     display: flex;
     flex-direction: column;
@@ -294,6 +306,40 @@ body {
 .friend-name {
     flex: 1;
 }
+
+.friend-recommendations{
+    scrollbar-width: thin;
+    scrollbar-color: var(--morado) var(--gris-oscuro);
+}
+
+/* Efectos scrollbar */
+
+/* .database-songs::-webkit-scrollbar,
+.friends::-webkit-scrollbar,
+.friend-recommendations::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.database-songs::-webkit-scrollbar-track,
+.friends::-webkit-scrollbar-track,
+.friend-recommendations::-webkit-scrollbar-track {
+    background: var(--gris-oscuro);
+    border-radius: 10px;
+}
+
+.database-songs::-webkit-scrollbar-thumb,
+.friends::-webkit-scrollbar-thumb,
+.friend-recommendations::-webkit-scrollbar-thumb {
+    background: var(--morado);
+    border-radius: 10px;
+}
+
+.database-songs::-webkit-scrollbar-thumb:hover,
+.friends::-webkit-scrollbar-thumb:hover,
+.friend-recommendations::-webkit-scrollbar-thumb:hover {
+    background: var(--morado-oscuro);
+} */
 
 /* ========== ANIMACIONES ========== */
 @keyframes fadeIn {
