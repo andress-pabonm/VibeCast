@@ -23,7 +23,7 @@ void *malloc_cpy(size_t size, void *value_ptr);
  * int num = 1;
  * int *ptr_num = alloc(int, &num);
  */
-#define alloc(type, value_ptr) malloc_cpy()
+#define alloc(type, value_ptr) malloc_cpy(sizeof(type), value_ptr)
 
 /**
  * Para asignar memoria en HEAP y copiar un string con un formato y parámetros dados.
