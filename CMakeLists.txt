@@ -45,7 +45,14 @@ FetchContent_MakeAvailable(webview pcre2 json-c)
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/vendored/sqlite")
 
-add_executable(${EXECUTABLE_NAME} ${SOURCES})
+option(DISABLE_CLI "Para deshabilitar la linea de comandos" OFF)
+if(DISABLE_CLI)
+    add_executable(${EXECUTABLE_NAME} WIN32)
+else()
+    add_executable(${EXECUTABLE_NAME})
+endif()
+
+target_sources(${EXECUTABLE_NAME} PRIVATE ${SOURCES})
 
 target_link_libraries(
     ${EXECUTABLE_NAME}
@@ -54,6 +61,16 @@ target_link_libraries(
     webview::core_static
     pcre2-8-static
     json-c
+)
+
+target_link_libraries(${EXECUTABLE_NAME}
+    PRIVATE
+    advapi32
+    ole32
+    shell32
+    shlwapi
+    user32
+    version
 )
 
 target_include_directories(
