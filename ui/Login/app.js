@@ -5,24 +5,32 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {
+  window.is_logged_in().then((res) => {
+    console.log(res);
+    if (res.message === 1) {
+      location.href = "../Menu/menu.html";
+    }
+  });
+
   // Elementos del DOM
   const loginForm = document.querySelector(".login-form");
   const passwordInput = document.getElementById("password");
   const togglePassword = document.querySelector(".toggle-password");
-  const registerBtn = document.querySelector(".register-btn")
+  const registerBtn = document.querySelector(".register-btn");
 
-  document.querySelectorAll('.toggle-password').forEach(btn => {
-    btn.addEventListener('click', function() {
+  document.querySelectorAll(".toggle-password").forEach((btn) => {
+    btn.addEventListener("click", function () {
       // Encontrar el input asociado a este botón
-      const input = this.closest('.input-group').querySelector('input');
-      
+      const input = this.closest(".input-group").querySelector("input");
+
       // Cambiar el tipo de input
-      const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-      input.setAttribute('type', type);
-      
+      const type =
+        input.getAttribute("type") === "password" ? "text" : "password";
+      input.setAttribute("type", type);
+
       // Cambiar el icono
-      this.classList.toggle('fa-eye');
-      this.classList.toggle('fa-eye-slash');
+      this.classList.toggle("fa-eye");
+      this.classList.toggle("fa-eye-slash");
     });
   });
 
@@ -31,35 +39,32 @@ document.addEventListener("DOMContentLoaded", () => {
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
 
-      const email = loginForm.querySelector('input[type="email"]');
+      const username = loginForm.querySelector('input[type="text"]');
       const password = loginForm.querySelector('input[type="password"]');
 
-      simulateLogin(email.value, password.value);
+      simulateLogin(username.value, password.value);
     });
   }
 
   // Efecto hover mejorado para botones
   if (registerBtn) {
-      // Efecto hover
-      registerBtn.addEventListener('mouseenter', () => {
-          registerBtn.style.transform = 'translateY(-3px)';
-      });
-      
-      registerBtn.addEventListener('mouseleave', () => {
-          registerBtn.style.transform = 'translateY(0)';
-      });
+    // Efecto hover
+    registerBtn.addEventListener("mouseenter", () => {
+      registerBtn.style.transform = "translateY(-3px)";
+    });
+
+    registerBtn.addEventListener("mouseleave", () => {
+      registerBtn.style.transform = "translateY(0)";
+    });
   }
 });
 
 /**
  * Simula el proceso de login
- * @param {string} email - Email del usuario
+ * @param {string} username - Email del usuario
  * @param {string} password - Contraseña del usuario
  */
-function simulateLogin(email, password) {
-  // console.log("Intentando login con:", { email, password });
-  // Aquí iría la lógica real de autenticación
-
+function simulateLogin(username, password) {
   // Simulación de carga
   const loginBtn = document.querySelector(".login-btn");
   const originalText = loginBtn.innerHTML;
@@ -67,24 +72,18 @@ function simulateLogin(email, password) {
   loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Validando...';
   loginBtn.disabled = true;
 
-  // setTimeout(() => {
-  //   loginBtn.innerHTML = originalText;
-  //   loginBtn.disabled = false;
-  //   showSuccess("¡Bienvenido de vuelta!");
-  // }, 1500);
-
-  const req = {
-    type: "login",
-    data: {
-      email: email,
-      password: password,
-    },
-  };
-
-  window.enviarMensaje(JSON.stringify(req)).then((res) => {
+  window.iniciar_sesion(username, password).then((res) => {
     loginBtn.innerHTML = originalText;
     loginBtn.disabled = false;
-    showSuccess("¡Bienvenido de vuelta!"); //vamos a poner esto?
+    console.log(res);
+    if (res.message === 1) {
+      showSuccess("¡Bienvenido de vuelta!");
+      setTimeout(() => {
+        location.reload(); // Refresca la página
+      }, 500);
+    } else {
+      showError("Usuario o contraseña incorrectos.");
+    }
   });
 }
 
@@ -137,5 +136,5 @@ function showSuccess(message) {
   setTimeout(() => {
     successElement.style.opacity = "0";
     setTimeout(() => successElement.remove(), 300);
-  }, 3000); 
+  }, 3000);
 }

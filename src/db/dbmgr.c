@@ -160,16 +160,16 @@ void func(CloseDB)
     }
 }
 
-static new_select_handler(getCount)
+static select_handler(getCount)
 {
     sscanf(*argv, "%d", (int *)arg);
     return SQLITE_OK;
 }
 
-int contar_registros(const char *table_name, char **errmsg)
+int contar_registros(const char *table_name, const char *condition, char **errmsg)
 {
     int count = 0;
-    obtener_registros(table_name, "COUNT(*)", NULL, getCount, &count, errmsg);
+    obtener_registros(table_name, "COUNT(*)", condition, getCount, &count, errmsg);
     return count;
 }
 

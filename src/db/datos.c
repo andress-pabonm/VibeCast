@@ -4,14 +4,14 @@
 #include <string.h>
 #include <stdio.h>
 
-static ABB usuarios = {NULL};
-static ABB artistas = {NULL};
-static Lista canciones = {NULL};
-static Cola anuncios = {NULL, NULL};
+/* ==== Estructuras de datos ==== */
 
-#define new_cmp(name) int name(void *value_ptr_1, void *value_ptr_2)
-#define new_free(name) bool name(void *value_ptr)
-#define new_op(name) bool name(int index, void *value_ptr)
+ABB usuarios = {NULL};
+ABB artistas = {NULL};
+Lista canciones = {NULL};
+Cola anuncios = {NULL, NULL};
+
+/* ==== Comparadores ==== */
 
 new_cmp(cmpUsuarios)
 {
@@ -45,49 +45,24 @@ new_cmp(cmpCancionConId)
     return cancion->id - *id;
 }
 
-// Para rellenar el árbol de usuarios
-new_select_handler(cargarUsuarios);
+/* ==== Funciones de ayuda para cargar los datos ==== */
 
-// Para rellenar la lista de álbumes por artista
-new_select_handler(cargarAlbumesPorArtista);
+static select_handler(cargarUsuarios);
 
-// Para rellenar la lista de canciones por artista. Además, se rellena la lista de canciones general.
-new_select_handler(cargarCancionesPorAlbum);
+static select_handler(cargarAlbumesPorArtista);
+static select_handler(cargarCancionesPorAlbum);
 
-// Para cargar datos por usuario (amigos, playlists e historial)
-new_select_handler(cargarDatosPorUsuario);
+static select_handler(cargarDatosPorUsuario);
+static select_handler(cargarAmigosPorUsuario);
+static select_handler(cargarPlaylistsPorUsuario);
+static select_handler(cargarCancionesPorPlaylist);
 
-// Para cargar los amigos
-new_select_handler(cargarAmigosPorUsuario);
+static select_handler(cargarHistorialPorUsuario);
+static select_handler(cargarReproduccionesPorHistorial);
 
-// Para cargar las playlists
-new_select_handler(cargarPlaylistsPorUsuario);
-new_select_handler(cargarCancionesPorPlaylist);
+static select_handler(cargarAnuncios);
 
-// Para cargar los historiales
-new_select_handler(cargarHistorialPorUsuario);
-new_select_handler(cargarReproduccionesPorHistorial);
-
-// Para cargar los anuncios
-new_select_handler(cargarAnuncios);
-
-bool func(LoadData)
-{
-    char *condition = NULL;
-
-    // TODO 1: Cargar usuarios, artistas, álbumes y canciones
-    obtener_registros("Usuarios", "*", NULL, cargarUsuarios, NULL, NULL);
-
-    // TODO 2: Cargar amigos, playlists e historiales de reproducción
-    obtener_registros("Usuarios", "username", NULL, cargarDatosPorUsuario, NULL, NULL);
-
-    // TODO 3: Cargar anuncios
-    obtener_registros("Anuncios", "*", NULL, cargarAnuncios, NULL, NULL);
-
-    return true; // Datos cargados correctamente
-}
-
-new_select_handler(cargarUsuarios)
+static select_handler(cargarUsuarios)
 {
     Usuario usuario;
 
@@ -109,7 +84,6 @@ new_select_handler(cargarUsuarios)
     usuario.artista = NULL;
 
     Usuario *ptr_usuario = alloc(Usuario, &usuario);
-
     insertarNodo(ABB, &usuarios, ptr_usuario, cmpUsuarios);
 
     if (strlen(argv[6]))
@@ -134,7 +108,7 @@ new_select_handler(cargarUsuarios)
 }
 
 // Para rellenar la lista de álbumes por artista
-new_select_handler(cargarAlbumesPorArtista)
+static select_handler(cargarAlbumesPorArtista)
 {
     Album album;
 
@@ -154,7 +128,7 @@ new_select_handler(cargarAlbumesPorArtista)
 }
 
 // Para rellenar la lista de canciones por artista. Además, se rellena la lista de canciones general.
-new_select_handler(cargarCancionesPorAlbum)
+static select_handler(cargarCancionesPorAlbum)
 {
     Cancion cancion;
 
@@ -176,7 +150,7 @@ new_select_handler(cargarCancionesPorAlbum)
 }
 
 // Para cargar datos por usuario (amigos, playlists e historial)
-new_select_handler(cargarDatosPorUsuario)
+static select_handler(cargarDatosPorUsuario)
 {
     Usuario *usuario = (*buscarNodo(ABB, &usuarios, argv[0], cmpUsuarioConUsername))->value_ptr;
 
@@ -196,7 +170,7 @@ new_select_handler(cargarDatosPorUsuario)
 }
 
 // Para cargar los amigos
-new_select_handler(cargarAmigosPorUsuario)
+static select_handler(cargarAmigosPorUsuario)
 {
     Usuario *amigo = (*buscarNodo(ABB, &usuarios, argv[0], cmpUsuarioConUsername))->value_ptr;
     insertarNodo(Lista, arg, amigo, NULL);
@@ -204,7 +178,7 @@ new_select_handler(cargarAmigosPorUsuario)
 }
 
 // Para cargar las playlists
-new_select_handler(cargarPlaylistsPorUsuario)
+static select_handler(cargarPlaylistsPorUsuario)
 {
     Playlist playlist;
 
@@ -221,7 +195,7 @@ new_select_handler(cargarPlaylistsPorUsuario)
     return 0;
 }
 
-new_select_handler(cargarCancionesPorPlaylist)
+static select_handler(cargarCancionesPorPlaylist)
 {
     int id_cancion;
     sscanf(argv[0], "%d", &id_cancion);
@@ -231,7 +205,7 @@ new_select_handler(cargarCancionesPorPlaylist)
 }
 
 // Para cargar los historiales
-new_select_handler(cargarHistorialPorUsuario)
+static select_handler(cargarHistorialPorUsuario)
 {
     Historial *historial = arg;
 
@@ -245,7 +219,7 @@ new_select_handler(cargarHistorialPorUsuario)
     return 0;
 }
 
-new_select_handler(cargarReproduccionesPorHistorial)
+static select_handler(cargarReproduccionesPorHistorial)
 {
     Reproduccion reproduccion;
 
@@ -261,7 +235,7 @@ new_select_handler(cargarReproduccionesPorHistorial)
     return 0;
 }
 
-new_select_handler(cargarAnuncios)
+static select_handler(cargarAnuncios)
 {
     Anuncio anuncio;
 
@@ -272,4 +246,22 @@ new_select_handler(cargarAnuncios)
     insertarNodo(Cola, &anuncios, ptr_anuncio);
 
     return 0;
+}
+
+/* ======== Funciones visibles en otros archivos ======== */
+
+bool func(LoadData)
+{
+    char *condition = NULL;
+
+    // TODO 1: Cargar usuarios, artistas, álbumes y canciones
+    obtener_registros("Usuarios", "*", NULL, cargarUsuarios, NULL, NULL);
+
+    // TODO 2: Cargar amigos, playlists e historiales de reproducción
+    obtener_registros("Usuarios", "username", NULL, cargarDatosPorUsuario, NULL, NULL);
+
+    // TODO 3: Cargar anuncios
+    obtener_registros("Anuncios", "*", NULL, cargarAnuncios, NULL, NULL);
+
+    return true; // Datos cargados correctamente
 }

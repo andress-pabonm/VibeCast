@@ -4,51 +4,28 @@
 #define WINMAIN
 #include <core/main.h>
 
-#include <db/dbmgr.h>
-#include <utils/utils.h>
-#include <ui/interfaces.h>
+// Incluir las funciones necesarias para inicializar la app
+#include <ui/interfaces.h> // Para las funciones tipo message_handler_t y el webview.h
+#include <db/dbmgr.h>      // Para InitDB y CloseDB
+#include <utils/utils.h>   // Para malloc_cpy()
 
-#include <webview/webview.h> // Para la interfaz gráfica
-#include <json.h>            // Para recibir las peticiones desde JS
-#include <stdio.h>           // Mientras se prueba la aplicación.
-#include <string.h>
+#include <stdio.h> // Para imprimir mensajes en consola.
 
-// Definir tamaños mínimos y máximos
+/* ==== Constantes para las dimensiones de la ventana ==== */
+
 // #define MIN_WIDTH 320
 // #define MIN_HEIGHT 480
+// Anchura inicial de la ventana
 #define INIT_WIDTH 640
+// Altura inicial de la ventana
 #define INIT_HEIGHT 720
 
-#define JSON(...) stringify({__VA_ARGS__})
+/* ==== Utilidades ==== */
 
-typedef void (*message_handler_t)(const char *id, const char *req, void *arg);
-#define new_message_handler(name) void name(const char *id, const char *req, void *arg)
+// Para centrar la ventana en la pantalla
+void centrar_ventana(HWND hwnd);
 
-new_message_handler(handle_message);
-
-void centrar_ventana(HWND hwnd)
-{
-    RECT rect;
-    int anchoVentana, altoVentana;
-    int anchoPantalla = GetSystemMetrics(SM_CXSCREEN);
-    int altoPantalla = GetSystemMetrics(SM_CYSCREEN);
-
-    GetWindowRect(hwnd, &rect);
-    anchoVentana = rect.right - rect.left;
-    altoVentana = rect.bottom - rect.top;
-
-    // Calcular posición centrada
-    int x = (anchoPantalla - anchoVentana) / 2;
-    int y = (altoPantalla - altoVentana) / 2;
-
-    // Mover la ventana
-    SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
-}
-
-typedef struct
-{
-    webview_t w;
-} AppState;
+/* ======== Funciones principales de la aplicación ======== */
 
 AppResult AppInit(void **appstate, int argc, char *argv[])
 {
@@ -76,15 +53,20 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
     SetWindowPos(hwnd, NULL, 0, 0, INIT_WIDTH, INIT_HEIGHT, SWP_NOZORDER | SWP_SHOWWINDOW);
     centrar_ventana(hwnd);
 
-    // Icono de la ventana
+    // Ícono de la ventana
     HICON hIcon = (HICON)LoadImage(NULL, path_to("assets/icon/favicon.ico"), IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE);
     SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
 
     // Enlazar funciones para controlar la interfaz gráfica
-    webview_bind(w, "enviarMensaje", handle_message, *appstate);
+    bind_fn(w, test, *appstate);
 
     // Idealmente habría que crear un controlador para cada interfaz
     // De ese modo se facilitaría distinguir en qué interfaz estaría el usuario
+
+    bind_fn(w, is_logged_in, *appstate);
+    bind_fn(w, iniciar_sesion, *appstate);
+    bind_fn(w, cerrar_sesion, *appstate);
+    bind_fn(w, crear_cuenta, *appstate);
 
     // Ir a la primera interfaz
     webview_navigate(w, INTERFAZ("Login/index.html"));
@@ -100,25 +82,25 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
     /* ======== Insertar datos de prueba ======== */
 
     // Aquí se carga un registro de prueba
-    if (nuevo_registro(
-            "Usuarios",
-            "email, password, username, nickname, pais, plan, nombre_artista",
-            stringify(
-                "rociovc@gmail.com",
-                "abduzcan",
-                "rocio",
-                "rocioxdxdlol",
-                "Afganistan",
-                0, // esta pobre XD
-                "rociovcoficial1645"),
-            NULL))
-    {
-        puts("Registro exitoso.");
-    }
-    else
-    {
-        puts("Registro fallido.");
-    }
+    // if (nuevo_registro(
+    //         "Usuarios",
+    //         "email, password, username, nickname, pais, plan, nombre_artista",
+    //         stringify(
+    //             "rociovc@gmail.com",
+    //             "abduzcan",
+    //             "rocio",
+    //             "rocioxdxdlol",
+    //             "Afganistan",
+    //             0, // esta pobre XD
+    //             "rociovcoficial1645"),
+    //         NULL))
+    // {
+    //     puts("Registro exitoso.");
+    // }
+    // else
+    // {
+    //     puts("Registro fallido.");
+    // }
 
     /* ======== Cargar los datos e inicializar las estructuras ======== */
 
@@ -148,73 +130,31 @@ AppResult AppIterate(void *appstate)
 void AppQuit(void *appstate, AppResult appresult)
 {
     webview_destroy(cast(AppState *, appstate)->w); // Destruir la ventana
+    // func(FreeData);                                 // Para liberar la memoria de las estructuras de datos
+    func(CloseDB); // Cerrar la base de datos
+
     free(appstate);
 
     puts("Ejecución finalizada");
 }
 
-new_select_handler(comprobarUsuario)
+/* ======== Definición de funciones adicionales ======== */
+
+void centrar_ventana(HWND hwnd)
 {
-    for (int i = 0; i < argc; i++)
-    {
-        printf("%s = %s\n", fields[i], argv[i]);
-    }
+    RECT rect;
+    int anchoVentana, altoVentana;
+    int anchoPantalla = GetSystemMetrics(SM_CXSCREEN);
+    int altoPantalla = GetSystemMetrics(SM_CYSCREEN);
 
-    return 0;
-}
+    GetWindowRect(hwnd, &rect);
+    anchoVentana = rect.right - rect.left;
+    altoVentana = rect.bottom - rect.top;
 
-new_message_handler(handle_message)
-{
-    printf("req: %s\n", req);
+    // Calcular posición centrada
+    int x = (anchoPantalla - anchoVentana) / 2;
+    int y = (altoPantalla - altoVentana) / 2;
 
-    // TODO 1: Obtener el tipo de petición que se está haciendo
-
-    // Convertir un string a un objeto JSON
-    struct json_object *array = json_tokener_parse(req);
-
-    // Extrae el primer elemento de la lista
-    struct json_object *json_str_obj = json_object_array_get_idx(array, 0);
-
-    const char *json_inner_str = json_object_get_string(json_str_obj);
-    struct json_object *parsed_json = json_tokener_parse(json_inner_str);
-
-    struct json_object *type, *data;
-
-    json_object_object_get_ex(parsed_json, "type", &type);
-    json_object_object_get_ex(parsed_json, "data", &data);
-
-    const char *type_str = json_object_get_string(type);
-    printf("type: %s\n", type_str);
-
-    // TODO 2: Según el tipo de petición, invocar a las diferentes funciones
-    if (!strcmp(type_str, "login"))
-    {
-        puts("Estás intentando iniciar sesión.");
-
-        struct json_object *email, *password;
-
-        json_object_object_get_ex(data, "email", &email);
-        json_object_object_get_ex(data, "password", &password);
-
-        const char *email_str = json_object_get_string(email);
-        const char *password_str = json_object_get_string(password);
-
-        printf("%s %s\n", email_str, password_str);
-
-        char condition[256];
-        snprintf(condition, sizeof(condition),
-                 stringify(email = "%s"), email_str);
-
-        obtener_registros(
-            "*",
-            "Usuarios",
-            condition,
-            comprobarUsuario,
-            NULL,
-            NULL);
-    }
-
-    // TODO 3: Enviar un mensaje de respuesta a JS
-
-    webview_return(cast(AppState *, arg)->w, id, 0, JSON("status" : "OK"));
+    // Mover la ventana
+    SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_SHOWWINDOW);
 }
