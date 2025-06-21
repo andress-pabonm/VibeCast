@@ -69,40 +69,16 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
     bind_fn(w, crear_cuenta, *appstate);
 
     // Ir a la primera interfaz
-    //webview_navigate(w, INTERFAZ("Login/index.html")); necesito ya ir viendo el modelo del menu y perfil
-
-    webview_navigate(w, INTERFAZ("Menu/menu.html"));
+    webview_navigate(w, INTERFAZ("Login/index.html"));
 
     /* ======== Inicializar la base de datos ======== */
 
-    if (!func(InitDB, ":memory:", NULL))
+    // if (!func(InitDB, ":memory:", NULL)) // Para hacer pruebas
+    if (!func(InitDB, "data.db", NULL))
     {
         puts("Error al inicializar la base de datos.");
         return APP_FAILURE;
     }
-
-    /* ======== Insertar datos de prueba ======== */
-
-    // Aquí se carga un registro de prueba
-    // if (nuevo_registro(
-    //         "Usuarios",
-    //         "email, password, username, nickname, pais, plan, nombre_artista",
-    //         stringify(
-    //             "rociovc@gmail.com",
-    //             "abduzcan",
-    //             "rocio",
-    //             "rocioxdxdlol",
-    //             "Afganistan",
-    //             0, // esta pobre XD
-    //             "rociovcoficial1645"),
-    //         NULL))
-    // {
-    //     puts("Registro exitoso.");
-    // }
-    // else
-    // {
-    //     puts("Registro fallido.");
-    // }
 
     /* ======== Cargar los datos e inicializar las estructuras ======== */
 
