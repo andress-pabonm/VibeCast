@@ -286,13 +286,15 @@ Nodo **buscarNodo(ABB, ABB *abb, void *value_ptr, cmpfn_t cmp)
     Nodo **ref = &abb->root;
     int cmpv;
 
-    while (*ref && (cmpv = cmp((*ref)->value_ptr, value_ptr)))
+    while (*ref)
     {
+        if (!(cmpv = cmp((*ref)->value_ptr, value_ptr)))
+            return ref;
         // Desplazarse a la izquierda o a la derecha
         ref = (cmp > 0) ? &(*ref)->izq : &(*ref)->der;
     }
 
-    return ref;
+    return NULL;
 }
 
 bool eliminarNodo(ABB, ABB *abb, void *value_ptr, cmpfn_t cmp)

@@ -69,6 +69,9 @@ typedef struct
  */
 typedef int (*cmpfn_t)(void *value_1_ptr, void *value_2_ptr);
 
+// Macro para facilitar declarar y definir funciones tipo (cmpfn_t)
+#define new_cmp(name) int name(void *value_ptr_1, void *value_ptr_2)
+
 /**
  * Tipo para funciones para operar sobre los valores en una lista, pila, cola o árbol.
  *
@@ -79,6 +82,9 @@ typedef int (*cmpfn_t)(void *value_1_ptr, void *value_2_ptr);
  */
 typedef bool (*opfn_t)(int index, void *value_ptr);
 
+// Macro para facilitar declarar y definir funciones tipo (opfn_t)
+#define new_op(name) bool name(int index, void *value_ptr)
+
 /**
  * Tipo para funciones para liberar memoria.
  *
@@ -86,6 +92,9 @@ typedef bool (*opfn_t)(int index, void *value_ptr);
  * @return true si se ha podido liberar la memoria, caso contrario retorna false.
  */
 typedef bool (*freefn_t)(void *value_ptr);
+
+// Macro para facilitar declarar y definir funciones tipo (freefn_t)
+#define new_free(name) bool name(void *value_ptr)
 
 /* ================ Declaración de funciones ================ */
 
