@@ -39,8 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
 
-      const username = loginForm.querySelector('input[type="text"]');
-      const password = loginForm.querySelector('input[type="password"]');
+      const username = loginForm.querySelector("#username");
+      const password = loginForm.querySelector("#password");
 
       simulateLogin(username.value, password.value);
     });

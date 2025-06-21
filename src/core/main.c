@@ -53,6 +53,9 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
     SetWindowPos(hwnd, NULL, 0, 0, INIT_WIDTH, INIT_HEIGHT, SWP_NOZORDER | SWP_SHOWWINDOW);
     centrar_ventana(hwnd);
 
+    // Maximizar la ventana
+    ShowWindow(hwnd, SW_SHOWMAXIMIZED);
+
     // Ícono de la ventana
     HICON hIcon = (HICON)LoadImage(NULL, path_to("assets/icon/favicon.ico"), IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE);
     SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
@@ -73,8 +76,8 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
 
     /* ======== Inicializar la base de datos ======== */
 
-    // if (!func(InitDB, ":memory:", NULL)) // Para hacer pruebas
-    if (!func(InitDB, "data.db", NULL))
+    if (!func(InitDB, ":memory:", NULL)) // Para hacer pruebas
+    // if (!func(InitDB, "data.db", NULL))
     {
         puts("Error al inicializar la base de datos.");
         return APP_FAILURE;
