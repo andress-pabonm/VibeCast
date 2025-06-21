@@ -1,36 +1,70 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VibeCast</title>
-    <link rel="stylesheet" href="menuStyles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Principal | VibeCast</title>
+    <link rel="stylesheet" href="menuStyles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <button id="inicio">Perfil</button>
-            <input type="text" id="navegacion" placeholder="Navegación"/>
-        </header>
-        <main>
-            <aside class="playlists">
-                <h3>Playlists del usuario</h3>
-                <!-- Playlists se cargarán dinámicamente -->
-            </aside>
-            <section class="database-songs">
-                <h3>Canciones de la base de datos</h3>
-                <!-- Canciones se cargarán dinámicamente -->
-            </section>
-            <aside class="friends">
-                <h3>Amigos del usuario</h3>
-                <!-- Amigos se cargarán dinámicamente -->
-            </aside>
-            <aside class="friend-songs">
-                <h3>Recomendaciones canciones amigos</h3>
-                <!-- Canciones se cargarán dinámicamente -->
-            </aside>
+    <div class="menu-container fade-in">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-music logo-icon"></i>
+                <h1 class="logo-title">VibeCast</h1>
+            </div>
+            
+            <nav class="main-menu">
+                <ul>
+                    <li><a href="../Biblioteca/index.html"><i class="fas fa-music"></i> Biblioteca</a></li>
+                    <li><a href="../Amigos/index.html"><i class="fas fa-users"></i> Amigos</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Buscar canciones, artistas..." class="search-input">
+                </div>
+                <button class="profile-btn">
+                    Mi perfil
+                </button>
+            </header>
+
+            <div class="content-grid"> 
+                <!-- Canciones de la base de datos -->
+                <section class="card-section database-songs">
+                    <h2 class="section-title"><i class="fas fa-database"></i> Explorar Canciones</h2>
+                    <div class="song-list" id="songs-container">
+                        <!-- Canciones se cargarán dinámicamente -->
+                    </div>
+                </section>
+                
+                <!-- Amigos del usuario -->
+                <section class="card-section friends">
+                    <h2 class="section-title"><i class="fas fa-user-friends"></i> Tus Amigos</h2>
+                    <div class="friends-list" id="friends-container">
+                        <!-- Amigos se cargarán dinámicamente -->
+                    </div>
+                </section>
+
+                <!-- Recomendaciones de amigos -->
+                <section class="card-section friend-recommendations">
+                    <h2 class="section-title"><i class="fas fa-heart"></i> Recomendaciones</h2>
+                    <div class="song-list" id="recommendations-container">
+                        <!-- Canciones recomendadas se cargarán dinámicamente -->
+                    </div>
+                </section>
+            </div>
         </main>
     </div>
+
     <script src="menuApp.js"></script>
 </body>
 </html>

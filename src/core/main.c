@@ -69,7 +69,9 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
     bind_fn(w, crear_cuenta, *appstate);
 
     // Ir a la primera interfaz
-    webview_navigate(w, INTERFAZ("Login/index.html"));
+    //webview_navigate(w, INTERFAZ("Login/index.html")); necesito ya ir viendo el modelo del menu y perfil
+
+    webview_navigate(w, INTERFAZ("Menu/menu.html"));
 
     /* ======== Inicializar la base de datos ======== */
 
