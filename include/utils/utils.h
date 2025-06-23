@@ -1,7 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H 1
 
-#include <stddef.h> // Para size_t
+#include <sal.h>
 
 /**
  * Para asignar memoria en HEAP y copiar un valor en ella.
@@ -13,7 +13,7 @@
  * int num = 1;
  * int *ptr_num = malloc_cpy(sizeof(num), &num);
  */
-void *malloc_cpy(size_t size, void *value_ptr);
+void *malloc_cpy(int size, void *value_ptr);
 
 /**
  * Para facilitar el uso de malloc_cpy() en ciertos casos.
@@ -31,7 +31,7 @@ void *malloc_cpy(size_t size, void *value_ptr);
  * @param ...: Argumentos para el formato.
  * @return Puntero al espacio en HEAP.
  */
-char *mprintf(const char *fmt, ...);
+char *mprintf(_Printf_format_string_ const char *fmt, ...);
 
 /**
  * Para convertir datos en un tipo dado.
