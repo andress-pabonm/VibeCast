@@ -1,163 +1,73 @@
 #include <db/dbmgr.h>
+#include <utils/utils.h>
 #include <sqlite3.h>
-// #include <stdio.h>
+#include <stdio.h>
 
 // Conexión con la base de datos
 static sqlite3 *db = NULL;
 
-// Función para crear tablas
-static int create_table(const char *table_name, const char *table_fields, char **errmsg)
-{
-    char *sql = sqlite3_mprintf("CREATE TABLE IF NOT EXISTS %s (%s)", table_name, table_fields);
-    int rc = sqlite3_exec(db, sql, NULL, NULL, errmsg);
-    sqlite3_free(sql);
-    return rc;
-}
-
-#define sqlerr()         \
-    if (rc != SQLITE_OK) \
-    return false
-
-bool func(InitDB, const char *db_name, char **errmsg)
+bool func(InitDB, const char *db_name, const char *script_filename, char **errmsg)
 {
     if (db)
         return true;
 
-    int rc;
+    if (!script_filename)
+        return false;
 
     // Conectarse con la base de datos
-    rc = sqlite3_open(db_name, &db);
+    int rc = sqlite3_open(db_name, &db);
 
     if (rc != SQLITE_OK)
     {
-        *errmsg = sqlite3_mprintf("No se pudo establecer la conexión con la base de datos.");
+        if (errmsg)
+            *errmsg = sqlite3_mprintf("No se pudo establecer la conexión con la base de datos.");
         return false;
     }
 
-    // Crear la tabla de usuarios
-    rc = create_table(
-        "Usuarios",
-        "email TEXT NOT NULL UNIQUE, "
-        "password TEXT, "
-        "username TEXT PRIMARY KEY, "
-        "nickname TEXT, "
-        "pais TEXT, "
-        "plan INTEGER, "
-        "nombre_artista TEXT UNIQUE",
-        errmsg);
+    // Cargar el script
 
-    sqlerr();
+    // Abrir el archivo
+    FILE *script_file = fopen(script_filename, "r");
+    if (!script_file)
+    {
+        if (errmsg)
+            *errmsg = sqlite3_mprintf("Error al abrir el archivo de script.");
+        return false;
+    }
 
-    // Crear la tabla de amigos
-    rc = create_table(
-        "Amigos",
-        "usuario1 TEXT, "
-        "usuario2 TEXT, "
-        "PRIMARY KEY(usuario1, usuario2), "
-        "FOREIGN KEY(usuario1) REFERENCES Usuarios(username), "
-        "FOREIGN KEY(usuario2) REFERENCES Usuarios(username)",
-        errmsg);
+    // Obtener el tamaño del archivo
+    fseek(script_file, 0, SEEK_END);
+    int script_len = ftell(script_file);
 
-    sqlerr();
+    // Asignar memoria para cargar el script
+    char *script_str = malloc_cpy(script_len + 1, NULL);
+    if (!script_str)
+    {
+        if (errmsg)
+            *errmsg = sqlite3_mprintf("Error al cargar el script.");
+        fclose(script_file);
+        return false;
+    }
 
-    // Crear la tabla de álbumes
-    rc = create_table(
-        "Albumes",
-        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-        "artista TEXT NOT NULL, "
-        "nombre_album TEXT NOT NULL, "
-        "fecha_creacion TEXT NOT NULL, "
-        "FOREIGN KEY(artista) REFERENCES Usuarios(username)",
-        errmsg);
+    rewind(script_file);                           // Regresar al inicio del archivo
+    fread(script_str, 1, script_len, script_file); // Copiar el script
+    fclose(script_file);                           // Cerrar el archivo
+    script_str[script_len] = '\0';                 // Asegurar que el string termine en '\0'
 
-    sqlerr();
+    // Ejecutar el script
+    rc = sqlite3_exec(db, script_str, NULL, NULL, errmsg);
+    free(script_str); // Liberar la memoria del script
 
-    // Crear la tabla de canciones
-    rc = create_table(
-        "Canciones",
-        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-        "id_album INTEGER NOT NULL, "
-        "nombre_cancion TEXT NOT NULL, "
-        "genero TEXT NOT NULL, "
-        "fecha_lanzamiento TEXT NOT NULL, "
-        "popularidad INTEGER DEFAULT 0, "
-        "reproducciones INTEGER DEFAULT 0, "
-        "duracion REAL NOT NULL, "
-        "url TEXT NOT NULL, "
-        "FOREIGN KEY(id_album) REFERENCES Albumes(id)",
-        errmsg);
-
-    sqlerr();
-
-    // Crear tabla playlists
-    rc = create_table(
-        "Playlists",
-        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-        "nombre_playlist TEXT NOT NULL, "
-        // "fecha_creacion TEXT NOT NULL, "
-        "propietario TEXT NOT NULL, "
-        "FOREIGN KEY(propietario) REFERENCES Usuarios(username)",
-        errmsg);
-
-    sqlerr();
-
-    // Crear la tabla para las canciones por playlist
-    rc = create_table(
-        "Playlist_Canciones",
-        "id_playlist INTEGER NOT NULL, "
-        "id_cancion INTEGER NOT NULL, "
-        "PRIMARY KEY(id_playlist, id_cancion), "
-        "FOREIGN KEY(id_playlist) REFERENCES Playlists(id), "
-        "FOREIGN KEY(id_cancion) REFERENCES Canciones(id)",
-        errmsg);
-
-    sqlerr();
-
-    // Crear la tabla para las reproducciones
-    rc = create_table(
-        "Reproducciones",
-        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-        "username TEXT NOT NULL, "
-        "id_cancion INTEGER NOT NULL, "
-        "fecha_escuchado TEXT NOT NULL, "
-        "FOREIGN KEY(username) REFERENCES Usuarios(username), "
-        "FOREIGN KEY(id_cancion) REFERENCES Canciones(id)",
-        errmsg);
-
-    sqlerr();
-
-    // Crear la tabla para los historiales
-    rc = create_table(
-        "Historiales",
-        "username TEXT PRIMARY KEY, "
-        "tiempo_escuchado REAL DEFAULT 0.0, "
-        "cantidad_anuncios INTEGER DEFAULT 0, "
-        "FOREIGN KEY(username) REFERENCES Usuarios(username)",
-        errmsg);
-
-    sqlerr();
-
-    // Crear la tabla para los anuncios publicitarios
-    rc = create_table(
-        "Anuncios",
-        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-        "anunciante TEXT NOT NULL, "
-        "url TEXT NOT NULL, "
-        "FOREIGN KEY(anunciante) REFERENCES Usuarios(username)",
-        errmsg);
-
-    sqlerr();
-
-    return true;
+    return rc == SQLITE_OK;
 }
 
 void func(CloseDB)
 {
-    if (db)
-    {
-        sqlite3_close(db);
+    if (db && (sqlite3_close(db) == SQLITE_OK))
         db = NULL;
-    }
+
+    if (!db)
+        puts("Base de datos cerrada");
 }
 
 static select_handler(getCount)
@@ -187,18 +97,13 @@ bool obtener_registros(const char *table_name, const char *table_fields, const c
 {
     char *sql = NULL;
     if (condition)
-    {
         sql = sqlite3_mprintf("SELECT %s FROM %s WHERE %s", table_fields, table_name, condition);
-    }
     else
-    {
         sql = sqlite3_mprintf("SELECT %s FROM %s", table_fields, table_name);
-    }
 
     if (!sql)
         return false;
     int rc = sqlite3_exec(db, sql, handler, arg, errmsg);
-
     sqlite3_free(sql);
 
     return rc == SQLITE_OK;
@@ -211,7 +116,6 @@ bool actualizar_registros(const char *table_name, const char *values, const char
     if (!sql)
         return false;
     int rc = sqlite3_exec(db, sql, NULL, NULL, errmsg);
-
     sqlite3_free(sql);
 
     return rc == SQLITE_OK;
@@ -224,7 +128,6 @@ bool eliminar_registros(const char *table_name, const char *condition, char **er
     if (!sql)
         return false;
     int rc = sqlite3_exec(db, sql, NULL, NULL, errmsg);
-
     sqlite3_free(sql);
 
     return rc == SQLITE_OK;

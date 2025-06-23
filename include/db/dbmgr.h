@@ -22,7 +22,7 @@ typedef int (*select_handler_t)(void *arg, int argc, char **argv, char **fields)
 /* ======== Funciones para la conexión con la base de datos ======== */
 
 // Abrir base de datos
-bool func(InitDB, const char *db_name, char **errmsg);
+bool func(InitDB, const char *db_name, const char *script_filename, char **errmsg);
 
 // Cerrar base de datos
 void func(CloseDB);
