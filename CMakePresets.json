@@ -1,0 +1,42 @@
+{
+  "version": 10,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 28,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "console",
+      "displayName": "Consola (main)",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/console",
+      "cacheVariables": {
+        "BUILD_GUI_APP": "OFF"
+      }
+    },
+    {
+      "name": "gui",
+      "displayName": "Aplicación gráfica (WinMain)",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/gui",
+      "cacheVariables": {
+        "BUILD_GUI_APP": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "console",
+      "configurePreset": "console",
+      "configuration": "Release"
+    },
+    {
+      "name": "gui",
+      "configurePreset": "gui",
+      "configuration": "Release"
+    }
+  ]
+}
