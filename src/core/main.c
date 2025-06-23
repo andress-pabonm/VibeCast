@@ -77,7 +77,7 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
     /* ======== Inicializar la base de datos ======== */
 
     if (!func(InitDB, ":memory:", NULL)) // Para hacer pruebas
-    // if (!func(InitDB, "data.db", NULL))
+    //if (!func(InitDB, "data.db", NULL))
     {
         puts("Error al inicializar la base de datos.");
         return APP_FAILURE;

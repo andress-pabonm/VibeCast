@@ -14,8 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Elementos del DOM
   const loginForm = document.querySelector(".login-form");
-  const passwordInput = document.getElementById("password");
-  const togglePassword = document.querySelector(".toggle-password");
   const registerBtn = document.querySelector(".register-btn");
 
   document.querySelectorAll(".toggle-password").forEach((btn) => {

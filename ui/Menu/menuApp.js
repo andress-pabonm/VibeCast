@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     /* AQUI IRIA TODA LA LOGICA PARA CARGAR LOS DATOS DEL SQLLITE */
     
-    
-    
     // Simulación de datos
     const mockData = {
         songs: [
@@ -11,15 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 3, title: "Billie Jean", artist: "Michael Jackson", duration: "4:54" },
             { id: 4, title: "Sweet Child O'Mine", artist: "Guns N' Roses", duration: "5:56" },
             { id: 5, title: "Sweet Child O'Mine", artist: "Guns N' Roses", duration: "5:56" },
-            { id: 6, title: "Sweet Child O'Mine", artist: "Guns N' Roses", duration: "5:56" },
-            { id: 7, title: "Sweet Child O'Mine", artist: "Guns N' Roses", duration: "5:56" },
-        ],
-        friends: [
-            { id: 1, name: "María García" },
-            { id: 2, name: "Carlos López" },
-            { id: 3, name: "Ana Martínez" },
-            { id: 4, name: "Rocio xd"},
-            { id: 5, name: "Pableis"}
+            { id: 5, title: "AYAYAYA", artist: "SI", duration: "2:00" }
         ],
         recommendations: [
             { id: 1, title: "Dancing Queen", artist: "ABBA", friend: "María García", duration: "3:50" },
@@ -46,21 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
         songsContainer.appendChild(songElement);
     });
 
-    // Cargar amigos
-    const friendsContainer = document.getElementById('friends-container');
-    mockData.friends.forEach(friend => {
-        const friendElement = document.createElement('div');
-        friendElement.className = 'friend-item';
-        friendElement.innerHTML = `
-            <div class="friend-avatar">
-                <i class="fas fa-user"></i>
-            </div>
-            <div class="friend-name">${friend.name}</div>
-            <i class="fas fa-chevron-right"></i>
-        `;
-        friendsContainer.appendChild(friendElement);
-    });
-
     // Cargar recomendaciones
     const recommendationsContainer = document.getElementById('recommendations-container');
     mockData.recommendations.forEach(song => {
@@ -79,11 +54,19 @@ document.addEventListener('DOMContentLoaded', () => {
         recommendationsContainer.appendChild(songElement);
     });
 
-    // Evento para el botón de perfil
-    const profileBtn = document.querySelector('.profile-btn');
-    if (profileBtn) {
-        profileBtn.addEventListener('click', () => {
-            window.location.href = '../Perfil/perfil.html';
+    // Evento para el botón de cerrar sesión ANDRES AQUI IMPLEMENTA BIEN LA LOGICA XDXD
+    const logoutBtn = document.querySelector('.logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            // Aquí iría la lógica para cerrar sesión
+            // Por ejemplo:
+            fetch('/logout', { method: 'POST' })
+                .then(() => {
+                    window.location.href = '../Login/login.html';
+                })
+                .catch(error => {
+                    console.error('Error al cerrar sesión:', error);
+                });
         });
     }
 
