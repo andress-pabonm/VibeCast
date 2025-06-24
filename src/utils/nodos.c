@@ -291,7 +291,7 @@ Nodo **buscarNodo(ABB, ABB *abb, void *value_ptr, cmpfn_t cmp)
         if (!(cmpv = cmp((*ref)->value_ptr, value_ptr)))
             return ref;
         // Desplazarse a la izquierda o a la derecha
-        ref = (cmp > 0) ? &(*ref)->izq : &(*ref)->der;
+        ref = (cmpv > 0) ? &(*ref)->izq : &(*ref)->der;
     }
 
     return NULL;
