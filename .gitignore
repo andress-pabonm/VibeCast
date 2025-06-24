@@ -25,3 +25,4 @@ Thumbs.db
 # Archivo de configuración especial para VibeCast
 /include/VibeCastConfig.h
 CMakeUserPresets.json
+data.db
