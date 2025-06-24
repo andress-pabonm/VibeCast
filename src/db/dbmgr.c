@@ -133,6 +133,11 @@ bool eliminar_registros(const char *table_name, const char *condition, char **er
     return rc == SQLITE_OK;
 }
 
+bool ejecutar_script(const char *script, select_handler_t handler, void *arg, char **errmsg)
+{
+    return script && (sqlite3_exec(db, script, handler, arg, errmsg) == SQLITE_OK);
+}
+
 void free_errmsg(char *errmsg)
 {
     sqlite3_free(errmsg);

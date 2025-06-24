@@ -354,3 +354,179 @@ body {
 .fade-in {
   animation: fadeIn 0.5s ease-in-out;
 }
+
+/* Estilos específicos para la biblioteca */
+.library-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    height: calc(100vh - 150px);
+}
+
+.playlists-section, .songs-section {
+    background-color: var(--gris-oscuro);
+    border-radius: 10px;
+    padding: 1.5rem;
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.playlists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.playlist-card {
+    background-color: var(--gris-medio);
+    border-radius: 8px;
+    padding: 1rem;
+    transition: var(--transition-normal);
+    cursor: pointer;
+    position: relative;
+    aspect-ratio: 1/1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.playlist-card:hover {
+    background-color: var(--morado-oscuro);
+    transform: translateY(-5px);
+}
+
+.playlist-image {
+    width: 100%;
+    height: 70%;
+    background: linear-gradient(135deg, var(--morado), var(--azul-oscuro));
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.playlist-image i {
+    font-size: 2.5rem;
+    color: var(--blanco);
+}
+
+.playlist-info {
+    flex: 1;
+}
+
+.playlist-name {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.playlist-song-count {
+    font-size: 0.8rem;
+    color: var(--detalle);
+}
+
+.new-playlist-btn {
+    background: linear-gradient(45deg, var(--azul-oscuro), var(--azul));
+    color: var(--blanco);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition-normal);
+}
+
+.new-playlist-btn:hover {
+    background: linear-gradient(45deg, var(--azul), var(--azul-oscuro));
+    transform: translateY(-2px);
+}
+
+.songs-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    color: var(--azul);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: var(--gris-oscuro);
+    padding: 2rem;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.modal h3 {
+    margin-bottom: 1.5rem;
+}
+
+.modal input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1.5rem;
+    background-color: var(--gris-medio);
+    border: 2px solid var(--morado);
+    border-radius: 5px;
+    color: var(--blanco);
+}
+
+.modal button {
+    width: 100%;
+    padding: 0.75rem;
+    background: linear-gradient(45deg, var(--morado), var(--azul-oscuro));
+    color: var(--blanco);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: var(--transition-normal);
+}
+
+.modal button:hover {
+    background: linear-gradient(45deg, var(--azul-oscuro), var(--morado));
+}
+
+.hidden {
+    display: none;
+}

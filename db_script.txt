@@ -3,8 +3,8 @@ CREATE TABLE IF NOT EXISTS Usuarios (
     username TEXT NOT NULL UNIQUE,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
-    nickname TEXT,
-    pais TEXT,
+    nickname TEXT NOT NULL,
+    pais TEXT NOT NULL,
     plan INTEGER NOT NULL DEFAULT 0
 );
 
@@ -35,8 +35,10 @@ CREATE TABLE IF NOT EXISTS Canciones (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_album INTEGER NOT NULL,
     nombre TEXT NOT NULL,
-    url TEXT NOT NULL,
+    genero TEXT NOT NULL,
+    fecha_publicacion TEXT NOT NULL,
     duracion INTEGER NOT NULL,
+    url TEXT NOT NULL,
     popularidad INTEGER NOT NULL DEFAULT 0,
     reproducciones INTEGER NOT NULL DEFAULT 0,
     UNIQUE (id_album, nombre),
@@ -61,7 +63,7 @@ CREATE TABLE IF NOT EXISTS Playlist_Canciones (
 
 CREATE TABLE IF NOT EXISTS Historiales (
     id_usuario INTEGER PRIMARY KEY,
-    tiempo_escuchado REAL NOT NULL DEFAULT 0.0,
+    tiempo_escuchado INTEGER NOT NULL DEFAULT 0,
     cantidad_anuncios INTEGER NOT NULL DEFAULT 0,
     FOREIGN KEY (id_usuario) REFERENCES Usuarios(id)
 );

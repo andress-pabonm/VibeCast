@@ -8,14 +8,12 @@ document.addEventListener("DOMContentLoaded", () => {
   window.is_logged_in().then((res) => {
     console.log(res);
     if (res.message === 1) {
-      location.href = "../Menu/menu.html";
+      window.location.replace("../Menu/menu.html");
     }
   });
 
   // Elementos del DOM
   const loginForm = document.querySelector(".login-form");
-  const passwordInput = document.getElementById("password");
-  const togglePassword = document.querySelector(".toggle-password");
   const registerBtn = document.querySelector(".register-btn");
 
   document.querySelectorAll(".toggle-password").forEach((btn) => {
@@ -79,7 +77,7 @@ function simulateLogin(username, password) {
     if (res.message === 1) {
       showSuccess("¡Bienvenido de vuelta!");
       setTimeout(() => {
-        location.reload(); // Refresca la página
+        window.location.reload(); // Refresca la página
       }, 500);
     } else {
       showError("Usuario o contraseña incorrectos.");

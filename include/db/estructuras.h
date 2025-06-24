@@ -21,8 +21,10 @@ typedef struct Usuario Usuario;
 
 struct Artista
 {
+	// Puntero a su perfil de usuario
+	Usuario *usuario;
 	// Nombre del artista
-	char *nombreArtista;
+	char *nombre;
 	// Lista de los álbumes del artista
 	Lista albumes;
 };
@@ -30,12 +32,14 @@ struct Artista
 // Estructura para representar un álbum de canciones
 struct Album
 {
+	// Identificador único de álbum (utilizado en la base de datos)
+	int id;
 	// Artista al que pertenece el álbum
 	Artista *artista;
 	// Nombre del álbum
-	char *nombreAlbum;
+	char *nombre;
 	// Fecha en la que se creó el álbum
-	char fechaCreacion[11];
+	char *fechaCreacion;
 	// Lista de canciones del álbum
 	Lista canciones;
 };
@@ -45,34 +49,34 @@ struct Cancion
 {
 	// Identificador de la canción
 	int id;
-	
+
 	// Álbum al que pertenece la canción
 	Album *album;
 	// Título de la canción
-	char *nombreCancion;
+	char *nombre;
 	// Género musical al que pertenece la canción
 	char *genero;
 	// Fecha en la que se publicó la canción en la app
-	char fechaLanzamiento[11];
+	char *fechaPublicacion;
+
+	// Duración de la canción
+	int duracion;
+	// URL donde se encuentra la canción
+	char *url;
 
 	// Cantidad de veces que se ha añadido a una playlist
 	int popularidad;
 	// Cantidad total de reproducciones de la canción
 	int reproducciones;
-
-	// Duración de la canción
-	float duracion;
-	// URL donde se encuentra la canción
-	char *url;
 };
 
 // Estructura para representar una playlist
 struct Playlist
 {
+	// Identificador único de playlist (utilizado en la base de datos)
+	int id;
 	// Nombre de la playlist
-	char *nombrePlaylist;
-	// Fecha en la que se creó la playlist
-	// char fechaCreacion[11];
+	char *nombre;
 	// Lista con las canciones agregadas a la playlist
 	Lista canciones;
 };
@@ -83,7 +87,7 @@ struct Historial
 	// Pila con las reproducciones
 	Pila reproducciones;
 	// Tiempo total escuchado/reproducido
-	float tiempoEscuchado;
+	int tiempoEscuchado;
 	// Cantidad de anuncios "vistos" por el usuario (PLAN_FREEMIUM)
 	int cantidadAnuncios;
 };
@@ -94,7 +98,7 @@ struct Reproduccion
 	// Canción reproducida
 	Cancion *cancion;
 	// Fecha de la reproducción
-	char fechaEscuchado[11];
+	char *fechaEscuchado;
 };
 
 // Tipo de dato para representar los planes disponibles
@@ -110,7 +114,7 @@ enum Plan
 // Estructura para representar un anuncio publicitario
 struct Anuncio
 {
-	// Nombre del anunciante
+	// Usuario anunciante
 	Usuario *anunciante;
 	// URL del anuncio
 	char *url;
@@ -119,31 +123,32 @@ struct Anuncio
 // Estructura para representar un usuario
 struct Usuario
 {
+	// Identificador único de usuario (utilizado en la base de datos)
+	int id;
+	
+	// Usuario para iniciar sesión
+	char *username;
 	// Dirección de correo electrónico registrado
 	char *email;
 	// Contraseña para iniciar sesión
 	char *password;
 
-	// Identificador único de usuario
-	char *username;
 	// Nombre visible
 	char *nickname;
-
 	// Pais de origen del usuario
 	char *pais;
 	// Plan vigente de la cuenta
 	Plan plan;
 
+	// Perfil de artista
+	Artista *artista;
+
+	// Lista de amigos del usuario
+	Lista amigos;
 	// Lista de playlists creadas por el usuario
 	Lista playlists;
 	// Historial de reproducciones del usuario
 	Historial historial;
-
-	// Lista de amigos del usuario
-	Lista amigos;
-
-	// Perfil de artista
-	Artista *artista;
 };
 
 #endif // ESTRUCTURAS_DB_H

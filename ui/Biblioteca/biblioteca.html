@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca | VibeCast</title>
+    <link rel="stylesheet" href="../Biblioteca/bibliotecaStyles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="bibliotecaStyles.css">
+</head>
+<body>
+    <div class="menu-container fade-in">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-music logo-icon"></i>
+                <h1 class="logo-title">VibeCast</h1>
+            </div>
+            
+            <nav class="main-menu">
+                <ul>
+                    <li><a href="../Menu/menu.html"><i class="fas fa-home"></i>Inicio</a></li>
+                    <li class="biblioteca-item active"><a href="#"><i class="fas fa-music"></i>Biblioteca</a></li>
+                    <li><a href="../Historial/index.html"><i class="fas fa-history"></i>Historial</a></li>
+                    <li><a href="../Amigos/index.html"><i class="fas fa-user-friends"></i>Amigos</a></li>
+                    <li><a href="../Perfil/perfil.html"><i class="fas fa-user"></i>Perfil</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Buscar en tus playlists..." class="search-input">
+                </div>
+                <button class="new-playlist-btn" id="newPlaylistBtn">
+                    <i class="fas fa-plus"></i> Nueva playlist
+                </button>
+            </header>
+
+            <div class="library-container">
+                <!-- Sección de Playlists -->
+                <section class="playlists-section">
+                    <h2 class="section-title"><i class="fas fa-list"></i> Tus Playlists</h2>
+                    <div class="playlists-grid" id="playlistsContainer">
+                        <!-- Playlists se cargarán dinámicamente -->
+                    </div>
+                </section>
+
+                <!-- Sección de Canciones (aparece al seleccionar playlist) -->
+                <section class="songs-section hidden" id="songsSection">
+                    <div class="songs-header">
+                        <button class="back-btn" id="backToPlaylists">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </button>
+                        <h2 class="section-title" id="currentPlaylistTitle"></h2>
+                    </div>
+                    <div class="song-list" id="playlistSongsContainer">
+                        <!-- Canciones de la playlist seleccionada -->
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para nueva playlist -->
+    <div class="modal hidden" id="newPlaylistModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Crear nueva playlist</h3>
+            <input type="text" id="playlistNameInput" placeholder="Nombre de la playlist">
+            <button id="createPlaylistBtn">Crear</button>
+        </div>
+    </div>
+
+    <script src="bibliotecaApp.js"></script>
+</body>
+</html>

@@ -123,7 +123,10 @@ AppResult AppIterate(void *appstate)
 void AppQuit(void *appstate, AppResult appresult)
 {
     webview_destroy(cast(AppState *, appstate)->w); // Destruir la ventana
+
+    // TODO: Implementar la liberación de memoria de las estructuras
     // func(FreeData);                                 // Para liberar la memoria de las estructuras de datos
+    
     func(CloseDB); // Cerrar la base de datos
 
     free(appstate);
