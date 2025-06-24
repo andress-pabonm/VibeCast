@@ -14,9 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
         recommendations: [
             { id: 1, title: "Dancing Queen", artist: "ABBA", friend: "María García", duration: "3:50" },
             { id: 2, title: "Hotel California", artist: "Eagles", friend: "Carlos López", duration: "6:30" },
-            { id: 2, title: "Hotel California", artist: "Eagles", friend: "Carlos López", duration: "6:30" },
-            { id: 2, title: "Hotel California", artist: "Eagles", friend: "Carlos López", duration: "6:30" },
-            { id: 2, title: "Hotel California", artist: "Eagles", friend: "Carlos López", duration: "6:30" }
         ]
     };
 
