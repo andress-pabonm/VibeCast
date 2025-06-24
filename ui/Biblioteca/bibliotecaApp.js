@@ -1,3 +1,6 @@
+//Andres prueba la parte grafica y luego modifica o no se XD
+//Esta agregado para q cree una playlist desde la interfaz pero no crea en si la playlist en la interfaz
+
 document.addEventListener('DOMContentLoaded', () => {
     // Datos de ejemplo
     const mockData = {
@@ -6,7 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 2, name: "Rock Clásico", songCount: 15 },
             { id: 3, name: "Para estudiar", songCount: 8 },
             { id: 4, name: "Éxitos 2023", songCount: 32 },
-            { id: 5, name: "Mixtape Verano", songCount: 18 }
+            { id: 5, name: "Mixtape Verano", songCount: 18 },
+            { id: 6, name: "Iban 2", songCount: 2}
         ],
         playlistSongs: {
             1: [

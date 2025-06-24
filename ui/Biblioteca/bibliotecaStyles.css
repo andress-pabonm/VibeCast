@@ -88,18 +88,12 @@ body {
     text-align: center;
 }
 
-.main-menu a:hover, .main-menu .active a {
-    background-color: var(--morado-oscuro);
-    color: var(--blanco);
-}
-
-/* Estilo para el elemento activo del menú */
-.main-menu .menu-item.active a {
+/* Estilo para el elemento activo de la biblioteca*/
+.main-menu .biblioteca-item.active a {
     background-color: var(--morado-oscuro);
     color: var(--blanco);
     position: relative;
 }
-
 
 /* Main Content */
 .main-content {
@@ -118,7 +112,7 @@ body {
 
 .search-bar {
     position: relative;
-    width: 65.5%;
+    width: 80%;
 }
 
 .search-icon {
@@ -147,7 +141,7 @@ body {
 }
 
 /* Estilos para el botón de cerrar sesión */
-.logout-btn {
+/* .logout-btn {
     background: linear-gradient(45deg, var(--morado), #e63946);
     color: var(--blanco);
     border: none;
@@ -186,135 +180,7 @@ body {
 
 .logout-btn:hover::before {
     left: 100%;
-}
-
-/* Content Grid */
-.content-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 1.5rem;
-    height: calc(100vh - 150px);
-}
-
-.card-section {
-    background-color: var(--gris-oscuro);
-    border-radius: 10px;
-    padding: 1.5rem;
-    max-height: 100%;
-    overflow-y: auto;
-    /* transition: transform 0.3s ease; */
-}
-
-/* .card-section:hover {
-    transform: translateY(-5px); ver si se pone esto xd
 } */
-
-.section-title {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-    color: var(--azul);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* Song List */
-
-.database-songs {
-    grid-row: span 2;
-    scrollbar-width: thin;
-    scrollbar-color: var(--morado) var(--gris-oscuro);
-}
-
-.song-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.song-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem;
-    background-color: var(--gris-medio);
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.song-item:hover {
-    background-color: var(--morado-oscuro);
-    cursor: pointer;
-}
-
-.song-info {
-    flex: 1;
-}
-
-.song-actions {
-    color: var(--detalle);
-}
-
-.song-actions i {
-    margin-left: 0.75rem;
-    cursor: pointer;
-}
-
-.song-actions i:hover {
-    color: var(--azul);
-}
-
-/* Friends List */
-
-.friends{
-    scrollbar-width: thin;
-    scrollbar-color: var(--morado) var(--gris-oscuro);
-}
-
-.friends-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.friend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    background-color: var(--gris-medio);
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.friend-item:hover {
-    background-color: var(--morado-oscuro);
-    cursor: pointer;
-}
-
-.friend-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-    background-color: var(--morado);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.friend-avatar i {
-    color: var(--blanco);
-}
-
-.friend-name {
-    flex: 1;
-}
-
-.friend-recommendations{
-    scrollbar-width: thin;
-    scrollbar-color: var(--morado) var(--gris-oscuro);
-}
 
 /* Efectos scrollbar */
 
@@ -345,22 +211,14 @@ body {
     background: var(--morado-oscuro);
 } */
 
-/* ========== ANIMACIONES ========== */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in {
-  animation: fadeIn 0.5s ease-in-out;
-}
-
 /* Estilos específicos para la biblioteca */
 .library-container {
     display: flex;
     flex-direction: column;
     gap: 2rem;
     height: calc(100vh - 150px);
+    scrollbar-width: thin;
+    scrollbar-color: var(--morado) var(--gris-oscuro);
 }
 
 .playlists-section, .songs-section {
@@ -529,4 +387,14 @@ body {
 
 .hidden {
     display: none;
+}
+
+/* ========== ANIMACIONES ========== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
 }
