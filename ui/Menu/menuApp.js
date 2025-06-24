@@ -47,6 +47,50 @@ document.addEventListener("DOMContentLoaded", () => {
   //       songsContainer.appendChild(songElement);
   //     });
   //   });
+
+  // Simulación de datos
+  const mockData = {
+    songs: [
+      { id: 1, title: "Bohemian Rhapsody", artist: "Queen", duration: "5:55" },
+      { id: 2, title: "Imagine", artist: "John Lennon", duration: "3:04" },
+      {
+        id: 3,
+        title: "Billie Jean",
+        artist: "Michael Jackson",
+        duration: "4:54",
+      },
+      {
+        id: 4,
+        title: "Sweet Child O'Mine",
+        artist: "Guns N' Roses",
+        duration: "5:56",
+      },
+      {
+        id: 5,
+        title: "Sweet Child O'Mine",
+        artist: "Guns N' Roses",
+        duration: "5:56",
+      },
+      { id: 5, title: "AYAYAYA", artist: "SI", duration: "2:00" },
+    ],
+    recommendations: [
+      {
+        id: 1,
+        title: "Dancing Queen",
+        artist: "ABBA",
+        friend: "María García",
+        duration: "3:50",
+      },
+      {
+        id: 2,
+        title: "Hotel California",
+        artist: "Eagles",
+        friend: "Carlos López",
+        duration: "6:30",
+      },
+    ],
+  };
+
   // Cargar canciones
   const songsContainer = document.getElementById("songs-container");
   mockData.songs.forEach((song) => {
