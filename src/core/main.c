@@ -36,6 +36,8 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
         return APP_FAILURE;
     *appstate = state;
 
+    puts("Estado de la aplicación inicializado.");
+
     /* ======== Inicializar la interfaz gráfica ======== */
 
     // Crear la ventana
@@ -74,14 +76,22 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
     // Ir a la primera interfaz
     webview_navigate(w, INTERFAZ("Login/index.html"));
 
+    puts("Interfaz gráfica inicializada");
+    
     /* ======== Inicializar la base de datos ======== */
 
-    if (!func(InitDB, ":memory:", NULL)) // Para hacer pruebas
-    //if (!func(InitDB, "data.db", NULL))
+    char *errmsg = NULL;
+
+    // if (!func(InitDB, ":memory:", "db_script.txt", NULL)) // Para hacer pruebas
+    if (!func(InitDB, "data.db", "db_script.txt", &errmsg))
     {
         puts("Error al inicializar la base de datos.");
+        puts(errmsg);
+        free_errmsg(errmsg);
         return APP_FAILURE;
     }
+
+    puts("Base de datos inicializada.");
 
     /* ======== Cargar los datos e inicializar las estructuras ======== */
 
@@ -90,6 +100,8 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
         puts("Error al cargar los datos.");
         return APP_FAILURE;
     }
+
+    puts("Datos cargados.");
 
     puts("Aplicación inicializada correctamente.");
 
@@ -111,7 +123,10 @@ AppResult AppIterate(void *appstate)
 void AppQuit(void *appstate, AppResult appresult)
 {
     webview_destroy(cast(AppState *, appstate)->w); // Destruir la ventana
+
+    // TODO: Implementar la liberación de memoria de las estructuras
     // func(FreeData);                                 // Para liberar la memoria de las estructuras de datos
+    
     func(CloseDB); // Cerrar la base de datos
 
     free(appstate);

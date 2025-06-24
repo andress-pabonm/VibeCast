@@ -240,6 +240,8 @@ message_handler(crear_cuenta)
     char *nickname = get_string(get_array_idx(data, 0));
     char *pais = get_string(get_array_idx(data, 1));
 
+    // TODO: Verificar que nickname y pais no sean nulos o sean un texto vacio ("")
+
     char *values = mprintf(stringify("%s", "%s", "%s", "%s", "%s"), email, password, username, nickname, pais);
 
     if (!nuevo_registro("Usuarios", "email, password, username, nickname, pais", values, NULL))

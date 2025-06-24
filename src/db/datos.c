@@ -1,14 +1,22 @@
 #include <db/datos.h>
 #include <db/dbmgr.h>
 #include <utils/utils.h>
-#include <string.h>
+#include <stdlib.h>
+// #include <string.h>
 #include <stdio.h>
 
 /* ==== Estructuras de datos ==== */
 
+// ABB para usuarios (ordenado por Usuario.username)
 ABB usuarios = {NULL};
+
+// ABB para artistas (ordenado por Artista.nombre)
 ABB artistas = {NULL};
+
+// Lista global de canciones (ordenado por Cancion.album)
 Lista canciones = {NULL};
+
+// Cola para los anuncios (ordenado por tiempo de creacion)
 Cola anuncios = {NULL, NULL};
 
 /* ==== Comparadores ==== */
@@ -34,7 +42,7 @@ new_cmp(cmpArtistas)
     Artista *artista_1 = value_ptr_1;
     Artista *artista_2 = value_ptr_2;
 
-    return strcmp(artista_1->nombreArtista, artista_2->nombreArtista);
+    return strcmp(artista_1->nombre, artista_2->nombre);
 }
 
 new_cmp(cmpCancionConId)
@@ -47,13 +55,16 @@ new_cmp(cmpCancionConId)
 
 /* ==== Funciones de ayuda para cargar los datos ==== */
 
+// ==== Declaraciones ====
+
 static select_handler(cargarUsuarios);
 
+static select_handler(cargarArtistaPorUsuario);
 static select_handler(cargarAlbumesPorArtista);
 static select_handler(cargarCancionesPorAlbum);
 
-static select_handler(cargarDatosPorUsuario);
 static select_handler(cargarAmigosPorUsuario);
+
 static select_handler(cargarPlaylistsPorUsuario);
 static select_handler(cargarCancionesPorPlaylist);
 
@@ -62,188 +73,355 @@ static select_handler(cargarReproduccionesPorHistorial);
 
 static select_handler(cargarAnuncios);
 
+static select_handler(cargarOtrosDatosPorUsuario);
+
+// ==== Definiciones ====
+
+#define USUARIO_ID 0
+#define USUARIO_USERNAME 1
+#define USUARIO_EMAIL 2
+#define USUARIO_PASSWORD 3
+#define USUARIO_NICKNAME 4
+#define USUARIO_PAIS 5
+#define USUARIO_PLAN 6
+
 static select_handler(cargarUsuarios)
 {
-    Usuario usuario;
+    // Cargar la información del usuario
 
-    // TODO 1: Copiar datos a la variable (usuario)
-    usuario.email = malloc_cpy(strlen(argv[0]) + 1, argv[0]);
-    usuario.password = malloc_cpy(strlen(argv[0]) + 1, argv[1]);
-    usuario.username = malloc_cpy(strlen(argv[0]) + 1, argv[2]);
-    usuario.nickname = malloc_cpy(strlen(argv[0]) + 1, argv[3]);
-    usuario.pais = malloc_cpy(strlen(argv[0]) + 1, argv[4]);
-    sscanf(argv[5], "%d", &usuario.plan);
+    Usuario *usuario = alloc(Usuario, NULL);
 
-    usuario.amigos.head = NULL;
-    usuario.playlists.head = NULL;
+    usuario->username = mprintf(argv[USUARIO_USERNAME]);
+    usuario->email = mprintf(argv[USUARIO_EMAIL]);
+    usuario->password = mprintf(argv[USUARIO_PASSWORD]);
+    usuario->nickname = mprintf(argv[USUARIO_NICKNAME]);
+    usuario->pais = mprintf(argv[USUARIO_PAIS]);
+    sscanf(argv[USUARIO_PLAN], "%d", &usuario->plan);
 
-    usuario.historial.reproducciones.top = NULL;
-    usuario.historial.cantidadAnuncios = 0;
-    usuario.historial.tiempoEscuchado = 0;
+    usuario->artista = NULL;
 
-    usuario.artista = NULL;
+    usuario->amigos.head = NULL;
+    usuario->playlists.head = NULL;
 
-    Usuario *ptr_usuario = alloc(Usuario, &usuario);
-    insertarNodo(ABB, &usuarios, ptr_usuario, cmpUsuarios);
+    usuario->historial.reproducciones.top = NULL;
+    usuario->historial.tiempoEscuchado = 0;
+    usuario->historial.cantidadAnuncios = 0;
 
-    if (strlen(argv[6]))
-    {
-        // Cargar artista
-        Artista artista;
-        artista.nombreArtista = malloc_cpy(strlen(argv[6] + 1), argv[6]);
-        artista.albumes.head = NULL;
+    // Insertarlo en el árbol
+    insertarNodo(ABB, &usuarios, usuario, cmpUsuarios);
 
-        Artista *ptr_artista = alloc(Artista, &artista);
-        insertarNodo(ABB, &artistas, ptr_artista, cmpArtistas);
+    // Cargar su perfil de artista si tiene
 
-        ptr_usuario->artista = ptr_artista;
+    char *condition =
+        mprintf("id_usuario = %s", argv[USUARIO_ID]);
 
-        // Cargar álbumes
-        char *condition = mprintf(stringify(artista = "%s"), usuario.username);
-        obtener_registros("Albumes", "id, nombre_album, fecha_creacion", condition, cargarAlbumesPorArtista, ptr_artista, NULL);
-        sqlite3_free(condition);
-    }
+    obtener_registros(
+        "Artistas", "*", condition,
+        cargarArtistaPorUsuario,
+        usuario, NULL);
+
+    free(condition);
 
     return 0;
 }
 
-// Para rellenar la lista de álbumes por artista
+#define ARTISTA_ID 0
+#define ARTISTA_NOMBRE 1
+
+static select_handler(cargarArtistaPorUsuario)
+{
+    // Cargar información del artista
+
+    Artista *artista = alloc(Artista, NULL);
+
+    artista->usuario = arg; // Enlazar a su usuario
+    artista->nombre = mprintf(argv[ARTISTA_NOMBRE]);
+    artista->albumes.head = NULL;
+
+    // Insertarlo en el árbol
+    insertarNodo(ABB, &artistas, artista, cmpArtistas);
+
+    // Enlazar sus álbumes
+
+    char *condition =
+        mprintf("id_artista = %s", argv[ARTISTA_ID]);
+
+    obtener_registros(
+        "Albumes", "*", condition,
+        cargarAlbumesPorArtista,
+        artista, NULL);
+
+    free(condition);
+
+    // Enlazar a su perfil de usuario
+
+    artista->usuario->artista = artista;
+
+    return 0;
+}
+
+#define ALBUM_ID 0
+#define ALBUM_NOMBRE 1
+#define ALBUM_FECHA_CREACION 2
+
 static select_handler(cargarAlbumesPorArtista)
 {
-    Album album;
+    // Cargar información del álbum
 
-    album.artista = arg;
-    album.nombreAlbum = malloc_cpy(strlen(argv[1]) + 1, argv[2]);
-    strcpy(album.fechaCreacion, argv[2]);
-    album.canciones.head = NULL;
+    Album *album = alloc(Album, NULL);
 
-    Album *ptr_album = alloc(Album, &album);
-    insertarNodo(Lista, &album.artista->albumes, ptr_album, NULL);
+    sscanf(argv[ALBUM_ID], "%d", &album->id);
+    album->artista = arg; // Enlazar al artista
+    album->nombre = mprintf(argv[ALBUM_NOMBRE]);
+    album->fechaCreacion = mprintf(argv[ALBUM_FECHA_CREACION]);
+    album->canciones.head = NULL;
 
-    char *condition = mprintf("id_album = %s", argv[0]);
-    obtener_registros("Canciones", "*", condition, cargarCancionesPorAlbum, ptr_album, NULL);
-    sqlite3_free(condition);
+    // Insertarlo en la lista
+    insertarNodo(
+        Lista, &album->artista->albumes,
+        album, NULL);
+
+    // Enlazar sus canciones
+
+    char *condition =
+        mprintf("id_album = %d", album->id);
+
+    obtener_registros(
+        "Canciones", "*",
+        condition, cargarCancionesPorAlbum,
+        album, NULL);
+
+    free(condition);
 
     return 0;
 }
 
-// Para rellenar la lista de canciones por artista. Además, se rellena la lista de canciones general.
+#define CANCION_ID 0
+#define CANCION_NOMBRE 1
+#define CANCION_GENERO 2
+#define CANCION_FECHA_PUBLICACION 3
+#define CANCION_DURACION 4
+#define CANCION_URL 5
+#define CANCION_POPULARIDAD 6
+#define CANCION_REPRODUCCIONES 7
+
 static select_handler(cargarCancionesPorAlbum)
 {
-    Cancion cancion;
+    // Cargar la información de la canción
 
-    sscanf(argv[0], "%d", &cancion.id);
-    cancion.album = arg;
-    cancion.nombreCancion = malloc_cpy(strlen(argv[2]) + 1, argv[2]);
-    cancion.genero = malloc_cpy(strlen(argv[3]) + 1, argv[3]);
-    strcpy(cancion.fechaLanzamiento, argv[4]);
-    sscanf(argv[5], "%d", &cancion.popularidad);
-    sscanf(argv[6], "%d", &cancion.reproducciones);
-    sscanf(argv[7], "%f", &cancion.duracion);
-    cancion.url = malloc_cpy(strlen(argv[8]) + 1, argv[8]);
+    Cancion *cancion = alloc(Cancion, NULL);
 
-    Cancion *ptr_cancion = alloc(Cancion, &cancion);
-    insertarNodo(Lista, &cancion.album->canciones, ptr_cancion, NULL);
-    insertarNodo(Lista, &canciones, ptr_cancion, NULL);
+    cancion->album = arg; // Enlazar a su álbum
+    sscanf(argv[CANCION_ID], "%d", &cancion->id);
+    cancion->nombre = mprintf(argv[CANCION_NOMBRE]);
+    cancion->genero = mprintf(argv[CANCION_GENERO]);
+    cancion->fechaPublicacion = mprintf(argv[CANCION_FECHA_PUBLICACION]);
 
-    return 0;
-}
+    sscanf(argv[CANCION_DURACION], "%d", &cancion->duracion);
+    cancion->url = mprintf(argv[CANCION_URL]);
 
-// Para cargar datos por usuario (amigos, playlists e historial)
-static select_handler(cargarDatosPorUsuario)
-{
-    Usuario *usuario = (*buscarNodo(ABB, &usuarios, argv[0], cmpUsuarioConUsername))->value_ptr;
+    sscanf(argv[CANCION_POPULARIDAD], "%d", &cancion->popularidad);
+    sscanf(argv[CANCION_REPRODUCCIONES], "%d", &cancion->reproducciones);
 
-    char *condition = mprintf(stringify(usuario1 = "%s"), argv[0]);
-    obtener_registros("Amigos", "usuario2", condition, cargarAmigosPorUsuario, &usuario->amigos, NULL);
-    sqlite3_free(condition);
-
-    condition = mprintf(stringify(propietario = "%s"), argv[0]);
-    obtener_registros("Playlists", "*", condition, cargarPlaylistsPorUsuario, &usuario->playlists, NULL);
-    sqlite3_free(condition);
-
-    condition = mprintf(stringify(username = "%s"), argv[0]);
-    obtener_registros("Historiales", "*", condition, cargarHistorialPorUsuario, &usuario->historial, NULL);
-    sqlite3_free(condition);
+    // Insertar en la lista del álbum
+    insertarNodo(
+        Lista, &cancion->album->canciones,
+        cancion, NULL);
+    // Insertar en la lista global
+    insertarNodo(
+        Lista, &canciones,
+        cancion, NULL);
 
     return 0;
 }
 
-// Para cargar los amigos
+#define AMIGO_USERNAME 0
+
 static select_handler(cargarAmigosPorUsuario)
 {
-    Usuario *amigo = (*buscarNodo(ABB, &usuarios, argv[0], cmpUsuarioConUsername))->value_ptr;
+    // Buscar el amigo
+
+    Usuario *amigo =
+        (*buscarNodo(
+             ABB, &usuarios,
+             argv[AMIGO_USERNAME],
+             cmpUsuarioConUsername))
+            ->value_ptr;
+
+    // Insertarlo en la lista de amigos
     insertarNodo(Lista, arg, amigo, NULL);
+
     return 0;
 }
 
-// Para cargar las playlists
+#define PLAYLIST_ID 0
+#define PLAYLIST_NOMBRE 1
+
 static select_handler(cargarPlaylistsPorUsuario)
 {
-    Playlist playlist;
+    // Cargar la información de la playlist
 
-    playlist.nombrePlaylist = malloc_cpy(strlen(argv[1]) + 1, argv[1]);
-    playlist.canciones.head = NULL;
+    Playlist *playlist = alloc(Playlist, NULL);
 
-    Playlist *ptr_playlist = alloc(Playlist, &playlist);
-    insertarNodo(Lista, arg, ptr_playlist, NULL);
+    sscanf(argv[PLAYLIST_ID], "%d", &playlist->id);
+    playlist->nombre = mprintf(argv[PLAYLIST_NOMBRE]);
+    playlist->canciones.head = NULL;
 
-    char *condition = mprintf("id_playlist = %s", argv[0]);
-    obtener_registros("Playlist_Canciones", "id_cancion", condition, cargarCancionesPorPlaylist, &ptr_playlist->canciones, NULL);
-    sqlite3_free(condition);
+    // Insertarlo en la lista correspondiente
+    insertarNodo(Lista, arg, playlist, NULL);
+
+    // Enlazar las canciones
+
+    char *condition =
+        mprintf("id_playlist = %d", playlist->id);
+
+    obtener_registros(
+        "Playlist_Canciones", "id_cancion",
+        condition, cargarCancionesPorPlaylist,
+        &playlist->canciones, NULL);
+
+    free(condition);
 
     return 0;
 }
-
 static select_handler(cargarCancionesPorPlaylist)
 {
     int id_cancion;
-    sscanf(argv[0], "%d", &id_cancion);
-    Cancion *cancion = (*buscarNodo(Lista, &canciones, &id_cancion, cmpCancionConId))->value_ptr;
+    sscanf(argv[CANCION_ID], "%d", &id_cancion);
+
+    // Buscar canción
+    Cancion *cancion =
+        (*buscarNodo(
+             Lista, &canciones,
+             &id_cancion, cmpCancionConId))
+            ->value_ptr;
+
+    // Insertarla en la playlist
     insertarNodo(Lista, arg, cancion, NULL);
+
     return 0;
 }
 
-// Para cargar los historiales
+#define HISTORIAL_TIEMPO_ESCUCHADO 1
+#define HISTORIAL_CANTIDAD_ANUNCIOS 2
+
 static select_handler(cargarHistorialPorUsuario)
 {
+    // Cargar los datos del historial
+
     Historial *historial = arg;
 
-    sscanf(argv[1], "", &historial->tiempoEscuchado);
-    sscanf(argv[2], "", &historial->cantidadAnuncios);
+    sscanf(argv[HISTORIAL_TIEMPO_ESCUCHADO], "%d", &historial->tiempoEscuchado);
+    sscanf(argv[HISTORIAL_CANTIDAD_ANUNCIOS], "%d", &historial->cantidadAnuncios);
 
-    char *condition = mprintf(stringify(username = "%s"), argv[0]);
-    obtener_registros("Reproducciones", "id_cancion, fecha_escuchado", condition, cargarReproduccionesPorHistorial, &historial->reproducciones, NULL);
-    sqlite3_free(condition);
+    // Enlazar reproducciones
+
+    char *condition =
+        mprintf("usuario_id = %s", argv[USUARIO_ID]);
+
+    obtener_registros(
+        "Reproducciones", "id_cancion, fecha_escuchado", condition,
+        cargarReproduccionesPorHistorial,
+        &historial->reproducciones, NULL);
+
+    free(condition);
 
     return 0;
 }
+
+#define REPRODUCCION_FECHA_ESCUCHADO 1
 
 static select_handler(cargarReproduccionesPorHistorial)
 {
-    Reproduccion reproduccion;
+    // Cargar la información de las reproducciones
 
     int id_cancion;
-    sscanf(argv[0], "%d", &id_cancion);
-    reproduccion.cancion = (*buscarNodo(Lista, &canciones, &id_cancion, cmpCancionConId))->value_ptr;
+    sscanf(argv[CANCION_ID], "%d", &id_cancion);
 
-    strcpy(reproduccion.fechaEscuchado, argv[1]);
+    Reproduccion *reproduccion = alloc(Reproduccion, NULL);
 
-    Reproduccion *ptr_reproduccion = alloc(Reproduccion, &reproduccion);
-    insertarNodo(Pila, arg, ptr_reproduccion);
+    reproduccion->fechaEscuchado =
+        mprintf(argv[REPRODUCCION_FECHA_ESCUCHADO]);
+
+    reproduccion->cancion =
+        (*buscarNodo(
+             Lista, &canciones,
+             &id_cancion, cmpCancionConId))
+            ->value_ptr;
+
+    // Insertarlo en el historial
+    insertarNodo(Pila, arg, reproduccion);
 
     return 0;
 }
 
+#define ANUNCIO_ANUNCIANTE 0
+#define ANUNCIO_URL 1
+
 static select_handler(cargarAnuncios)
 {
-    Anuncio anuncio;
+    // Cargar la información de los anuncios
 
-    anuncio.anunciante = (*buscarNodo(ABB, &usuarios, argv[0], cmpUsuarioConUsername))->value_ptr;
-    anuncio.url = malloc_cpy(strlen(argv[1]) + 1, argv[1]);
+    Anuncio *anuncio = alloc(Anuncio, NULL);
 
-    Anuncio *ptr_anuncio = alloc(Anuncio, &anuncio);
-    insertarNodo(Cola, &anuncios, ptr_anuncio);
+    anuncio->url = mprintf(argv[ANUNCIO_URL]);
+    anuncio->anunciante =
+        (*buscarNodo(
+             ABB, &usuarios,
+             argv[ANUNCIO_ANUNCIANTE],
+             cmpUsuarioConUsername))
+            ->value_ptr;
+
+    // Insertar en la cola de anuncios
+    insertarNodo(Cola, &anuncios, anuncio);
+
+    return 0;
+}
+
+static select_handler(cargarOtrosDatosPorUsuario)
+{
+    // Buscar usuario
+
+    int id_usuario;
+    sscanf(argv[USUARIO_ID], "%d", &id_usuario);
+
+    Usuario *usuario =
+        (*buscarNodo(
+             ABB, &usuarios,
+             argv[USUARIO_USERNAME],
+             cmpUsuarioConUsername))
+            ->value_ptr;
+
+    // Cargar amigos
+
+    char *condition = mprintf("Amigos.id_usuario_1 = %d", id_usuario);
+
+    obtener_registros(
+        "Amigos JOIN Usuarios ON Usuarios.id = Amigos.id_usuario_2",
+        "Usuarios.username",
+        condition,
+        cargarAmigosPorUsuario,
+        NULL, NULL);
+
+    free(condition);
+
+    // Cargar playlists
+
+    condition = mprintf("id_usuario = %d", id_usuario);
+
+    obtener_registros(
+        "Playlist", "id, nombre", condition,
+        cargarPlaylistsPorUsuario,
+        &usuario->playlists, NULL);
+
+    // Cargar historial
+
+    obtener_registros(
+        "Historiales", "*", condition,
+        cargarHistorialPorUsuario,
+        &usuario->historial, NULL);
+
+    free(condition);
 
     return 0;
 }
@@ -252,16 +430,20 @@ static select_handler(cargarAnuncios)
 
 bool func(LoadData)
 {
-    char *condition = NULL;
+    // Cargar usuarios, artistas, álbumes y canciones
+    obtener_registros(
+        "Usuarios", "*", NULL,
+        cargarUsuarios, NULL, NULL);
 
-    // TODO 1: Cargar usuarios, artistas, álbumes y canciones
-    obtener_registros("Usuarios", "*", NULL, cargarUsuarios, NULL, NULL);
+    // Cargar amigos, playlists, historiales
+    obtener_registros(
+        "Usuarios", "id, username", NULL,
+        cargarOtrosDatosPorUsuario, NULL, NULL);
 
-    // TODO 2: Cargar amigos, playlists e historiales de reproducción
-    obtener_registros("Usuarios", "username", NULL, cargarDatosPorUsuario, NULL, NULL);
-
-    // TODO 3: Cargar anuncios
-    obtener_registros("Anuncios", "*", NULL, cargarAnuncios, NULL, NULL);
+    // Cargar anuncios
+    obtener_registros(
+        "Anuncios JOIN Usuarios ON Usuarios.id = Anuncios.id_usuario",
+        "Usuarios.username, Anuncios.url", NULL, cargarAnuncios, NULL, NULL);
 
     return true; // Datos cargados correctamente
 }
