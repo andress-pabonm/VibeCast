@@ -27,6 +27,9 @@ bool func(InitDB, const char *db_name, const char *script_filename, char **errms
 // Cerrar base de datos
 void func(CloseDB);
 
+// Ejecutar un script sobre la base de datos abierta
+bool func(RunScript, const char *script_filename, char **errmsg);
+
 /* ======== Funciones para las operaciones básicas sobre la base de datos ======== */
 
 // Para contar la cantidad de registros en una tabla que cumplen una condición.

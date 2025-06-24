@@ -401,7 +401,7 @@ static select_handler(cargarOtrosDatosPorUsuario)
         "Usuarios.username",
         condition,
         cargarAmigosPorUsuario,
-        NULL, NULL);
+        &usuario->amigos, NULL);
 
     free(condition);
 
@@ -427,6 +427,15 @@ static select_handler(cargarOtrosDatosPorUsuario)
 }
 
 /* ======== Funciones visibles en otros archivos ======== */
+
+new_op(mostrarUsuario)
+{
+    Usuario *usuario = value_ptr;
+
+    printf("[%d]: %s\n", index, usuario->username);
+
+    return true;
+}
 
 bool func(LoadData)
 {

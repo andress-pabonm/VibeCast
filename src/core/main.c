@@ -5,7 +5,7 @@
 #include <core/main.h>
 
 // Incluir las funciones necesarias para inicializar la app
-#include <ui/interfaces.h> // Para las funciones tipo message_handler_t y el webview.h
+#include <ui/conexiones.h> // Para las funciones tipo message_handler_t y el webview.h
 #include <db/dbmgr.h>      // Para InitDB y CloseDB
 #include <utils/utils.h>   // Para malloc_cpy()
 
@@ -109,8 +109,7 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
 
     char *errmsg = NULL;
 
-    // if (!func(InitDB, ":memory:", "db_script.txt", NULL)) // Para hacer pruebas
-    if (!func(InitDB, "data.db", "db_script.txt", &errmsg))
+    if (!func(InitDB, "data.db", "db_setup.sql", &errmsg))
     {
         puts("Error al inicializar la base de datos.");
         puts(errmsg);

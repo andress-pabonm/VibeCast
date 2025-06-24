@@ -2,6 +2,8 @@
 #include <utils/utils.h>
 #include <sqlite3.h>
 #include <stdio.h>
+#include <io.h>
+#include <errno.h>
 
 // Conexión con la base de datos
 static sqlite3 *db = NULL;
@@ -11,8 +13,11 @@ bool func(InitDB, const char *db_name, const char *script_filename, char **errms
     if (db)
         return true;
 
-    if (!script_filename)
+    if (!db_name)
         return false;
+
+    // Verificar si el archivo ya existe
+    bool db_existed = (_access(db_name, 0) == 0);
 
     // Conectarse con la base de datos
     int rc = sqlite3_open(db_name, &db);
@@ -24,41 +29,12 @@ bool func(InitDB, const char *db_name, const char *script_filename, char **errms
         return false;
     }
 
-    // Cargar el script
+    // Si la base ya existía, no ejecutar el script
+    if (db_existed)
+        return true;
 
-    // Abrir el archivo
-    FILE *script_file = fopen(script_filename, "r");
-    if (!script_file)
-    {
-        if (errmsg)
-            *errmsg = sqlite3_mprintf("Error al abrir el archivo de script.");
-        return false;
-    }
-
-    // Obtener el tamaño del archivo
-    fseek(script_file, 0, SEEK_END);
-    int script_len = ftell(script_file);
-
-    // Asignar memoria para cargar el script
-    char *script_str = malloc_cpy(script_len + 1, NULL);
-    if (!script_str)
-    {
-        if (errmsg)
-            *errmsg = sqlite3_mprintf("Error al cargar el script.");
-        fclose(script_file);
-        return false;
-    }
-
-    rewind(script_file);                           // Regresar al inicio del archivo
-    fread(script_str, 1, script_len, script_file); // Copiar el script
-    fclose(script_file);                           // Cerrar el archivo
-    script_str[script_len] = '\0';                 // Asegurar que el string termine en '\0'
-
-    // Ejecutar el script
-    rc = sqlite3_exec(db, script_str, NULL, NULL, errmsg);
-    free(script_str); // Liberar la memoria del script
-
-    return rc == SQLITE_OK;
+    return func(RunScript, script_filename, errmsg) &&
+           func(RunScript, "datos_prueba.sql", errmsg);
 }
 
 void func(CloseDB)
@@ -69,6 +45,52 @@ void func(CloseDB)
     if (!db)
         puts("Base de datos cerrada");
 }
+
+bool func(RunScript, const char *script_filename, char **errmsg)
+{
+    /* Esta función sirve para cargar datos de prueba desde datos_prueba.sql */
+
+    if (!script_filename)
+        return false; // No se requiere script si la base ya existía
+
+    // Cargar el script
+
+    FILE *script_file = fopen(script_filename, "r");
+    if (!script_file)
+    {
+        if (errmsg)
+            *errmsg = sqlite3_mprintf("Error al abrir el archivo de script: %s", script_filename);
+        return false;
+    }
+
+    fseek(script_file, 0, SEEK_END);
+    int script_len = ftell(script_file);
+
+    char *script_str = malloc_cpy(script_len + 1, NULL);
+    if (!script_str)
+    {
+        if (errmsg)
+            *errmsg = sqlite3_mprintf("Error al cargar el script.");
+        fclose(script_file);
+        return false;
+    }
+
+    rewind(script_file);
+    fread(script_str, 1, script_len, script_file);
+    fclose(script_file);
+    script_str[script_len] = '\0';
+
+    // Ejecutar el script
+    int rc = sqlite3_exec(db, script_str, NULL, NULL, errmsg);
+    free(script_str);
+
+    printf("Script ejecutado: %s\n", script_filename);
+    printf("Resultado: %s\n", ((rc == SQLITE_OK) ? "Éxito" : "Fallo"));
+
+    return rc == SQLITE_OK;
+}
+
+/* ======== Funciones para interactuar con la base de datos ======== */
 
 static select_handler(getCount)
 {
