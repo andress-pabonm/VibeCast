@@ -1,5 +1,6 @@
 #include <ui/interfaces.h>
 #include <db/datos.h>
+#include <db/dbmgr.h>
 
 #define PCRE2_CODE_UNIT_WIDTH 8 // Para establecer que se manejan caracteres de 8 bits
 #include <pcre2.h>              // Para expresiones regulares
@@ -180,18 +181,62 @@ interfaz(CrearCuenta)
     const char *nickname = argv[4];
     const char *pais = argv[5];
 
-    Usuario tmpUsuario = {
-        .username = mprintf(username)
-        // Rellenar los otros campos
-    };
+    char *datos =
+        mprintf(
+            stringify("%s", "%s", "%s", "%s", "%s"),
+            username, email, password, nickname, pais);
 
-    // Insertar usuario en el árbol
-    if (insertarNodo(ABB, &usuarios, alloc(Usuario, &tmpUsuario), cmpUsuarios))
+    if (!nuevo_registro(
+            "Usuarios",
+            "username, email, password, nickname, pais",
+            datos, NULL))
     {
-        log("No se pudo insertar el usuario en el ABB.");
-        // Liberar memoria de los strings
+        log("Error al registrar datos en la base de datos.");
+        free(datos);
         return false;
     }
+
+    usuario =
+        alloc(
+            Usuario,
+            &cast(
+                Usuario,
+                .id = 0, // Hasta nuevo aviso
+
+                .username = mprintf(username),
+                .email = mprintf(email),
+                .password = mprintf(password),
+                .nickname = mprintf(nickname),
+                .pais = mprintf(pais),
+                .plan = PLAN_FREEMIUM,
+
+                .artista = NULL,
+
+                .amigos.head = NULL,
+                .playlists.head = NULL,
+
+                .historial.reproducciones.top = NULL,
+                .historial.tiempoEscuchado = 0,
+                .historial.cantidadAnuncios = 0));
+
+    // Insertar usuario en el árbol
+
+    if (insertarNodo(ABB, &usuarios, usuario, cmpUsuarios))
+    {
+        log("No se pudo insertar el usuario en el ABB. Reinicie la aplicación e intente iniciar sesión.");
+
+        free(usuario->username);
+        free(usuario->email);
+        free(usuario->password);
+        free(usuario->nickname);
+        free(usuario->pais);
+        usuario = NULL;
+
+        return false;
+    }
+
+    // Si se quiere que una vez registrado ya inicie sesión
+    usuario = NULL; // Comentar esta linea
 
     log("Cuenta creada correctamente.");
 

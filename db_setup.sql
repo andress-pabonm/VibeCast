@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS Canciones (
     FOREIGN KEY (id_album) REFERENCES Albumes(id)
 );
 
-CREATE TABLE IF NOT EXISTS Playlist (
+CREATE TABLE IF NOT EXISTS Playlists (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     id_usuario INTEGER NOT NULL,
     nombre TEXT NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS Playlist_Canciones (
     id_playlist INTEGER NOT NULL,
     id_cancion INTEGER NOT NULL,
     PRIMARY KEY (id_playlist, id_cancion),
-    FOREIGN KEY (id_playlist) REFERENCES Playlist(id),
+    FOREIGN KEY (id_playlist) REFERENCES Playlists(id),
     FOREIGN KEY (id_cancion) REFERENCES Canciones(id)
 );
 

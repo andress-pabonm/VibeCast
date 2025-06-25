@@ -24,7 +24,7 @@ INSERT INTO Canciones (id_album, nombre, genero, fecha_publicacion, duracion, ur
 (2, "Bit Urbano", "Electrónica", "2024-02-22", 180, "canciones/dave/bit.mp3", 85, 1500),
 (2, "Calle y Sonido", "Hip-hop", "2024-02-25", 200, "canciones/dave/calle.mp3", 90, 1800);
 
-INSERT INTO Playlist (id_usuario, nombre) VALUES
+INSERT INTO Playlists (id_usuario, nombre) VALUES
 (1, "Favoritas de Alice"),
 (2, "Lo que suena");
 
