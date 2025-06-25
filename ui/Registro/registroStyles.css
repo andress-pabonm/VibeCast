@@ -8,12 +8,12 @@
     --detalle: #a8dadc;
     --error: #ff0a54;
     
-    /* Transiciones */
     --transition-fast: 0.2s ease;
     --transition-normal: 0.3s ease;
     --transition-slow: 0.5s ease;
 }
 
+/* ========== RESET Y ESTILOS BASE ========== */
 * {
     margin: 0;
     padding: 0;
@@ -33,48 +33,27 @@ body {
     text-align: center;
 }
 
-/* Contenedor principal */
+/* ========== CONTENEDOR REGISTRO ========== */
 .register-container {
     background: rgba(26, 26, 26, 0.9);
     border-radius: 20px;
-    box-shadow: 0 10px 25px var(--morado), 0 5px 10px var(--negro);
     padding: 2.5rem;
     width: 100%;
     max-width: 500px;
+    min-width: 400px;
     backdrop-filter: blur(8px);
     border: 1px solid var(--morado);
-    /*animation: spiderPulse 4s infinite ease-in-out; discutir si hay q poner*/
-    min-width: 400px;
-    min-height: 550;
+    box-shadow: 0 10px 25px var(--morado), 0 5px 10px var(--negro);
+    text-align: center;
     position: relative;
     overflow: auto;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
-/*@keyframes spiderPulse {
-    0%, 100% { box-shadow: 0 0 25px rgba(142, 45, 226, 0.3); }
-    50% { box-shadow: 0 0 40px rgba(76, 201, 240, 0.3); }
-} animaciones que cambian de color en el borde del registro */
-
-/* Encabezado */
+/* ========== LOGO Y TÍTULO ========== */
 .logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     margin-bottom: 1rem;
-    /*filter: drop-shadow(0 0 5px var(--azul));*/
 }
-
-/*.logo-icon {
-    font-size: 2.5rem;
-    color: var(--azul);
-    margin-right: 10px;
-    animation: swing 3s infinite alternate;
-}
-
-@keyframes swing {
-    0% { transform: rotate(-10deg); }
-    100% { transform: rotate(10deg); }
-}*/
 
 .logo-title {
     font-size: 3rem;
@@ -83,7 +62,6 @@ body {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    text-shadow: none;
 }
 
 .slogan {
@@ -93,7 +71,6 @@ body {
     opacity: 0.9;
     text-transform: uppercase;
     letter-spacing: 1px;
-    text-align: center;
 }
 
 /* ========== FORMULARIO ========== */
@@ -106,24 +83,33 @@ body {
     gap: 15px;
 }
 
-/*.form-row .input-group {
-    flex: 1;
-    min-width: 0;
-}*/
-
 .input-group {
     position: relative;
     margin-bottom: 1.5rem;
+    flex: 1;
 }
 
-.input-icon {
+.input-icon, .toggle-password {
     position: absolute;
-    left: 1rem;
     top: 50%;
     transform: translateY(-50%);
     color: var(--morado);
-    font-size: 1rem;
+    transition: color var(--transition-fast);
     z-index: 2;
+}
+
+.input-icon {
+    left: 1rem;
+    font-size: 1rem;
+}
+
+.toggle-password {
+    right: 1rem;
+    cursor: pointer;
+}
+
+.toggle-password:hover {
+    color: var(--azul);
 }
 
 .form-input {
@@ -133,39 +119,17 @@ body {
     border: 2px solid var(--morado);
     border-radius: 10px;
     font-size: 0.95rem;
-    transition: var(--transition-normal);
+    transition: all var(--transition-normal);
     color: var(--blanco);
-    position: relative;
 }
-
-/*.form-input::placeholder {
-    color: var(--detalle);
-    opacity: 0.6;
-}*/
 
 .form-input:focus {
     outline: none;
-    border-color: var(--azul);
-    /*box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.3);*/
     background: rgba(30, 30, 30, 0.9);
+    border-color: var(--azul);
 }
 
-.toggle-password {
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: var(--morado);
-    transition: color var(--transition-fast);
-    z-index: 2;
-}
-
-.toggle-password:hover {
-    color: var(--azul);
-}
-
-/* Botón de registro */
+/* ========== BOTÓN ========== */
 .register-btn {
     width: 100%;
     padding: 0.875rem;
@@ -180,19 +144,23 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.0625rem;
+    gap: 0.625rem;
     position: relative;
     overflow: hidden;
     text-transform: uppercase;
     letter-spacing: 1px;
-    /*background: var(--morado);
-    background: var(--azul-oscuro); escoger bien los colores de fondo*/
     box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
 }
 
+.register-btn:hover {
+    background: linear-gradient(45deg, var(--azul-oscuro), var(--morado));
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px var(--azul);
+}
+
 .register-btn:active {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 2px 10px rgba(67, 97, 238, 0.4) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(67, 97, 238, 0.4);
     transition: transform 0.1s, box-shadow 0.1s;
 }
 
@@ -204,15 +172,7 @@ body {
     width: 100%;
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(76, 201, 240, 0.3), transparent);
-    transition: var(--transition-slow); /* ver si se pone esta transicion */
-}
-
-.register-btn:hover {
-    /* background: var(--morado);
-    background: var(--azul-oscuro); escoger bien los colores de fondo */
-    background: linear-gradient(45deg, var(--azul-oscuro), var(--morado));
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px var(--azul);
+    transition: var(--transition-slow);
 }
 
 .register-btn:hover::before {
@@ -220,7 +180,6 @@ body {
 }
 
 .btn-icon {
-    margin-left: 1rem;
     margin-bottom: 0.1rem;
     transition: var(--transition-normal);
     color: var(--azul);
@@ -230,7 +189,7 @@ body {
     transform: translateX(5px) scale(1.1);
 }
 
-/* Enlace de login */
+/* ========== ENLACES ========== */
 .login-link {
     margin-top: 1.5rem;
     font-size: 0.85rem;
@@ -238,17 +197,17 @@ body {
 }
 
 .link {
-  color: var(--morado);
-  font-weight: 600;
-  text-decoration: none;
-  transition: color var(--transition-fast);
+    color: var(--morado);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color var(--transition-fast);
 }
 
 .link:hover {
-  color: var(--azul);
+    color: var(--azul);
 }
 
-/* Validación */
+/* ========== VALIDACIÓN ========== */
 .input-group.error .form-input {
     border-color: var(--error);
     background: rgba(255, 10, 84, 0.1);
@@ -260,10 +219,6 @@ body {
 
 /* ========== ANIMACIONES ========== */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
-
-.fade-in {
-  animation: fadeIn 0.5s ease-in-out;
-} 

@@ -236,3 +236,47 @@ body {
 .content-table i:hover {
     color: var(--azul);
 }
+
+/* Estilos para el botón de cerrar sesión */
+/* .logout-btn {
+    background: linear-gradient(45deg, var(--morado), #e63946);
+    color: var(--blanco);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition-normal);
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.logout-btn:hover {
+    background: linear-gradient(45deg, #e63946, var(--morado));
+    transform: translateY(-2px);
+}
+
+.logout-btn:active {
+    transform: translateY(0);
+}
+
+.logout-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(230, 57, 70, 0.4), transparent);
+    transition: var(--transition-slow);
+}
+
+.logout-btn:hover::before {
+    left: 100%;
+} */
+
+/* Content Grid */

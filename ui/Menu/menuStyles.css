@@ -10,12 +10,12 @@
     --gris-medio: #3a3a3a;
     --gris-claro: #4a4a4a;
 
-    /* Transiciones */
     --transition-fast: 0.2s ease;
     --transition-normal: 0.3s ease;
     --transition-slow: 0.5s ease;
 }
 
+/* ========== RESET Y ESTILOS BASE ========== */
 * {
     margin: 0;
     padding: 0;
@@ -29,12 +29,14 @@ body {
     line-height: 1.6;
 }
 
+/* ========== CONTENEDOR PRINCIPAL ========== */
 .menu-container {
     display: flex;
     min-height: 100vh;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Sidebar */
+/* ========== SIDEBAR ========== */
 .sidebar {
     width: 250px;
     background-color: var(--gris-oscuro);
@@ -79,7 +81,7 @@ body {
     align-items: center;
     padding: 0.5rem;
     border-radius: 5px;
-    transition: all 0.3s ease;
+    transition: var(--transition-normal);
 }
 
 .main-menu a i {
@@ -88,20 +90,13 @@ body {
     text-align: center;
 }
 
-.main-menu a:hover, .menu-item.active a {
+.main-menu a:hover,
+.menu-item.active a {
     background-color: var(--morado-oscuro);
     color: var(--blanco);
 }
 
-/* Estilo para el elemento activo del menú */
-.main-menu .menu-item.active a {
-    background-color: var(--morado-oscuro);
-    color: var(--blanco);
-    position: relative;
-}
-
-
-/* Main Content */
+/* ========== CONTENIDO PRINCIPAL ========== */
 .main-content {
     margin-left: 250px;
     width: calc(100% - 250px);
@@ -143,52 +138,9 @@ body {
 .search-input:focus {
     outline: none;
     border-color: var(--azul);
-    /*box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.3);*/
 }
 
-/* Estilos para el botón de cerrar sesión */
-/* .logout-btn {
-    background: linear-gradient(45deg, var(--morado), #e63946);
-    color: var(--blanco);
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 20px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: var(--transition-normal);
-    font-size: 1rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.logout-btn:hover {
-    background: linear-gradient(45deg, #e63946, var(--morado));
-    transform: translateY(-2px);
-}
-
-.logout-btn:active {
-    transform: translateY(0);
-}
-
-.logout-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(230, 57, 70, 0.4), transparent);
-    transition: var(--transition-slow);
-}
-
-.logout-btn:hover::before {
-    left: 100%;
-} */
-
-/* Content Grid */
+/* ========== GRID DE CONTENIDO ========== */
 .content-grid { 
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -203,12 +155,7 @@ body {
     padding: 1.5rem;
     max-height: 100%;
     overflow-y: auto;
-    /* transition: transform 0.3s ease; */
 }
-
-/* .card-section:hover {
-    transform: translateY(-5px); ver si se pone esto xd
-} */
 
 .section-title {
     font-size: 1.25rem;
@@ -219,8 +166,7 @@ body {
     gap: 0.5rem;
 }
 
-/* Song List */
-
+/* ========== LISTA DE CANCIONES ========== */
 .database-songs {
     grid-row: span 2;
     scrollbar-width: thin;
@@ -240,7 +186,7 @@ body {
     padding: 0.75rem;
     background-color: var(--gris-medio);
     border-radius: 8px;
-    transition: all 0.3s ease;
+    transition: var(--transition-normal);
 }
 
 .song-item:hover {
@@ -265,9 +211,8 @@ body {
     color: var(--azul);
 }
 
-/* Friends List */
-
-.friends{
+/* ========== LISTA DE AMIGOS ========== */
+.friends {
     scrollbar-width: thin;
     scrollbar-color: var(--morado) var(--gris-oscuro);
 }
@@ -285,7 +230,7 @@ body {
     padding: 0.75rem;
     background-color: var(--gris-medio);
     border-radius: 8px;
-    transition: all 0.3s ease;
+    transition: var(--transition-normal);
 }
 
 .friend-item:hover {
@@ -312,46 +257,13 @@ body {
     flex: 1;
 }
 
-.friend-recommendations{
+.friend-recommendations {
     scrollbar-width: thin;
     scrollbar-color: var(--morado) var(--gris-oscuro);
 }
-
-/* Efectos scrollbar */
-
-/* .database-songs::-webkit-scrollbar,
-.friends::-webkit-scrollbar,
-.friend-recommendations::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-.database-songs::-webkit-scrollbar-track,
-.friends::-webkit-scrollbar-track,
-.friend-recommendations::-webkit-scrollbar-track {
-    background: var(--gris-oscuro);
-    border-radius: 10px;
-}
-
-.database-songs::-webkit-scrollbar-thumb,
-.friends::-webkit-scrollbar-thumb,
-.friend-recommendations::-webkit-scrollbar-thumb {
-    background: var(--morado);
-    border-radius: 10px;
-}
-
-.database-songs::-webkit-scrollbar-thumb:hover,
-.friends::-webkit-scrollbar-thumb:hover,
-.friend-recommendations::-webkit-scrollbar-thumb:hover {
-    background: var(--morado-oscuro);
-} */
 
 /* ========== ANIMACIONES ========== */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in {
-  animation: fadeIn 0.5s ease-in-out;
 }
