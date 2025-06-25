@@ -5,7 +5,7 @@
 #include <core/main.h>
 
 // Incluir las funciones necesarias para inicializar la app
-#include <ui/interfaces.h> // Para las funciones tipo message_handler_t y el webview.h
+#include <ui/conexiones.h> // Para las funciones tipo message_handler_t y el webview.h
 #include <db/dbmgr.h>      // Para InitDB y CloseDB
 #include <utils/utils.h>   // Para malloc_cpy()
 
@@ -13,8 +13,8 @@
 
 /* ==== Constantes para las dimensiones de la ventana ==== */
 
-// #define MIN_WIDTH 320
-// #define MIN_HEIGHT 480
+#define MIN_WIDTH 320
+#define MIN_HEIGHT 480
 // Anchura inicial de la ventana
 #define INIT_WIDTH 640
 // Altura inicial de la ventana
@@ -24,6 +24,29 @@
 
 // Para centrar la ventana en la pantalla
 void centrar_ventana(HWND hwnd);
+
+// Guardar el procedimiento de ventana original
+static WNDPROC original_wndproc = NULL;
+
+// Nuevo WndProc que fuerza un tamaño mínimo
+LRESULT CALLBACK MinSizeWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    if (msg == WM_GETMINMAXINFO)
+    {
+        MINMAXINFO *minmax = (MINMAXINFO *)lParam;
+
+        // minmax->ptMinTrackSize.x = 480; // Ancho mínimo
+        // minmax->ptMinTrackSize.y = 360; // Alto mínimo
+
+        minmax->ptMinTrackSize.x = MIN_WIDTH;
+        minmax->ptMinTrackSize.y = MIN_HEIGHT;
+
+        return 0;
+    }
+
+    // Llamar al WndProc original para otros mensajes
+    return CallWindowProc(original_wndproc, hwnd, msg, wParam, lParam);
+}
 
 /* ======== Funciones principales de la aplicación ======== */
 
@@ -55,6 +78,10 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
     SetWindowPos(hwnd, NULL, 0, 0, INIT_WIDTH, INIT_HEIGHT, SWP_NOZORDER | SWP_SHOWWINDOW);
     centrar_ventana(hwnd);
 
+    // Reemplazar el WndProc por uno personalizado
+    original_wndproc = (WNDPROC)GetWindowLongPtr(hwnd, GWLP_WNDPROC);
+    SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)MinSizeWndProc);
+
     // Maximizar la ventana
     ShowWindow(hwnd, SW_SHOWMAXIMIZED);
 
@@ -77,13 +104,12 @@ AppResult AppInit(void **appstate, int argc, char *argv[])
     webview_navigate(w, INTERFAZ("Login/index.html"));
 
     puts("Interfaz gráfica inicializada");
-    
+
     /* ======== Inicializar la base de datos ======== */
 
     char *errmsg = NULL;
 
-    // if (!func(InitDB, ":memory:", "db_script.txt", NULL)) // Para hacer pruebas
-    if (!func(InitDB, "data.db", "db_script.txt", &errmsg))
+    if (!func(InitDB, "data.db", "db_setup.sql", &errmsg))
     {
         puts("Error al inicializar la base de datos.");
         puts(errmsg);
@@ -126,7 +152,7 @@ void AppQuit(void *appstate, AppResult appresult)
 
     // TODO: Implementar la liberación de memoria de las estructuras
     // func(FreeData);                                 // Para liberar la memoria de las estructuras de datos
-    
+
     func(CloseDB); // Cerrar la base de datos
 
     free(appstate);
