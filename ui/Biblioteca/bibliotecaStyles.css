@@ -222,7 +222,7 @@ body {
 }
 
 .playlists-section, .songs-section {
-    background-color: var(--gris-oscuro);
+    background-color: var(--gris-oscuro);;
     border-radius: 10px;
     padding: 1.5rem;
     max-height: 100%;
@@ -243,7 +243,7 @@ body {
     transition: var(--transition-normal);
     cursor: pointer;
     position: relative;
-    aspect-ratio: 1/1;
+    aspect-ratio: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -251,7 +251,6 @@ body {
 }
 
 .playlist-card:hover {
-    background-color: var(--morado-oscuro);
     transform: translateY(-5px);
 }
 
@@ -264,7 +263,7 @@ body {
     align-items: center;
     justify-content: center;
     margin-bottom: 0.5rem;
-}
+} /* imagenes hay q hablarlo */
 
 .playlist-image i {
     font-size: 2.5rem;
@@ -299,19 +298,41 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    transition: var(--transition-normal);
+    transition: var(--transition-normal); 
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden;
 }
 
 .new-playlist-btn:hover {
     background: linear-gradient(45deg, var(--azul), var(--azul-oscuro));
     transform: translateY(-2px);
 }
+ 
+.new-playlist-btn:active {
+    transform: translateY(0);
+}
+
+.new-playlist-btn::before {
+    content: '';
+    position: absolute; 
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(76, 201, 240, 0.4), transparent);
+    transition: var(--transition-slow);
+}
+
+.new-playlist-btn:hover::before {
+    left: 100%;
+} 
 
 .songs-header {
     display: flex;
-    align-items: center;
-    gap: 1rem;
     margin-bottom: 1.5rem;
+    padding: 0.5rem 0;
+    /* border-bottom: 1px solid var(--gris-claro); */
 }
 
 .back-btn {
@@ -321,8 +342,86 @@ body {
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
     font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    transition: var(--transition-normal);
+}
+
+.back-btn:hover {
+    background-color: var(--gris-medio);
+}
+
+#currentPlaylistTitle {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 1.25rem;
+    color: var(--azul);
+}
+
+/* Mejora el diseño de las canciones */
+.song-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.song-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--gris-medio);
+    border-radius: 8px;
+    border: 1px solid var(--gris-claro);
+    transition: var(--transition-normal);
+}
+
+.song-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.song-info strong {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.song-info p {
+    color: var(--detalle);
+    font-size: 0.9rem;
+}
+
+.song-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-left: 1rem;
+}
+
+.song-actions span {
+    color: var(--detalle);
+    font-size: 0.9rem;
+}
+
+.song-actions i {
+    color: var(--detalle);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    font-size: 1.1rem;
+}
+
+.play-btn {
+    color: var(--azul) !important;
+}
+
+.remove-song {
+    color: #e63946 !important;
 }
 
 /* Modal */

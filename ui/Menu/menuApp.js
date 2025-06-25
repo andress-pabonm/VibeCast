@@ -65,13 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
         artist: "Guns N' Roses",
         duration: "5:56",
       },
-      {
-        id: 5,
-        title: "Sweet Child O'Mine",
-        artist: "Guns N' Roses",
-        duration: "5:56",
-      },
-      { id: 5, title: "AYAYAYA", artist: "SI", duration: "2:00" },
+      { id: 5, title: "AYAYA", artist: "SI", duration: "2:00" },
     ],
     recommendations: [
       {
@@ -137,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
       window.cerrar_sesion().then((res) => {
         if (res.message === "1") {
           setTimeout(() => {
-            location.reload();
+            window.location.reload();
           }, 500);
         }
       });

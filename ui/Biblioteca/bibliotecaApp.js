@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Datos de ejemplo
     const mockData = {
         playlists: [
-            { id: 1, name: "Favoritas", songCount: 24 },
+            { id: 1, name: "Favoritas", songCount: 24 }, 
             { id: 2, name: "Rock Clásico", songCount: 15 },
             { id: 3, name: "Para estudiar", songCount: 8 },
             { id: 4, name: "Éxitos 2023", songCount: 32 },
@@ -73,8 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="song-actions">
                     <span>${song.duration}</span>
-                    <i class="fas fa-play"></i>
-                    <i class="fas fa-trash-alt remove-song"></i>
+                    <i class="fas fa-play play-btn" title="Reproducir"></i>
+                    <i class="fas fa-trash-alt remove-song" title="Eliminar"></i>
                 </div>
             `;
             playlistSongsContainer.appendChild(songElement);
