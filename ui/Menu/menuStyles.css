@@ -106,7 +106,7 @@ body {
     margin-left: 250px;
     width: calc(100% - 250px);
     padding: 2rem;
-    min-width: 400px;
+    min-width: 800px;
 }
 
 .main-header {
@@ -147,7 +147,7 @@ body {
 }
 
 /* Estilos para el botón de cerrar sesión */
-.logout-btn {
+/* .logout-btn {
     background: linear-gradient(45deg, var(--morado), #e63946);
     color: var(--blanco);
     border: none;
@@ -186,14 +186,15 @@ body {
 
 .logout-btn:hover::before {
     left: 100%;
-}
+} */
 
 /* Content Grid */
-.content-grid {
+.content-grid { 
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 1.5rem;
     height: calc(100vh - 150px);
+    min-height: 400px;
 }
 
 .card-section {

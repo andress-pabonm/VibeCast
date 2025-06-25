@@ -65,13 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
         artist: "Guns N' Roses",
         duration: "5:56",
       },
-      {
-        id: 5,
-        title: "Sweet Child O'Mine",
-        artist: "Guns N' Roses",
-        duration: "5:56",
-      },
-      { id: 5, title: "AYAYAYA", artist: "SI", duration: "2:00" },
+      { id: 5, title: "AYAYA", artist: "SI", duration: "2:00" },
     ],
     recommendations: [
       {
@@ -131,18 +125,18 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Evento para el botón de cerrar sesión
-  const logoutBtn = document.querySelector(".logout-btn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      window.cerrar_sesion().then((res) => {
-        if (res.message === 1) {
-          setTimeout(() => {
-            location.reload();
-          }, 500);
-        }
-      });
-    });
-  }
+  // const logoutBtn = document.querySelector(".logout-btn");
+  // if (logoutBtn) {
+  //   logoutBtn.addEventListener("click", () => {
+  //     window.cerrar_sesion().then((res) => {
+  //       if (res.message === 1) {
+  //         setTimeout(() => {
+  //           location.reload();
+  //         }, 500);
+  //       }
+  //     });
+  //   });
+  // }
 
   // Eventos para las canciones
   document.querySelectorAll(".song-item").forEach((item) => {
