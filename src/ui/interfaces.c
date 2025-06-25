@@ -1,39 +1,10 @@
 #include <ui/interfaces.h>
-#include <stdio.h>
-#include <string.h>
+#include <db/datos.h>
 
-#include <json.h>               // Para manejar los mensajes enviados desde JS
 #define PCRE2_CODE_UNIT_WIDTH 8 // Para establecer que se manejan caracteres de 8 bits
 #include <pcre2.h>              // Para expresiones regulares
 
 /* ======== Utilidades ======== */
-
-// ========
-// JSON-C
-// ========
-
-// Para obtener el JSON dentro de un string
-#define get_json json_tokener_parse
-
-// Para obtener el JSON dentro de un array
-#define get_array_idx json_object_array_get_idx
-
-// Para obtener un campo de un JSON
-static inline struct json_object *get_field(struct json_object *src, const char *field)
-{
-    struct json_object *dest;
-    json_object_object_get_ex(src, field, &dest);
-    return dest;
-}
-
-// Para convertir un string a JSON
-#define init_json(dest, src) struct json_object *dest = src
-
-// Para inicializar (data) con el JSON obtenido de (req)
-#define init_data_json() init_json(data, get_json(req))
-
-// Para obtener el string de un JSON dado
-#define get_string(src) mprintf("%s", json_object_get_string(src))
 
 // ========
 // PCRE2
@@ -115,180 +86,114 @@ static bool validar_email(const char *email)
 // Puntero al usuario que ha iniciado sesión
 static Usuario *usuario = NULL;
 
-message_handler(test)
+// Cola de reproducción
+static Cola cola_repr = {NULL};
+
+/* Funciones principales */
+
+#define log(...) \
+    if (msg)     \
+    *msg = mprintf(__VA_ARGS__)
+
+interfaz(IsLoggedIn)
 {
-    puts(req);
-    send_message(0, "test done");
+    return usuario ? true : false;
 }
 
-message_handler(is_logged_in)
+interfaz(IniciarSesion)
 {
-    if (usuario)
-        send_message(0, TRUE);
-    else
-        send_message(0, FALSE);
-}
+    const char *username = argv[0];
+    const char *password = argv[1];
 
-message_handler(iniciar_sesion)
-{
-    if (usuario)
-    {
-        send_message(0, STATUS_SUCCESS);
-        return;
-    }
+    printf("Datos recibidos en IniciarSesion():\n\tusername: %s\n\tpassword: %s\n", username, password);
 
-    // Inicializa (data) con el JSON obtenido desde (req)
-    init_data_json();
-
-    // TODO 1: Obtener los datos de entrada
-    char *username = get_string(get_array_idx(data, 0));
-
-    // TODO 2: Buscar username en los datos
+    // TODO 1: Buscar el usuario en el árbol
     Nodo **ref = buscarNodo(ABB, &usuarios, username, cmpUsuarioConUsername);
     if (!ref)
     {
-        puts("No se encontro el username");
-        free(username);
-        send_message(0, STATUS_FAILURE);
-        return;
+        log("Usuario no registrado.");
+        return false;
     }
 
-    free(username);
-    char *password = get_string(get_array_idx(data, 1));
-
-    // TODO 3: Verificar que la contraseña sea correcta
     usuario = (*ref)->value_ptr;
     if (strcmp(usuario->password, password))
     {
-        printf("La password no coincide: %s != %s\n", usuario->password, password);
-        free(password);
-        usuario = NULL;
-        send_message(0, STATUS_FAILURE);
-        return;
+        log("Contraseña incorrecta.");
+        usuario = NULL; // Regresar el puntero a NULL
+        return false;
     }
 
-    free(password);
+    log("¡Inicio de sesión exitoso!");
 
-    send_message(0, STATUS_SUCCESS);
+    return true;
 }
 
-message_handler(cerrar_sesion)
+interfaz(CerrarSesion)
 {
-    if (usuario)
-        usuario = NULL;
-
-    send_message(0, STATUS_SUCCESS);
+    return !(usuario = NULL);
 }
 
-message_handler(crear_cuenta)
+interfaz(CrearCuenta)
 {
-    if (usuario)
+    if (argc != 6 || !argv)
     {
-        send_message(0, "Hay una sesión iniciada.");
-        return;
+        log("%s: Número de parámetros (argc) incorrecto. Se esperaba 6.", __func__);
+        return false;
     }
 
-    init_data_json();
-
-    // nickname, pais, username, email, password, passwordConfirmation
-
-    char *username = get_string(get_array_idx(data, 2));
-    if (buscarNodo(ABB, &usuarios, username, cmpUsuarioConUsername))
+    for (int i = 0; i < argc; i++)
     {
-        free(username);
-        send_message(0, "El nombre de usuario ya existe.");
-        return;
+        if (!argv[i])
+        {
+            log("Todos los campos son obligatorios.");
+            return false;
+        }
     }
 
-    char *email = get_string(get_array_idx(data, 3));
+    // email, username, password, confirmPassword, nickname, pais
+    const char *email = argv[0];
 
+    // Validar email
     if (!validar_email(email))
     {
-        free(username);
-        free(email);
-        send_message(0, "Correo electrónico no válido.");
-        return;
+        log("Dirección de correo no válida.");
+        return false;
     }
 
-    char *condition = mprintf(stringify(email = "%s"), email);
-    if (contar_registros("Usuarios", condition, NULL))
+    // Diseñar alguna forma de encontrar si el correo ya está registrado (sin depender de sqlite)
+
+    const char *username = argv[1];
+    if (buscarNodo(ABB, &usuarios, username, cmpUsuarioConUsername))
     {
-        free(username);
-        free(email);
-        free(condition);
-        send_message(0, "El correo ya está registrado.");
-        return;
+        log("Usuario ya existente.");
+        return false;
     }
 
-    free(condition);
-
-    char *password = get_string(get_array_idx(data, 4));
-    char *confirmPassword = get_string(get_array_idx(data, 5));
-
+    const char *password = argv[2];
+    const char *confirmPassword = argv[3];
     if (strcmp(password, confirmPassword))
     {
-        free(username);
-        free(email);
-        free(password);
-        free(confirmPassword);
-        send_message(0, "Las contraseñas no coinciden.");
-        return;
+        log("Las contraseñas no coinciden.");
+        return false;
     }
 
-    free(confirmPassword);
+    const char *nickname = argv[4];
+    const char *pais = argv[5];
 
-    char *nickname = get_string(get_array_idx(data, 0));
-    char *pais = get_string(get_array_idx(data, 1));
+    Usuario tmpUsuario = {
+        .username = mprintf(username)
+        // Rellenar los otros campos
+    };
 
-    // TODO: Verificar que nickname y pais no sean nulos o sean un texto vacio ("")
-
-    char *values = mprintf(stringify("%s", "%s", "%s", "%s", "%s"), email, password, username, nickname, pais);
-
-    if (!nuevo_registro("Usuarios", "email, password, username, nickname, pais", values, NULL))
+    // Insertar usuario en el árbol
+    if (insertarNodo(ABB, &usuarios, alloc(Usuario, &tmpUsuario), cmpUsuarios))
     {
-        free(email);
-        free(password);
-        free(username);
-        free(nickname);
-        free(pais);
-        free(values);
-        send_message(0, "Error al crear cuenta.");
-        return;
+        log("No se pudo insertar el usuario en el ABB.");
+        // Liberar memoria de los strings
+        return false;
     }
 
-    free(values);
+    log("Cuenta creada correctamente.");
 
-    Usuario user = {
-        .email = email,
-        .password = password,
-        .username = username,
-        .nickname = nickname,
-        .pais = pais,
-        .plan = PLAN_FREEMIUM,
-
-        .amigos.head = NULL,
-        .playlists.head = NULL,
-
-        .historial.reproducciones.top = NULL,
-        .historial.tiempoEscuchado = 0,
-        .historial.cantidadAnuncios = 0,
-
-        .artista = NULL};
-
-    Usuario *ptr_user = alloc(Usuario, &user);
-
-    if (!ptr_user || !insertarNodo(ABB, &usuarios, ptr_user, cmpUsuarios))
-    {
-        free(email);
-        free(password);
-        free(username);
-        free(nickname);
-        free(pais);
-        send_message(0, "Error inesperado.");
-        return;
-    }
-
-    printf("Se registro el username: %s\n", ptr_user->username);
-
-    send_message(0, STATUS_SUCCESS);
+    return true;
 }
