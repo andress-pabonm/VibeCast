@@ -498,3 +498,113 @@ body {
 .fade-in {
   animation: fadeIn 0.5s ease-in-out;
 }
+
+
+/* Estilos específicos para el historial */
+.history-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    height: calc(100vh - 150px);
+}
+
+.history-filters {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.filter-btn {
+    background-color: var(--gris-medio);
+    color: var(--detalle);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    font-size: 0.9rem;
+}
+
+.filter-btn.active {
+    background-color: var(--morado-oscuro);
+    color: var(--blanco);
+}
+
+.filter-btn:hover {
+    background-color: var(--gris-claro);
+}
+
+.history-list {
+    background-color: var(--gris-oscuro);
+    border-radius: 10px;
+    padding: 1.5rem;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--gris-medio);
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    transition: var(--transition-normal);
+}
+
+.history-item:hover {
+    background-color: var(--morado-oscuro);
+    transform: translateY(-2px);
+}
+
+.history-info {
+    flex: 1;
+}
+
+.history-info .song-title {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.history-info .play-date {
+    font-size: 0.8rem;
+    color: var(--detalle);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.history-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.history-actions i {
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.history-actions i:hover {
+    color: var(--azul);
+    transform: scale(1.1);
+}
+
+.clear-history-btn {
+    background: linear-gradient(45deg, #e63946, var(--morado));
+    color: var(--blanco);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition-normal);
+}
+
+.clear-history-btn:hover {
+    background: linear-gradient(45deg, var(--morado), #e63946);
+    transform: translateY(-2px);
+}

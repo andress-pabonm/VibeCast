@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial | VibeCast</title>
+    <link rel="stylesheet" href="../Menu/menuStyles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="historialStyles.css">
+</head>
+<body>
+    <div class="menu-container fade-in">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-music logo-icon"></i>
+                <h1 class="logo-title">VibeCast</h1>
+            </div>
+            
+            <nav class="main-menu">
+                <ul>
+                    <li><a href="../Menu/menu.html"><i class="fas fa-home"></i>Inicio</a></li>
+                    <li><a href="../Biblioteca/biblioteca.html"><i class="fas fa-music"></i>Biblioteca</a></li>
+                    <li class="historial-item active"><a href="#"><i class="fas fa-history"></i>Historial</a></li>
+                    <li><a href="../Amigos/amigos.html"><i class="fas fa-user-friends"></i>Amigos</a></li>
+                    <li><a href="../Perfil/perfil.html"><i class="fas fa-user"></i>Perfil</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Buscar en tu historial..." class="search-input">
+                </div>
+            </header>
+
+            <div class="history-container">
+                <!-- Lista de historial -->
+                <section class="history-list">
+                    <h2 class="section-title"><i class="fas fa-clock"></i> Recientemente escuchado</h2>
+                    <div class="song-list" id="historyItemsContainer">
+                        <!-- Historial se cargará dinámicamente -->
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="historialApp.js"></script>
+</body>
+</html>
