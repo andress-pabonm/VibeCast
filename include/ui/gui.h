@@ -1,0 +1,33 @@
+#ifndef GUI_H
+#define GUI_H
+
+#include <VibeCastConfig.h>
+#include <stdbool.h>
+
+/* ======== Comunicación con webview ======== */
+
+/**
+ * Tipo para funciones de comunicación con webview.
+ * @param id: Identificador de la solicitud.
+ * @param req: Petición enviada por la interfaz gráfica. Formato: "[contenido_de_la_solicitud]"
+ * @param arg: Argumento pasado al enlazar la función. (Será el estado de la aplicación)
+ */
+typedef void (*message_handler_t)(const char *id, const char *req, void *arg);
+
+/* Funciones principales */
+
+bool func(InitGUI, void *appstate);    // Inicializar la interfaz gráfica
+bool func(RunGUI, void *appstate);     // Para ejecutar la interfaz gráfica
+bool func(DestroyGUI, void *appstate); // Liberar la memoria de la interfaz gráfica
+
+// Para conectar una función con la interfaz gráfica
+bool func(BindFn, const char *name, message_handler_t msgh, void *arg);
+// Macro para facilitar usar BindFN
+#define bind_fn(fn, arg) func(BindFn, stringify(fn), fn, arg)
+
+// Para enviar un mensaje a la interfaz gráfica
+bool func(SendMsg, const char *id, int status, const char *msg);
+// Macro para facilitar el uso de sendMessage
+#define send_message(status, message) func(SendMsg, id, status, message)
+
+#endif // GUI_H
