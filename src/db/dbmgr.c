@@ -80,6 +80,8 @@ bool func(RunScript, const char *script_filename, char **errmsg)
     fclose(script_file);
     script_str[script_len] = '\0';
 
+    puts(script_str);
+
     // Ejecutar el script
     int rc = sqlite3_exec(db, script_str, NULL, NULL, errmsg);
     free(script_str);

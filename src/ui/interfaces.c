@@ -134,6 +134,14 @@ interfaz(CerrarSesion)
     return !(usuario = NULL);
 }
 
+// ======== Helper
+select_handler(obtener_id_usuario)
+{
+    sscanf(argv[0], "%d", cast(int *, arg));
+    return 0;
+}
+// ======== Helper
+
 interfaz(CrearCuenta)
 {
     if (argc != 6 || !argv)
@@ -221,7 +229,7 @@ interfaz(CrearCuenta)
 
     // Insertar usuario en el árbol
 
-    if (insertarNodo(ABB, &usuarios, usuario, cmpUsuarios))
+    if (!insertarNodo(ABB, &usuarios, usuario, cmpUsuarios))
     {
         log("No se pudo insertar el usuario en el ABB. Reinicie la aplicación e intente iniciar sesión.");
 
@@ -234,6 +242,19 @@ interfaz(CrearCuenta)
 
         return false;
     }
+
+    // Establecer el id del usuario
+    if (!obtener_registros(
+            "Usuarios ORDER BY id DESC LIMIT 1",
+            "id", NULL, obtener_id_usuario, &usuario->id, msg))
+    {
+        puts(*msg);
+        free_errmsg(*msg);
+        log("Error al obtener el identificador de usuario. Reinicia la aplicación e intenta iniciar sesión.");
+        return false;
+    }
+
+    printf("El nuevo usuario tiene id = %d\n", usuario->id);
 
     // Si se quiere que una vez registrado ya inicie sesión
     usuario = NULL; // Comentar esta linea

@@ -87,11 +87,11 @@ function simulateRegister(
     .then((res) => {
       registerBtn.innerHTML = originalText;
       registerBtn.disabled = false;
-      console.log(res);
-      if (res.message === 1) {
+      console.log("crear_cuenta(): ", res);
+      if (res.message === "1") {
         // showSuccess("¡Registro completo!");
         setTimeout(() => {
-          location.href = "../Login/index.html"
+          window.location.replace("../Login/index.html");
         }, 500);
       } else {
         console.log(res.message);

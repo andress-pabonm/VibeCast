@@ -391,13 +391,47 @@ static select_handler(cargarOtrosDatosPorUsuario)
 
 /* ======== Funciones visibles en otros archivos ======== */
 
-new_op(mostrarUsuario)
+static select_handler(checkData)
 {
-    Usuario *usuario = value_ptr;
+    puts("\t\tRegistro:");
+    for (int i = 0; i < argc; i++)
+        printf("\t\t\t[%s]: %s\n", fields[i], argv[i]);
+    return 0;
+}
 
-    printf("[%d]: %s\n", index, usuario->username);
+static void showData()
+{
+    puts("Datos cargaods:");
 
-    return true;
+    puts("\tU<suarios:");
+    obtener_registros("Usuarios", "*", NULL, checkData, NULL, NULL);
+
+    puts("\tAmigos:");
+    obtener_registros("Amigos", "*", NULL, checkData, NULL, NULL);
+
+    puts("\tArtistas:");
+    obtener_registros("Artistas", "*", NULL, checkData, NULL, NULL);
+
+    puts("\tAlbumes:");
+    obtener_registros("Albumes", "*", NULL, checkData, NULL, NULL);
+
+    puts("\tCanciones:");
+    obtener_registros("Canciones", "*", NULL, checkData, NULL, NULL);
+
+    puts("\tPlaylists:");
+    obtener_registros("Playlists", "*", NULL, checkData, NULL, NULL);
+
+    puts("\tPlaylist_Canciones:");
+    obtener_registros("Playlist_Canciones", "*", NULL, checkData, NULL, NULL);
+
+    puts("\tHistoriales:");
+    obtener_registros("Historiales", "*", NULL, checkData, NULL, NULL);
+
+    puts("\tReproducciones:");
+    obtener_registros("Reproducciones", "*", NULL, checkData, NULL, NULL);
+
+    puts("\tAnuncios:");
+    obtener_registros("Anuncios", "*", NULL, checkData, NULL, NULL);
 }
 
 bool func(LoadData)
@@ -411,6 +445,8 @@ bool func(LoadData)
         free_errmsg(errmsg);
         return false;
     }
+
+    // showData(); // Descomenta esta linea si quieres ver todos los datos guardados en la base de datos
 
     // Cargar usuarios, artistas, álbumes y canciones
     obtener_registros(
@@ -441,32 +477,32 @@ bool func(FreeData)
 
 new_cmp(cmpUsuarios)
 {
-    Usuario *usuario_1 = value_ptr_1;
-    Usuario *usuario_2 = value_ptr_2;
+    const Usuario *usuario_1 = value_ptr_1;
+    const Usuario *usuario_2 = value_ptr_2;
 
     return strcmp(usuario_1->username, usuario_2->username);
 }
 
 new_cmp(cmpUsuarioConUsername)
 {
-    Usuario *usuario = value_ptr_1;
-    char *username = value_ptr_2;
+    const Usuario *usuario = value_ptr_1;
+    const char *username = value_ptr_2;
 
     return strcmp(usuario->username, username);
 }
 
 new_cmp(cmpArtistas)
 {
-    Artista *artista_1 = value_ptr_1;
-    Artista *artista_2 = value_ptr_2;
+    const Artista *artista_1 = value_ptr_1;
+    const Artista *artista_2 = value_ptr_2;
 
     return strcmp(artista_1->nombre, artista_2->nombre);
 }
 
 new_cmp(cmpCancionConId)
 {
-    Cancion *cancion = value_ptr_1;
-    int *id = value_ptr_2;
+    const Cancion *cancion = value_ptr_1;
+    const int *id = value_ptr_2;
 
     return cancion->id - *id;
 }
