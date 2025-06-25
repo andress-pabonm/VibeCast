@@ -89,7 +89,7 @@ body {
 }
 
 /* Estilo para el elemento activo de la biblioteca*/
-.main-menu .historial-item.active a {
+.main-menu a:hover, .historial-item.active a {
     background-color: var(--morado-oscuro);
     color: var(--blanco);
     position: relative;

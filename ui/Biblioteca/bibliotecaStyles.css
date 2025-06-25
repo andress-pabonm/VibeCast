@@ -89,10 +89,9 @@ body {
 }
 
 /* Estilo para el elemento activo de la biblioteca*/
-.main-menu .biblioteca-item.active a {
+.main-menu a:hover, .biblioteca-item.active a {
     background-color: var(--morado-oscuro);
     color: var(--blanco);
-    position: relative;
 }
 
 /* Main Content */

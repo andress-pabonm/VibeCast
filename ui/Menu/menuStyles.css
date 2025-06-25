@@ -88,7 +88,7 @@ body {
     text-align: center;
 }
 
-.main-menu a:hover, .main-menu .active a {
+.main-menu a:hover, .menu-item.active a {
     background-color: var(--morado-oscuro);
     color: var(--blanco);
 }
