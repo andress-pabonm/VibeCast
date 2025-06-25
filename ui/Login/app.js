@@ -6,8 +6,8 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   window.is_logged_in().then((res) => {
-    console.log(res);
-    if (res.message === 1) {
+    console.log("islogged_in(): ", res);
+    if (res.message === "1") {
       window.location.replace("../Menu/menu.html");
     }
   });
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  //Validación del formulario
+  // Envio del formulario
   if (loginForm) {
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -73,8 +73,8 @@ function simulateLogin(username, password) {
   window.iniciar_sesion(username, password).then((res) => {
     loginBtn.innerHTML = originalText;
     loginBtn.disabled = false;
-    console.log(res);
-    if (res.message === 1) {
+    console.log("iniciar_sesion(): ", res);
+    if (res.message === "1") {
       showSuccess("¡Bienvenido de vuelta!");
       setTimeout(() => {
         window.location.reload(); // Refresca la página

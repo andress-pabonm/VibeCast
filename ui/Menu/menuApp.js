@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   window.is_logged_in().then((res) => {
-    if (res.message === 0) {
+    if (res.message === "0") {
       window.location.replace("../Login/index.html");
     }
   });
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
       window.cerrar_sesion().then((res) => {
-        if (res.message === 1) {
+        if (res.message === "1") {
           setTimeout(() => {
             location.reload();
           }, 500);
