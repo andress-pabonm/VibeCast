@@ -1,9 +1,6 @@
 #include <db/datos.h>
 #include <db/dbmgr.h>
 #include <utils/utils.h>
-#include <stdlib.h>
-// #include <string.h>
-#include <stdio.h>
 
 /* ==== Estructuras de datos ==== */
 
@@ -18,40 +15,6 @@ Lista canciones = {NULL};
 
 // Cola para los anuncios (ordenado por tiempo de creacion)
 Cola anuncios = {NULL, NULL};
-
-/* ==== Comparadores ==== */
-
-new_cmp(cmpUsuarios)
-{
-    Usuario *usuario_1 = value_ptr_1;
-    Usuario *usuario_2 = value_ptr_2;
-
-    return strcmp(usuario_1->username, usuario_2->username);
-}
-
-new_cmp(cmpUsuarioConUsername)
-{
-    Usuario *usuario = value_ptr_1;
-    char *username = value_ptr_2;
-
-    return strcmp(usuario->username, username);
-}
-
-new_cmp(cmpArtistas)
-{
-    Artista *artista_1 = value_ptr_1;
-    Artista *artista_2 = value_ptr_2;
-
-    return strcmp(artista_1->nombre, artista_2->nombre);
-}
-
-new_cmp(cmpCancionConId)
-{
-    Cancion *cancion = value_ptr_1;
-    int *id = value_ptr_2;
-
-    return cancion->id - *id;
-}
 
 /* ==== Funciones de ayuda para cargar los datos ==== */
 
@@ -439,6 +402,16 @@ new_op(mostrarUsuario)
 
 bool func(LoadData)
 {
+    char *errmsg = NULL;
+
+    // Iniciar la base de datos
+    if (!func(InitDB, "data.db", "db_setup.sql", &errmsg))
+    {
+        printf("Error al inicializar la base de datos: %s\n", errmsg);
+        free_errmsg(errmsg);
+        return false;
+    }
+
     // Cargar usuarios, artistas, álbumes y canciones
     obtener_registros(
         "Usuarios", "*", NULL,
@@ -455,4 +428,45 @@ bool func(LoadData)
         "Usuarios.username, Anuncios.url", NULL, cargarAnuncios, NULL, NULL);
 
     return true; // Datos cargados correctamente
+}
+
+bool func(FreeData)
+{
+    /* Aquí se libera la memoria de las estructuras de datos */
+
+    return true;
+}
+
+/* ======== Comparadores ======== */
+
+new_cmp(cmpUsuarios)
+{
+    Usuario *usuario_1 = value_ptr_1;
+    Usuario *usuario_2 = value_ptr_2;
+
+    return strcmp(usuario_1->username, usuario_2->username);
+}
+
+new_cmp(cmpUsuarioConUsername)
+{
+    Usuario *usuario = value_ptr_1;
+    char *username = value_ptr_2;
+
+    return strcmp(usuario->username, username);
+}
+
+new_cmp(cmpArtistas)
+{
+    Artista *artista_1 = value_ptr_1;
+    Artista *artista_2 = value_ptr_2;
+
+    return strcmp(artista_1->nombre, artista_2->nombre);
+}
+
+new_cmp(cmpCancionConId)
+{
+    Cancion *cancion = value_ptr_1;
+    int *id = value_ptr_2;
+
+    return cancion->id - *id;
 }

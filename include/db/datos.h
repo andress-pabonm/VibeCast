@@ -1,11 +1,7 @@
 #ifndef DATOS_H
 #define DATOS_H
 
-#include <VibeCastConfig.h>
-#include <db/dbmgr.h>
 #include <db/estructuras.h>
-
-#include <stdbool.h>
 
 extern ABB usuarios;
 extern ABB artistas;
@@ -17,9 +13,10 @@ extern Cola anuncios;
 // Función para cargar los datos en las estructuras
 bool func(LoadData);
 
-// ============
-// Utilidades
-// ============
+// Función para liberar la memoria
+bool func(FreeData);
+
+/* Comparadores */
 
 // Compara dos usuarios
 new_cmp(cmpUsuarios);
