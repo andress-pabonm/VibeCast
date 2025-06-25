@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historial | VibeCast</title>
-    <link rel="stylesheet" href="../Menu/menuStyles.css">
+    <link rel="stylesheet" href="historialStyles.css">
+    <link rel="stylesheet" href="../Reproductor/reproductorStyles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="historialStyles.css">
 </head>
 <body>
     <div class="menu-container fade-in">
@@ -29,7 +29,7 @@
             </nav>
         </aside>
 
-        <!-- Main Content -->
+        <!-- Main Content --> 
         <main class="main-content">
             <header class="main-header">
                 <div class="search-bar">
@@ -50,6 +50,45 @@
         </main>
     </div>
 
+    <!-- Reproductor de música global -->
+    <div class="music-player" id="musicPlayer">
+        <div class="song-info-player">
+            <div class="song-title" id="currentSongTitle">No hay canción seleccionada</div>
+            <div class="song-artist" id="currentSongArtist">VibeCast</div>
+        </div>
+        <div class="player-controls">
+            <div class="player-buttons">
+                <button id="prevBtn"><i class="fas fa-step-backward"></i></button>
+                <button id="playPauseBtn" class="play-pause-btn"><i class="fas fa-play"></i></button>
+                <button id="nextBtn"><i class="fas fa-step-forward"></i></button>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="time-info">
+                    <span id="currentTime">0:00</span>
+                    <span id="totalTime">0:00</span>
+                </div>
+            </div>
+        </div>
+        <div class="player-actions">
+            <div class="volume-control">
+                <i class="fas fa-volume-up"></i>
+                <div class="volume-slider" id="volumeSlider">
+                    <div class="volume-level" id="volumeLevel"></div>
+                </div>
+            </div>
+            <button class="queue-btn" id="showQueueBtn">
+                <i class="fas fa-list"></i>
+            </button>
+            <button id="closePlayerBtn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
     <script src="historialApp.js"></script>
+    <script src="../reproductorApp.js"></script>
 </body>
 </html>

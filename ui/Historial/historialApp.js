@@ -69,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadHistory(filter = 'all') {
         historyContainer.innerHTML = '';
         
-        const now = new Date();
         let filteredHistory = mockHistory;
         
         filteredHistory.sort((a, b) => b.playedAt - a.playedAt);
@@ -89,9 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="history-actions">
                     <span>${item.duration}</span>
                     <i class="fas fa-play play-btn" title="Reproducir"></i>
-                    <i class="fas fa-music add-to-playlist" title="Añadir a playlist"></i>
+                    <i class="fas fa-plus-circle add-to-playlist" title="Añadir a playlist"></i>
                 </div>
-            `;
+            `; //AHI HAY UN ICONO PARA AGREGAR A UNA PLAYLIST, XQ CLARO PUEDE ESCUCHAR UNA CANCION PERO NO GUARDARLA
+            //PERO QUE PASA SI YA ESAT GUARDADA EN UNA PLAYLIST??? COMO SE QUITARIA ESA OPCION, NO SE SI ME ENTIENDES
             historyContainer.appendChild(historyElement);
         });
     }

@@ -9,11 +9,12 @@
     --gris-oscuro: #2a2a2a;
     --gris-medio: #3a3a3a;
     --gris-claro: #4a4a4a;
+    --error: #ff0a54;
 
     /* Transiciones */
-    --transition-fast: 0.2s ease;
-    --transition-normal: 0.3s ease;
-    --transition-slow: 0.5s ease;
+    --transicion-rapida: 0.2s ease;
+    --transicion-normal: 0.3s ease;
+    --transicion-lenta: 0.5s ease;
 }
 
 * {
@@ -27,6 +28,7 @@ body {
     background-color: var(--negro);
     color: var(--blanco);
     line-height: 1.6;
+    /* padding-bottom: 80px; Espacio para el reproductor */
 }
 
 .menu-container {
@@ -88,7 +90,6 @@ body {
     text-align: center;
 }
 
-/* Estilo para el elemento activo de la biblioteca*/
 .main-menu a:hover, .biblioteca-item.active a {
     background-color: var(--morado-oscuro);
     color: var(--blanco);
@@ -130,18 +131,16 @@ body {
     border-radius: 30px;
     color: var(--blanco);
     font-size: 1rem;
-    transition: var(--transition-normal);
+    transition: var(--transicion-normal);
 }
 
 .search-input:focus {
     outline: none;
     border-color: var(--azul);
-    /*box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.3);*/
 }
 
-/* Estilos para el botón de cerrar sesión */
-/* .logout-btn {
-    background: linear-gradient(45deg, var(--morado), #e63946);
+.new-playlist-btn {
+    background: linear-gradient(45deg, var(--azul-oscuro), var(--azul));
     color: var(--blanco);
     border: none;
     padding: 0.75rem 1.5rem;
@@ -151,77 +150,47 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    transition: var(--transition-normal);
+    transition: var(--transicion-normal);
     font-size: 1rem;
     position: relative;
     overflow: hidden;
 }
 
-.logout-btn:hover {
-    background: linear-gradient(45deg, #e63946, var(--morado));
+.new-playlist-btn:hover {
+    background: linear-gradient(45deg, var(--azul), var(--azul-oscuro));
     transform: translateY(-2px);
 }
 
-.logout-btn:active {
+.new-playlist-btn:active {
     transform: translateY(0);
 }
 
-.logout-btn::before {
+.new-playlist-btn::before {
     content: '';
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(230, 57, 70, 0.4), transparent);
-    transition: var(--transition-slow);
+    background: linear-gradient(90deg, transparent, rgba(76, 201, 240, 0.4), transparent);
+    transition: var(--transicion-lenta);
 }
 
-.logout-btn:hover::before {
+.new-playlist-btn:hover::before {
     left: 100%;
-} */
-
-/* Efectos scrollbar */
-
-/* .database-songs::-webkit-scrollbar,
-.friends::-webkit-scrollbar,
-.friend-recommendations::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
 }
 
-.database-songs::-webkit-scrollbar-track,
-.friends::-webkit-scrollbar-track,
-.friend-recommendations::-webkit-scrollbar-track {
-    background: var(--gris-oscuro);
-    border-radius: 10px;
-}
-
-.database-songs::-webkit-scrollbar-thumb,
-.friends::-webkit-scrollbar-thumb,
-.friend-recommendations::-webkit-scrollbar-thumb {
-    background: var(--morado);
-    border-radius: 10px;
-}
-
-.database-songs::-webkit-scrollbar-thumb:hover,
-.friends::-webkit-scrollbar-thumb:hover,
-.friend-recommendations::-webkit-scrollbar-thumb:hover {
-    background: var(--morado-oscuro);
-} */
-
-/* Estilos específicos para la biblioteca */
 .library-container {
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    height: calc(100vh - 150px);
+    height: calc(100vh - 250px);
     scrollbar-width: thin;
     scrollbar-color: var(--morado) var(--gris-oscuro);
 }
 
 .playlists-section, .songs-section {
-    background-color: var(--gris-oscuro);;
+    background-color: var(--gris-oscuro);
     border-radius: 10px;
     padding: 1.5rem;
     max-height: 100%;
@@ -239,7 +208,7 @@ body {
     background-color: var(--gris-medio);
     border-radius: 8px;
     padding: 1rem;
-    transition: var(--transition-normal);
+    transition: var(--transicion-normal);
     cursor: pointer;
     position: relative;
     aspect-ratio: 1;
@@ -262,7 +231,26 @@ body {
     align-items: center;
     justify-content: center;
     margin-bottom: 0.5rem;
-} /* imagenes hay q hablarlo */
+    position: relative;
+}
+
+.playlist-options {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.playlist-options i {
+    color: var(--blanco);
+}
 
 .playlist-image i {
     font-size: 2.5rem;
@@ -286,53 +274,10 @@ body {
     color: var(--detalle);
 }
 
-.new-playlist-btn {
-    background: linear-gradient(45deg, var(--azul-oscuro), var(--azul));
-    color: var(--blanco);
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 20px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: var(--transition-normal); 
-    font-size: 1rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.new-playlist-btn:hover {
-    background: linear-gradient(45deg, var(--azul), var(--azul-oscuro));
-    transform: translateY(-2px);
-}
- 
-.new-playlist-btn:active {
-    transform: translateY(0);
-}
-
-.new-playlist-btn::before {
-    content: '';
-    position: absolute; 
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(76, 201, 240, 0.4), transparent);
-    transition: var(--transition-slow);
-}
-
-.new-playlist-btn:hover::before {
-    left: 100%;
-} 
-
 .songs-header {
     display: flex;
     margin-bottom: 1.5rem;
     padding: 0.5rem 0;
-    text-align: center;
-    /* border-bottom: 1px solid var(--gris-claro); */
 }
 
 .back-btn {
@@ -346,21 +291,43 @@ body {
     font-size: 1rem;
     padding: 0.5rem 1rem;
     border-radius: 10px;
-    transition: var(--transition-normal);
+    transition: var(--transicion-normal);
 }
 
 .back-btn:hover {
     background-color: var(--gris-medio);
 }
 
+.playlist-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.action-btn {
+    background: linear-gradient(45deg, var(--morado), var(--azul-oscuro));
+    color: var(--blanco);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transicion-normal);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+}
+
 #currentPlaylistTitle {
     flex-grow: 1;
     font-size: 1.25rem;
     color: var(--azul);
-    margin-right: 100px;
 }
 
-/* Mejora el diseño de las canciones */
 .song-list {
     display: flex;
     flex-direction: column;
@@ -375,7 +342,7 @@ body {
     background-color: var(--gris-medio);
     border-radius: 8px;
     border: 1px solid var(--gris-claro);
-    transition: var(--transition-normal);
+    transition: var(--transicion-normal);
 }
 
 .song-info {
@@ -412,7 +379,7 @@ body {
 .song-actions i {
     color: var(--detalle);
     cursor: pointer;
-    transition: var(--transition-fast);
+    transition: var(--transicion-rapida);
     font-size: 1.1rem;
 }
 
@@ -469,31 +436,43 @@ body {
     color: var(--blanco);
 }
 
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+}
+
 .modal button {
-    width: 100%;
+    flex: 1;
     padding: 0.75rem;
-    background: linear-gradient(45deg, var(--morado), var(--azul-oscuro));
     color: var(--blanco);
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: var(--transition-normal);
+    transition: var(--transicion-normal);
+}
+
+#savePlaylistBtn {
+    background: linear-gradient(45deg, var(--azul-oscuro), var(--azul));
+}
+
+#deletePlaylistBtn {
+    background: linear-gradient(45deg, var(--error), #e63946);
 }
 
 .modal button:hover {
-    background: linear-gradient(45deg, var(--azul-oscuro), var(--morado));
+    transform: translateY(-2px);
 }
 
 .hidden {
     display: none;
 }
 
-/* ========== ANIMACIONES ========== */
+/* Animaciones */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .fade-in {
-  animation: fadeIn 0.5s ease-in-out;
+    animation: fadeIn 0.5s ease-in-out;
 }
