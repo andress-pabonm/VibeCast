@@ -1,19 +1,14 @@
 #include <utils/nodos.h>
-#include <utils/utils.h>
-#include <stdlib.h>
 
 Nodo *nuevoNodo(void *value_ptr)
 {
-    Nodo *nodo = value_ptr ? malloc_cpy(sizeof(Nodo), NULL) : NULL;
-
-    if (nodo)
-    {
-        nodo->izq = NULL;
-        nodo->der = NULL;
-        nodo->value_ptr = value_ptr;
-    }
-
-    return nodo;
+    return value_ptr
+               ? alloc(Nodo,
+                       &cast(Nodo,
+                             .izq = NULL,
+                             .der = NULL,
+                             .value_ptr = value_ptr))
+               : NULL;
 }
 
 // =======================
@@ -61,7 +56,7 @@ bool insertarNodo(Lista, Lista *lista, void *value_ptr, cmpfn_t cmp)
     return true;
 }
 
-Nodo **buscarNodo(Lista, Lista *lista, void *value_ptr, cmpfn_t cmp)
+Nodo **buscarNodo(Lista, Lista *lista, const void *value_ptr, cmpfn_t cmp)
 {
     if (!lista || !value_ptr || !cmp)
         return NULL;
@@ -278,7 +273,7 @@ bool insertarNodo(ABB, ABB *abb, void *value_ptr, cmpfn_t cmp)
     return true;
 }
 
-Nodo **buscarNodo(ABB, ABB *abb, void *value_ptr, cmpfn_t cmp)
+Nodo **buscarNodo(ABB, ABB *abb, const void *value_ptr, cmpfn_t cmp)
 {
     if (!abb || !value_ptr || !cmp)
         return NULL;

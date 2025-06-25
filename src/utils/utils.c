@@ -1,8 +1,5 @@
 #include <utils/utils.h>
-#include <stdlib.h> // Para malloc
-#include <string.h> // Para memcpy
 #include <stdarg.h> // Para va_list
-#include <stdio.h>  // Para snprintf
 
 void *malloc_cpy(int size, const void *src)
 {

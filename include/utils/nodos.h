@@ -1,7 +1,7 @@
 #ifndef NODOS_H
 #define NODOS_H 1
 
-#include <stdbool.h>
+#include <utils/utils.h>
 
 // Representación de un nodo genérico.
 typedef struct Nodo
@@ -46,55 +46,6 @@ typedef struct
     // Puntero a la raiz del árbol.
     Nodo *root;
 } ABB;
-
-/* ================ Tipos de funciones ================ */
-
-/**
- * Tipo para funciones de comparación.
- *
- * @param value_1_ptr: Puntero al primer valor.
- * @param value_2_ptr: Puntero al segundo valor.
- *
- * @return
- *
- * 0 si son iguales.
- *
- * Para orden ascendente:
- * - <0 si value_1 < value_2
- * - >0 si value_1 > value_2
- *
- * Para orden descendente:
- * - <0 si value_2 < value_1
- * - >0 si value_2 > value_1
- */
-typedef int (*cmpfn_t)(void *value_1_ptr, void *value_2_ptr);
-
-// Macro para facilitar declarar y definir funciones tipo (cmpfn_t)
-#define new_cmp(name) int name(void *value_ptr_1, void *value_ptr_2)
-
-/**
- * Tipo para funciones para operar sobre los valores en una lista, pila, cola o árbol.
- *
- * @param index: Índice del nodo en la lista. (Profundidad en caso de árboles).
- * @param value_ptr: Puntero al valor que contiene el nodo.
- *
- * @return true si debe continuar con el recorrido, caso contrario retorna false para detenerse.
- */
-typedef bool (*opfn_t)(int index, void *value_ptr);
-
-// Macro para facilitar declarar y definir funciones tipo (opfn_t)
-#define new_op(name) bool name(int index, void *value_ptr)
-
-/**
- * Tipo para funciones para liberar memoria.
- *
- * @param value_ptr: Puntero al valor del cual se liberará la memoria.
- * @return true si se ha podido liberar la memoria, caso contrario retorna false.
- */
-typedef bool (*freefn_t)(void *value_ptr);
-
-// Macro para facilitar declarar y definir funciones tipo (freefn_t)
-#define new_free(name) bool name(void *value_ptr)
 
 /* ================ Declaración de funciones ================ */
 
@@ -143,7 +94,7 @@ Nodo *nuevoNodo(void *value_ptr);
 // Para insertar un valor en una lista.
 bool insertarNodo(Lista, Lista *lista, void *value_ptr, cmpfn_t cmp);
 // Para buscar un valor en una lista.
-Nodo **buscarNodo(Lista, Lista *lista, void *value_ptr, cmpfn_t cmp);
+Nodo **buscarNodo(Lista, Lista *lista, const void *value_ptr, cmpfn_t cmp);
 // Para eliminar un valor en una lista.
 bool eliminarNodo(Lista, Lista *lista, void *value_ptr, cmpfn_t cmp);
 // Para liberar la memoria de una lista.
@@ -184,7 +135,7 @@ bool liberar(Cola, Cola *cola, freefn_t free_value);
 // Para insertar un valor en un árbol.
 bool insertarNodo(ABB, ABB *abb, void *value_ptr, cmpfn_t cmp);
 // Para buscar un valor en un árbol.
-Nodo **buscarNodo(ABB, ABB *abb, void *value_ptr, cmpfn_t cmp);
+Nodo **buscarNodo(ABB, ABB *abb, const void *value_ptr, cmpfn_t cmp);
 // Para eliminar un valor en un árbol.
 bool eliminarNodo(ABB, ABB *abb, void *value_ptr, cmpfn_t cmp);
 // Para liberar la memoria de un árbol.

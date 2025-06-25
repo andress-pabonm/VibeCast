@@ -1,7 +1,63 @@
 #ifndef UTILS_H
 #define UTILS_H 1
 
+#include <VibeCastConfig.h>
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
 #include <sal.h>
+
+/* ================ Tipos de funciones ================ */
+
+/**
+ * Tipo para funciones de comparación.
+ *
+ * @param value_1_ptr: Puntero al primer valor.
+ * @param value_2_ptr: Puntero al segundo valor.
+ *
+ * @return
+ *
+ * 0 si son iguales.
+ *
+ * Para orden ascendente:
+ * - <0 si value_1 < value_2
+ * - >0 si value_1 > value_2
+ *
+ * Para orden descendente:
+ * - <0 si value_2 < value_1
+ * - >0 si value_2 > value_1
+ */
+typedef int (*cmpfn_t)(const void *value_1_ptr, const void *value_2_ptr);
+
+// Macro para facilitar declarar y definir funciones tipo (cmpfn_t)
+#define new_cmp(name) int name(const void *value_ptr_1, const void *value_ptr_2)
+
+/**
+ * Tipo para funciones para operar sobre los valores en una lista, pila, cola o árbol.
+ *
+ * @param index: Índice del nodo en la lista. (Profundidad en caso de árboles).
+ * @param value_ptr: Puntero al valor que contiene el nodo.
+ *
+ * @return true si debe continuar con el recorrido, caso contrario retorna false para detenerse.
+ */
+typedef bool (*opfn_t)(int index, void *value_ptr);
+
+// Macro para facilitar declarar y definir funciones tipo (opfn_t)
+#define new_op(name) bool name(int index, void *value_ptr)
+
+/**
+ * Tipo para funciones para liberar memoria.
+ *
+ * @param value_ptr: Puntero al valor del cual se liberará la memoria.
+ * @return true si se ha podido liberar la memoria, caso contrario retorna false.
+ */
+typedef bool (*freefn_t)(void *value_ptr);
+
+// Macro para facilitar declarar y definir funciones tipo (freefn_t)
+#define new_free(name) bool name(void *value_ptr)
 
 /**
  * Para asignar memoria en HEAP y copiar un valor en ella.
