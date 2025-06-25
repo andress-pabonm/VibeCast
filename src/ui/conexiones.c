@@ -112,8 +112,8 @@ static message_handler(crear_cuenta)
     // Enviado: email, username, password, confirmPassword, nickname, pais
 
     const char *datos[] = {
-        username,
         email,
+        username,
         password,
         confirmPassword,
         nickname,
