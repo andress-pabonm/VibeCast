@@ -161,20 +161,19 @@ body {
     transform: translateY(-2px);
 }
 
-/* ========== CONTENEDOR DE AMIGOS ========== */
+/* ========== LISTA DE AMIGOS ========== */
 .friends-container {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 1.5rem;
     height: calc(100vh - 150px);
 }
 
-.friends-section,
-.requests-section {
+.friends-section {
     background-color: var(--gris-oscuro);
     border-radius: 10px;
     padding: 1.5rem;
+    height: 100%;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--morado) var(--gris-oscuro);
 }
 
 .section-title {
@@ -186,29 +185,13 @@ body {
     gap: 0.5rem;
 }
 
-.badge {
-    background-color: var(--morado);
-    color: var(--blanco);
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    margin-left: 0.5rem;
-}
-
-/* ========== LISTA DE AMIGOS ========== */
-.friends-list,
-.requests-list {
+.friends-list {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
 }
 
-.friend-card,
-.request-card {
+.friend-card {
     display: flex;
     align-items: center;
     padding: 1rem;
@@ -217,8 +200,7 @@ body {
     transition: var(--transition-normal);
 }
 
-.friend-avatar,
-.request-avatar {
+.friend-avatar {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -230,34 +212,17 @@ body {
     overflow: hidden;
 }
 
-.friend-avatar i,
-.request-avatar i {
+.friend-avatar i {
     font-size: 1.5rem;
     color: var(--blanco);
 }
 
-.friend-info,
-.request-info {
+.friend-name {
+    font-weight: 500;
     flex: 1;
 }
 
-.friend-name,
-.request-name {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-}
-
-.friend-status,
-.request-message {
-    font-size: 0.8rem;
-    color: var(--detalle);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.friend-actions,
-.request-actions {
+.friend-actions {
     display: flex;
     gap: 0.75rem;
 }
@@ -269,31 +234,16 @@ body {
     cursor: pointer;
     font-size: 1rem;
     transition: var(--transition-fast);
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.action-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.action-btn.accept {
-    color: var(--success);
-}
-
-.action-btn.reject {
+.action-btn.remove:hover {
     color: var(--error);
 }
 
-.action-btn.message {
-    color: var(--azul);
-}
-
-/* ========== MODALES ========== */
+/* ========== MODAL ========== */
 .modal {
     position: fixed;
     top: 0;
@@ -305,6 +255,10 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
 }
 
 .modal-content {
@@ -361,8 +315,4 @@ body {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-.hidden {
-    display: none;
 }
