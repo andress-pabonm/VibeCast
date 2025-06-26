@@ -124,20 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
     recommendationsContainer.appendChild(songElement);
   });
 
-  // Evento para el botón de cerrar sesión
-  const logoutBtn = document.querySelector(".logout-btn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", () => {
-      window.cerrar_sesion().then((res) => {
-        if (res.message === "1") {
-          setTimeout(() => {
-            window.location.reload();
-          }, 500);
-        }
-      });
-    });
-  }
-
   // Eventos para las canciones
   document.querySelectorAll(".song-item").forEach((item) => {
     item.addEventListener("click", (e) => {
