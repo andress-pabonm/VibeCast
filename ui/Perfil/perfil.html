@@ -32,15 +32,12 @@
         <!-- Main Content -->
         <main class="main-content">
             <header class="profile-header">
-                <div class="profile-avatar">
-                    <i class="fas fa-user avatar-icon"></i>
-                    <button class="edit-avatar-btn"><i class="fas fa-camera"></i></button>
-                </div>
                 <div class="profile-info">
                     <div class="profile-details">
                         <h1 id="profile-name">John Doe</h1>
                         <p id="profile-username">@johndoe</p>
                         <p id="profile-country"><i class="fas fa-globe"></i> México</p>
+                        <p id="profile-email"><i class="fas fa-envelope"></i> john.doe@example.com</p>
                     </div>
                     <button class="logout-btn" id="logoutBtn">
                         <i class="fas fa-sign-out-alt"></i> Cerrar sesión
@@ -49,9 +46,9 @@
             </header>
 
             <div class="profile-content">
-                <!-- Sección de información editable -->
+                <!-- Sección de información básica -->
                 <section class="profile-section">
-                    <h2 class="section-title"><i class="fas fa-user-edit"></i> Editar perfil</h2>
+                    <h2 class="section-title"><i class="fas fa-user-edit"></i>Tu información</h2>
                     <form id="profileForm" class="profile-form">
                         <div class="form-group">
                             <label for="edit-name">Nombre</label>
@@ -62,12 +59,12 @@
                             <input type="text" id="edit-country" placeholder="Tu país" required>
                         </div>
                         <div class="form-group">
-                            <label for="edit-email">Correo electrónico</label>
-                            <input type="email" id="edit-email" placeholder="Tu correo" required>
+                            <label for="edit-username">Nombre de usuario</label>
+                            <input type="text" id="edit-username" placeholder="Tu nombre de usuario" required>
                         </div>
                         <div class="form-group">
-                            <label for="edit-bio">Biografía</label>
-                            <textarea id="edit-bio" placeholder="Cuéntanos sobre ti"></textarea>
+                            <label for="edit-country">Correo electrónico</label>
+                            <input type="email" id="edit-email" placeholder="Tu correo electrónico" required>
                         </div>
                         <button type="submit" class="save-btn">Guardar cambios</button>
                     </form>
@@ -102,28 +99,56 @@
                     </form>
                 </section>
 
+                <!-- Sección de suscripción -->
+                <section class="profile-section">
+                    <h2 class="section-title"><i class="fas fa-crown"></i> Tu suscripción</h2>
+                    <div class="subscription-info" id="subscriptionInfo">
+                        <!-- Información de suscripción se cargará dinámicamente -->
+                    </div>
+                    <button class="upgrade-btn" id="upgradeBtn">
+                        <i class="fas fa-arrow-up"></i> Actualizar plan
+                    </button>
+                </section>
+
                 <!-- Sección de artista (solo visible si es artista) -->
                 <section class="artist-section hidden" id="artistSection">
-                    <h2 class="section-title"><i class="fas fa-star"></i> Tus álbumes</h2>
+                    <h2 class="section-title"><i class="fas fa-compact-disc"></i> Tus discos</h2>
                     <div class="albums-grid" id="albumsContainer">
                         <!-- Álbumes se cargarán dinámicamente -->
                     </div>
                     <button class="new-album-btn" id="newAlbumBtn">
-                        <i class="fas fa-plus"></i> Nuevo álbum
+                        <i class="fas fa-plus"></i> Nuevo disco
                     </button>
                 </section>
             </div>
         </main>
     </div>
 
-    <!-- Modal para nuevo álbum -->
+    <!-- Modal de planes -->
+    <div class="modal hidden" id="plansModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Elige tu plan</h3>
+            <div class="plans-container" id="plansContainer">
+                <!-- Planes se cargarán dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para nuevo disco -->
     <div class="modal hidden" id="newAlbumModal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
-            <h3>Crear nuevo álbum</h3>
-            <input type="text" id="albumNameInput" placeholder="Nombre del álbum">
-            <input type="text" id="albumYearInput" placeholder="Año de lanzamiento">
-            <button id="createAlbumBtn">Crear álbum</button>
+            <h3>Crear nuevo disco</h3>
+            <div class="form-group">
+                <label for="album-name">Nombre del disco</label>
+                <input type="text" id="album-name" placeholder="Nombre del disco" required>
+            </div>
+            <div class="form-group">
+                <label for="album-year">Año de lanzamiento</label>
+                <input type="number" id="album-year" placeholder="Año" min="1900" max="2099" required>
+            </div>
+            <button id="createAlbumBtn">Crear disco</button>
         </div>
     </div>
 

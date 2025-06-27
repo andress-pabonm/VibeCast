@@ -11,13 +11,14 @@
     --gris-claro: #4a4a4a;
     --error: #ff0a54;
     --success: #2a9d8f;
+    --premium: #f9c74f;
 
     --transition-fast: 0.2s ease;
     --transition-normal: 0.3s ease;
     --transition-slow: 0.5s ease;
 }
 
-/* ========== RESET Y ESTILOS BASE ========== */
+/* ========== BASE ========== */
 * {
     margin: 0;
     padding: 0;
@@ -31,7 +32,7 @@ body {
     line-height: 1.6;
 }
 
-/* ========== CONTENEDOR PRINCIPAL ========== */
+/* ========== LAYOUT ========== */
 .menu-container {
     display: flex;
     min-height: 100vh;
@@ -98,7 +99,7 @@ body {
     color: var(--blanco);
 }
 
-/* ========== CONTENIDO PRINCIPAL ========== */
+/* ========== MAIN CONTENT ========== */
 .main-content {
     margin-left: 250px;
     width: calc(100% - 250px);
@@ -106,60 +107,20 @@ body {
     min-height: 100vh;
 }
 
-/* ========== HEADER DE PERFIL ========== */
+/* ========== PROFILE HEADER ========== */
 .profile-header {
     display: flex;
     align-items: center;
     margin-bottom: 2rem;
-    gap: 2rem;
     padding-bottom: 2rem;
     border-bottom: 1px solid var(--gris-medio);
-}
-
-.profile-avatar {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    background-color: var(--morado);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.avatar-icon {
-    font-size: 4rem;
-    color: var(--blanco);
-}
-
-.edit-avatar-btn {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: var(--azul);
-    border: none;
-    color: var(--blanco);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition-normal);
-}
-
-.edit-avatar-btn:hover {
-    background-color: var(--azul-oscuro);
-    transform: scale(1.1);
 }
 
 .profile-info {
     flex: 1;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .profile-details h1 {
@@ -171,21 +132,18 @@ body {
     color: transparent;
 }
 
-#profile-username {
+#profile-username, 
+#profile-country, 
+#profile-email {
     color: var(--detalle);
     font-size: 1rem;
     margin-bottom: 0.5rem;
-}
-
-#profile-country {
-    color: var(--detalle);
-    font-size: 0.9rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.logout-btn {
+#logoutBtn {
     background: linear-gradient(45deg, var(--error), #e63946);
     color: var(--blanco);
     border: none;
@@ -199,12 +157,12 @@ body {
     transition: var(--transition-normal);
 }
 
-.logout-btn:hover {
+#logoutBtn:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(255, 10, 84, 0.4);
 }
 
-/* ========== CONTENIDO DE PERFIL ========== */
+/* ========== PROFILE CONTENT ========== */
 .profile-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -212,6 +170,7 @@ body {
     margin-top: 2rem;
 }
 
+/* ========== PROFILE SECTIONS ========== */
 .profile-section {
     background-color: var(--gris-oscuro);
     border-radius: 10px;
@@ -228,8 +187,9 @@ body {
     gap: 0.5rem;
 }
 
-/* ========== FORMULARIOS ========== */
-.profile-form, .password-form {
+/* ========== FORMS ========== */
+#profileForm, 
+#passwordForm {
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -246,7 +206,7 @@ body {
     font-size: 0.9rem;
 }
 
-.form-group input, .form-group textarea {
+.form-group input {
     width: 100%;
     padding: 0.75rem;
     background-color: var(--gris-medio);
@@ -257,32 +217,9 @@ body {
     transition: var(--transition-normal);
 }
 
-.form-group input:focus, .form-group textarea:focus {
+.form-group input:focus {
     outline: none;
     border-color: var(--morado);
-}
-
-.form-group textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-
-.input-with-icon {
-    position: relative;
-}
-
-.input-with-icon i {
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--detalle);
-    cursor: pointer;
-    transition: var(--transition-fast);
-}
-
-.input-with-icon i:hover {
-    color: var(--azul);
 }
 
 .save-btn {
@@ -301,16 +238,107 @@ body {
     transform: translateY(-2px);
 }
 
-/* ========== SECCIÓN DE ARTISTA ========== */
-.artist-section {
-    grid-column: span 2;
+/* Password form specific */
+.input-with-icon {
+    position: relative;
 }
 
-.albums-grid {
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--detalle);
+}
+
+/* ========== SUBSCRIPTION ========== */
+#subscriptionInfo {
+    background-color: var(--gris-medio);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.subscription-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.subscription-status.free {
+    color: var(--detalle);
+}
+
+.subscription-status.premium {
+    color: var(--premium);
+}
+
+.subscription-status i {
+    font-size: 1.2rem;
+}
+
+.expiration-date {
+    font-size: 0.9rem;
+    color: var(--detalle);
+    margin-bottom: 1rem;
+}
+
+.subscription-features {
+    margin-top: 1rem;
+}
+
+.subscription-features ul {
+    list-style: none;
+    margin-top: 0.5rem;
+}
+
+.subscription-features li {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.subscription-features i {
+    color: var(--azul);
+}
+
+#upgradeBtn {
+    width: 100%;
+    background: linear-gradient(45deg, var(--premium), #f8961e);
+    color: var(--negro);
+    border: none;
+    padding: 0.75rem;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: var(--transition-normal);
+}
+
+#upgradeBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(249, 199, 79, 0.4);
+}
+
+/* ========== ARTIST SECTION ========== */
+#artistSection {
+    grid-column: span 2;
+    background-color: var(--gris-oscuro);
+    border-radius: 10px;
+    padding: 1.5rem;
+}
+
+#albumsContainer {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1.5rem;
-    margin-bottom: 2rem;
+    margin: 1.5rem 0;
 }
 
 .album-card {
@@ -319,37 +347,31 @@ body {
     padding: 1rem;
     transition: var(--transition-normal);
     cursor: pointer;
-    position: relative;
-    aspect-ratio: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow: hidden;
 }
 
 .album-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .album-image {
     width: 100%;
-    height: 70%;
+    height: 160px;
     background: linear-gradient(135deg, var(--morado), var(--azul-oscuro));
     border-radius: 5px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 0.5rem;
-    position: relative;
+    margin-bottom: 1rem;
 }
 
 .album-image i {
-    font-size: 2.5rem;
+    font-size: 3rem;
     color: var(--blanco);
 }
 
 .album-info {
-    flex: 1;
+    padding: 0 0.5rem;
 }
 
 .album-name {
@@ -360,32 +382,36 @@ body {
     text-overflow: ellipsis;
 }
 
-.album-year {
+.album-details {
     font-size: 0.8rem;
     color: var(--detalle);
+    display: flex;
+    justify-content: space-between;
 }
 
-.new-album-btn {
+#newAlbumBtn {
+    width: 100%;
     background: linear-gradient(45deg, var(--azul-oscuro), var(--azul));
     color: var(--blanco);
     border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 20px;
+    padding: 0.75rem;
+    border-radius: 5px;
     font-weight: 500;
     cursor: pointer;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     transition: var(--transition-normal);
-    font-size: 1rem;
+    margin-top: 1rem;
 }
 
-.new-album-btn:hover {
+#newAlbumBtn:hover {
     background: linear-gradient(45deg, var(--azul), var(--azul-oscuro));
     transform: translateY(-2px);
 }
 
-/* ========== MODALES ========== */
+/* ========== MODALS ========== */
 .modal {
     position: fixed;
     top: 0;
@@ -397,6 +423,12 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    overflow: auto; /* Permite desplazamiento si el contenido es muy largo */
+    padding: 2rem 0; /* Espacio arriba y abajo */
+}
+
+.hidden {
+    display: none;
 }
 
 .modal-content {
@@ -404,8 +436,12 @@ body {
     padding: 2rem;
     border-radius: 10px;
     width: 90%;
-    max-width: 400px;
+    max-width: 600px;
     position: relative;
+    max-height: 90vh; /* Limita la altura máxima */
+    overflow-y: auto; /* Permite desplazamiento vertical si es necesario */
+    scrollbar-width: thin;
+    scrollbar-color: var(--morado) var(--gris-oscuro);
 }
 
 .close-modal {
@@ -417,23 +453,160 @@ body {
     color: var(--detalle);
 }
 
-.modal h3 {
-    margin-bottom: 1.5rem;
+/* Plans Modal */
+#plansContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.plan-card {
+    background-color: var(--gris-medio);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: var(--transition-normal);
+    border: 2px solid transparent;
+    min-height: 100%; /* Asegura que todas las tarjetas tengan la misma altura */
+    display: flex;
+    flex-direction: column;
+}
+
+.plan-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--morado);
+}
+
+.plan-card.premium {
+    border-color: var(--premium);
+}
+
+.plan-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
     color: var(--azul);
 }
 
-.modal input {
+/* Ajustes específicos para el modal de planes */
+#plansModal .modal-content {
+    max-height: 85vh; /* Un poco menos que el 90vh para dejar espacio para el título y botones */
+}
+
+.plan-card.premium .plan-name {
+    color: var(--premium);
+}
+
+.plan-price {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.plan-period {
+    font-size: 0.9rem;
+    color: var(--detalle);
+}
+
+.plan-features {
+    margin: 1rem 0;
+}
+
+.plan-features ul {
+    list-style: none;
+}
+
+.plan-features li {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.plan-features i {
+    color: var(--azul);
+}
+
+.plan-card.premium .plan-features i {
+    color: var(--premium);
+}
+
+.plan-card.annual {
+    border-color: var(--azul-oscuro);
+}
+
+.plan-card.annual .plan-name {
+    color: var(--azul-oscuro);
+}
+
+.select-plan-btn.annual {
+    background: linear-gradient(45deg, var(--azul-oscuro), var(--morado));
+    color: var(--blanco);
+    font-weight: 600;
+}
+
+.select-plan-btn {
     width: 100%;
     padding: 0.75rem;
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    margin-top: 1rem;
+    margin-top: auto; /* Empuja el botón hacia abajo */
+}
+
+.select-plan-btn.free {
+    background-color: var(--gris-claro);
+    color: var(--blanco);
+}
+
+.select-plan-btn.premium {
+    background: linear-gradient(45deg, var(--premium), #f8961e);
+    color: var(--negro);
+    font-weight: 600;
+}
+
+.select-plan-btn:hover {
+    transform: translateY(-2px);
+}
+
+.subscription-status.expirado {
+    color: var(--error);
+}
+
+.subscription-status.expirado i {
+    color: var(--error);
+}
+
+/* New Album Modal */
+#newAlbumModal .modal-content {
+    max-width: 500px;
+}
+
+#newAlbumModal .form-group {
     margin-bottom: 1rem;
+}
+
+#newAlbumModal label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--detalle);
+}
+
+#newAlbumModal input {
+    width: 100%;
+    padding: 0.75rem;
     background-color: var(--gris-medio);
     border: 2px solid var(--morado);
     border-radius: 5px;
     color: var(--blanco);
-    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
 }
 
-.modal button {
+#createAlbumBtn {
     width: 100%;
     padding: 0.75rem;
     background: linear-gradient(45deg, var(--morado), var(--azul-oscuro));
@@ -443,18 +616,133 @@ body {
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition-normal);
+    margin-top: 1rem;
 }
 
-.modal button:hover {
+#createAlbumBtn:hover {
     transform: translateY(-2px);
 }
 
-/* ========== CLASES UTILITARIAS ========== */
-.hidden {
-    display: none;
+/* ========== MUSIC PLAYER ========== */
+.music-player {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--gris-oscuro);
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--gris-medio);
+    z-index: 100;
 }
 
-/* ========== ANIMACIONES ========== */
+.song-info-player {
+    flex: 1;
+}
+
+.song-title {
+    font-weight: 500;
+}
+
+.song-artist {
+    font-size: 0.8rem;
+    color: var(--detalle);
+}
+
+.player-controls {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.player-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.player-buttons button {
+    background: none;
+    border: none;
+    color: var(--blanco);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.play-pause-btn {
+    font-size: 1.5rem;
+}
+
+.progress-container {
+    width: 100%;
+    max-width: 500px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: var(--gris-medio);
+    border-radius: 2px;
+    margin-bottom: 0.25rem;
+    cursor: pointer;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(to right, var(--morado), var(--azul));
+    border-radius: 2px;
+    width: 0%;
+}
+
+.time-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--detalle);
+}
+
+.player-actions {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.volume-slider {
+    width: 80px;
+    height: 4px;
+    background-color: var(--gris-medio);
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.volume-level {
+    height: 100%;
+    background-color: var(--azul);
+    border-radius: 2px;
+    width: 100%;
+}
+
+.queue-btn, 
+#closePlayerBtn {
+    background: none;
+    border: none;
+    color: var(--detalle);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+/* ========== ANIMATIONS ========== */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
