@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
             features: [
                 "Reproducción sin anuncios",
                 "Saltos ilimitados",
+                "Lo tienes por un año XD"
             ]
     }
     ];
@@ -99,11 +100,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('edit-name').value = userData.name;
         document.getElementById('edit-username').value = userData.username;
         document.getElementById('edit-country').value = userData.country;
+        document.getElementById('edit-email').value = userData.email;
         
         // Cargar información de suscripción
         loadSubscriptionInfo();
         
-        // Mostrar sección de artista si corresponde
+        // Mostrar sección de artista si corresponde USAR LOGICA
         if (userData.isArtist) {
             artistSection.classList.remove('hidden');
             loadAlbums();
@@ -113,31 +115,32 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cargar información de suscripción
     function loadSubscriptionInfo() {
         const isPremium = userData.subscription.type === "premium" || userData.subscription.type === "annual";
-        const expirationDate = new Date(userData.subscription.expiration);
-        const now = new Date();
-        const timeLeft = expirationDate - now;
+        // No vale de lo tiempo xd no se porque 
+        // const expirationDate = new Date(userData.subscription.expiration);
+        // const now = new Date();
+        // const timeLeft = expirationDate - now;
         
         let timeLeftText = '';
         let subscriptionStatus = '';
         
-        if (timeLeft <= 0) {
-            timeLeftText = '<span style="color: var(--error)">Expirado</span>';
-            subscriptionStatus = 'expirado';
-        } else {
-            // Calcular días, horas y minutos restantes
-            const daysLeft = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-            const hoursLeft = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        // if (timeLeft <= 0) {
+        //     timeLeftText = '<span style="color: var(--error)">Expirado</span>';
+        //     subscriptionStatus = 'expirado';
+        // } else {
+        //     // Calcular días, horas y minutos restantes
+        //     const daysLeft = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        //     const hoursLeft = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             
-            if (daysLeft > 0) {
-                timeLeftText = `Expira en ${daysLeft} día${daysLeft !== 1 ? 's' : ''}`;
-                if (hoursLeft > 0) {
-                    timeLeftText += ` y ${hoursLeft} hora${hoursLeft !== 1 ? 's' : ''}`;
-                }
-            } else {
-                const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                timeLeftText = `Expira en ${hoursLeft} hora${hoursLeft !== 1 ? 's' : ''} y ${minutesLeft} minuto${minutesLeft !== 1 ? 's' : ''}`;
-            }
-        }
+        //     if (daysLeft > 0) {
+        //         timeLeftText = `Expira en ${daysLeft} día${daysLeft !== 1 ? 's' : ''}`;
+        //         if (hoursLeft > 0) {
+        //             timeLeftText += ` y ${hoursLeft} hora${hoursLeft !== 1 ? 's' : ''}`;
+        //         }
+        //     } else {
+        //         const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        //         timeLeftText = `Expira en ${hoursLeft} hora${hoursLeft !== 1 ? 's' : ''} y ${minutesLeft} minuto${minutesLeft !== 1 ? 's' : ''}`;
+        //     }
+        // }
         
         subscriptionInfo.innerHTML = `
             <div class="subscription-status ${userData.subscription.type} ${subscriptionStatus}">
@@ -246,6 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const newName = document.getElementById('edit-name').value;
         const newUsername = document.getElementById('edit-username').value;
         const newCountry = document.getElementById('edit-country').value;
+        const newEmail = document.getElementById('edit-email').value;
         
         // Validar nombre de usuario
         if (!newUsername.startsWith('@')) {
@@ -257,11 +261,13 @@ document.addEventListener('DOMContentLoaded', function() {
         userData.name = newName;
         userData.username = newUsername;
         userData.country = newCountry;
+        userData.email = newEmail;
         
         // Actualizar la vista
         document.getElementById('profile-name').textContent = newName;
         document.getElementById('profile-username').textContent = newUsername;
         document.getElementById('profile-country').innerHTML = `<i class="fas fa-globe"></i> ${newCountry}`;
+        document.getElementById('profile-email').innerHTML = `<i class="fas fa-envelope"></i> ${newEmail}`;
         
         alert('Perfil actualizado correctamente');
     });
@@ -270,7 +276,6 @@ document.addEventListener('DOMContentLoaded', function() {
     passwordForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const currentPassword = document.getElementById('current-pasassword').value;
         const newPassword = document.getElementById('new-password').value;
         const confirmPassword = document.getElementById('confirm-new-password').value;
         
@@ -283,12 +288,12 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('La contraseña debe tener al menos 8 caracteres');
             return;
         }
-        
-        // Validar fortaleza de contraseña
-        const hasUpperCase = /[A-Z]/.test(newPassword);
-        const hasLowerCase = /[a-z]/.test(newPassword);
-        const hasNumbers = /\d/.test(newPassword);
-        const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
+         
+        // Validar fortaleza de contraseña supongo que esto en el c
+        // const hasUpperCase = /[A-Z]/.test(newPassword);
+        // const hasLowerCase = /[a-z]/.test(newPassword);
+        // const hasNumbers = /\d/.test(newPassword);
+        // const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
         
         if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChars) {
             alert('La contraseña debe contener al menos una mayúscula, una minúscula, un número y un carácter especial');
@@ -355,7 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
         alert(`Disco "${albumName}" creado correctamente`);
     });
 
-    // Cerrar modales
+    // Cerrar modals
     closeModals.forEach(btn => {
         btn.addEventListener('click', function() {
             plansModal.classList.add('hidden');
@@ -363,7 +368,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Cerrar modales al hacer clic fuera
+
+    // Cerrar modals al hacer clic fuera
     [plansModal, newAlbumModal].forEach(modal => {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -371,6 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
 
     // Evento para seleccionar plan
     plansContainer.addEventListener('click', function(e) {
@@ -405,9 +412,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Inicializar
     loadProfileData();
-
-    // Al final de perfilApp.js, después de loadProfileData();
-    if (userData.subscription.type !== 'free') {
-        setInterval(loadSubscriptionInfo, 60000); // Actualiza cada minuto
-    }
 });
