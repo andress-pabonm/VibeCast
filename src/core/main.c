@@ -1,7 +1,7 @@
 #include <VibeCastConfig.h>
 
-#define MAIN_USE_CALLBACKS
-#define WINMAIN
+#define VIBECAST_WINMAIN 1
+#define VIBECAST_MAIN_CALLBACKS 1
 #include <core/main.h>
 
 #include <ui/gui.h>   // Para la interfaz gráfica
@@ -10,37 +10,41 @@
 
 /* ======== Funciones principales de la aplicación ======== */
 
-AppResult AppInit(void **appstate, int argc, char *argv[])
+AppResult VibeCast_AppInit(void **appstate, int argc, char *argv[])
 {
     // Inicializar la interfaz gráfica
     if (!func(InitGUI, *appstate))
     {
         puts("Error al inicializar la interfaz gráfica.");
-        return APP_FAILURE;
+        return VIBECAST_APP_FAILURE;
     }
 
     // Cargar datos
     if (!func(LoadData))
     {
         puts("Error al cargar los datos.");
-        return APP_FAILURE;
+        return VIBECAST_APP_FAILURE;
     }
 
     puts("Aplicación inicializada correctamente.");
 
-    return APP_CONTINUE; // Continuar con la ejecución
+    return VIBECAST_APP_FAILURE; // Continuar con la ejecución
 }
 
 AppResult AppIterate(void *appstate)
 {
-    return func(RunGUI, appstate) ? APP_SUCCESS : APP_FAILURE;
+    return func(RunGUI, appstate)
+               ? VIBECAST_APP_SUCCESS
+               : VIBECAST_APP_FAILURE;
 }
 
-void AppQuit(void *appstate, AppResult appresult)
+AppResult VibeCast_AppQuit(void *appstate, AppResult appresult)
 {
     func(DestroyGUI, appstate); // Liberar la memoria de la interfaz gráfica
-    func(FreeData);   // Para liberar la memoria de las estructuras de datos
-    free(appstate);   // Liberar la memoria de appstate
+    func(FreeData);             // Para liberar la memoria de las estructuras de datos
+    free(appstate);             // Liberar la memoria de appstate
 
     puts("Ejecución finalizada");
+
+    return appresult;
 }
