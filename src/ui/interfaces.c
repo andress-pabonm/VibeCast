@@ -92,8 +92,8 @@ static Cola cola_repr = {NULL};
 
 /* Funciones principales */
 
-#define log(...) \
-    if (msg)     \
+#define send_message(...) \
+    if (msg)              \
     *msg = mprintf(__VA_ARGS__)
 
 interfaz(IsLoggedIn)
@@ -106,25 +106,21 @@ interfaz(IniciarSesion)
     const char *username = argv[0];
     const char *password = argv[1];
 
-    printf("Datos recibidos en IniciarSesion():\n\tusername: %s\n\tpassword: %s\n", username, password);
-
-    // TODO 1: Buscar el usuario en el árbol
-    Nodo **ref = buscarNodo(ABB, &usuarios, username, cmpUsuarioConUsername);
-    if (!ref)
+    usuario = searchValueInABB(usuarios, username, cmpUsuarioConUsername);
+    if (!usuario)
     {
-        log("Usuario no registrado.");
+        send_message("Usuario no registrado");
         return false;
     }
 
-    usuario = (*ref)->value_ptr;
     if (strcmp(usuario->password, password))
     {
-        log("Contraseña incorrecta.");
-        usuario = NULL; // Regresar el puntero a NULL
+        send_message("Contraseña incorrecta");
+        usuario = NULL;
         return false;
     }
 
-    log("¡Inicio de sesión exitoso!");
+    send_message("Inicio de sesión exitoso");
 
     return true;
 }
@@ -146,7 +142,7 @@ interfaz(CrearCuenta)
 {
     if (argc != 6 || !argv)
     {
-        log("%s: Número de parámetros (argc) incorrecto. Se esperaba 6.", __func__);
+        send_message("%s: Número de parámetros (argc) incorrecto. Se esperaba 6.", __func__);
         return false;
     }
 
@@ -154,7 +150,7 @@ interfaz(CrearCuenta)
     {
         if (!argv[i])
         {
-            log("Todos los campos son obligatorios.");
+            send_message("Todos los campos son obligatorios.");
             return false;
         }
     }
@@ -165,16 +161,16 @@ interfaz(CrearCuenta)
     // Validar email
     if (!validar_email(email))
     {
-        log("Dirección de correo no válida.");
+        send_message("Dirección de correo no válida.");
         return false;
     }
 
     // Diseñar alguna forma de encontrar si el correo ya está registrado (sin depender de sqlite)
 
     const char *username = argv[1];
-    if (buscarNodo(ABB, &usuarios, username, cmpUsuarioConUsername))
+    if (searchValueInABB(usuarios, username, cmpUsuarioConUsername))
     {
-        log("Usuario ya existente.");
+        send_message("Usuario ya existente.");
         return false;
     }
 
@@ -182,7 +178,7 @@ interfaz(CrearCuenta)
     const char *confirmPassword = argv[3];
     if (strcmp(password, confirmPassword))
     {
-        log("Las contraseñas no coinciden.");
+        send_message("Las contraseñas no coinciden.");
         return false;
     }
 
@@ -199,7 +195,7 @@ interfaz(CrearCuenta)
             "username, email, password, nickname, pais",
             datos, NULL))
     {
-        log("Error al registrar datos en la base de datos.");
+        send_message("Error al registrar datos en la base de datos.");
         free(datos);
         return false;
     }
@@ -231,7 +227,7 @@ interfaz(CrearCuenta)
 
     if (!insertarNodo(ABB, &usuarios, usuario, cmpUsuarios))
     {
-        log("No se pudo insertar el usuario en el ABB. Reinicie la aplicación e intente iniciar sesión.");
+        send_message("No se pudo insertar el usuario en el ABB. Reinicie la aplicación e intente iniciar sesión.");
 
         free(usuario->username);
         free(usuario->email);
@@ -250,7 +246,7 @@ interfaz(CrearCuenta)
     {
         puts(*msg);
         free_errmsg(*msg);
-        log("Error al obtener el identificador de usuario. Reinicia la aplicación e intenta iniciar sesión.");
+        send_message("Error al obtener el identificador de usuario. Reinicia la aplicación e intenta iniciar sesión.");
         return false;
     }
 
@@ -259,7 +255,7 @@ interfaz(CrearCuenta)
     // Si se quiere que una vez registrado ya inicie sesión
     usuario = NULL; // Comentar esta linea
 
-    log("Cuenta creada correctamente.");
+    send_message("Cuenta creada correctamente.");
 
     return true;
 }

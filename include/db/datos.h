@@ -1,5 +1,5 @@
-#ifndef DATOS_H
-#define DATOS_H
+#ifndef VIBECAST_DATOS_H
+#define VIBECAST_DATOS_H 1
 
 #include <db/estructuras.h>
 
@@ -18,16 +18,10 @@ bool func(FreeData);
 
 /* Comparadores */
 
-// Compara dos usuarios
-new_cmp(cmpUsuarios);
-
 // Compara un usuario y un username
-new_cmp(cmpUsuarioConUsername);
-
-// Compara dos artistas
-new_cmp(cmpArtistas);
+new_cmpfn(cmpUsuarioConUsername);
 
 // Compara una cancion y un id
-new_cmp(cmpCancionConId);
+new_cmpfn(cmpCancionConId);
 
-#endif // DATOS_H
+#endif // VIBECAST_DATOS_H

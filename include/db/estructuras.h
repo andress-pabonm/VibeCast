@@ -1,9 +1,11 @@
-#ifndef ESTRUCTURAS_DB_H
-#define ESTRUCTURAS_DB_H
+#ifndef VIBECAST_DB_ESTRUCTURAS_H
+#define VIBECAST_DB_ESTRUCTURAS_H 1
 
 #include <utils/nodos.h> // Para Lista, Pila y Cola
 
-// Estructuras para la base de datos de música tipo Spotify
+// ==========================================
+// Tipos hacia adelante (punteros a structs)
+// ==========================================
 
 typedef struct Artista Artista;
 typedef struct Album Album;
@@ -19,136 +21,115 @@ typedef struct Anuncio Anuncio;
 
 typedef struct Usuario Usuario;
 
-struct Artista
-{
-	// Puntero a su perfil de usuario
-	Usuario *usuario;
-	// Nombre del artista
-	char *nombre;
-	// Lista de los álbumes del artista
-	Lista albumes;
-};
+// ==========================================
+// Enumeraciones
+// ==========================================
 
-// Estructura para representar un álbum de canciones
-struct Album
-{
-	// Identificador único de álbum (utilizado en la base de datos)
-	int id;
-	// Artista al que pertenece el álbum
-	Artista *artista;
-	// Nombre del álbum
-	char *nombre;
-	// Fecha en la que se creó el álbum
-	char *fechaCreacion;
-	// Lista de canciones del álbum
-	Lista canciones;
-};
-
-// Estructura para representar una canción
-struct Cancion
-{
-	// Identificador de la canción
-	int id;
-
-	// Álbum al que pertenece la canción
-	Album *album;
-	// Título de la canción
-	char *nombre;
-	// Género musical al que pertenece la canción
-	char *genero;
-	// Fecha en la que se publicó la canción en la app
-	char *fechaPublicacion;
-
-	// Duración de la canción
-	int duracion;
-	// URL donde se encuentra la canción
-	char *url;
-
-	// Cantidad de veces que se ha añadido a una playlist
-	int popularidad;
-	// Cantidad total de reproducciones de la canción
-	int reproducciones;
-};
-
-// Estructura para representar una playlist
-struct Playlist
-{
-	// Identificador único de playlist (utilizado en la base de datos)
-	int id;
-	// Nombre de la playlist
-	char *nombre;
-	// Lista con las canciones agregadas a la playlist
-	Lista canciones;
-};
-
-// Estructura para representar el historial de un usuario
-struct Historial
-{
-	// Pila con las reproducciones
-	Pila reproducciones;
-	// Tiempo total escuchado/reproducido
-	int tiempoEscuchado;
-	// Cantidad de anuncios "vistos" por el usuario (PLAN_FREEMIUM)
-	int cantidadAnuncios;
-};
-
-// Estructura para representar una reproducción de una canción
-struct Reproduccion
-{
-	// Canción reproducida
-	Cancion *cancion;
-	// Fecha de la reproducción
-	char *fechaEscuchado;
-};
-
-// Tipo de dato para representar los planes disponibles
 enum Plan
 {
-	// Plan por defecto (con anuncios)
-	PLAN_FREEMIUM = 0,
-
-	// Plan "pagado" (sin anuncios)
-	PLAN_PREMIUM
+	PLAN_FREEMIUM = 0, // Plan con anuncios
+	PLAN_PREMIUM	   // Plan sin anuncios
 };
 
-// Estructura para representar un anuncio publicitario
+// ==========================================
+// Estructuras
+// ==========================================
+
+// ---------- Reproducción e historial ----------
+
+struct Reproduccion
+{
+	const Cancion *cancion; // Canción reproducida
+	char *fechaEscuchado;	// Fecha de reproducción
+};
+
+struct Historial
+{
+	Pila reproducciones;  // Pila de reproducciones
+	int tiempoEscuchado;  // Tiempo total escuchado (en segundos)
+	int cantidadAnuncios; // Anuncios vistos (solo en FREEMIUM)
+};
+
+// ---------- Canciones y álbumes ----------
+
+struct Cancion
+{
+	int id;					// ID único
+	const Album *album;		// Álbum al que pertenece
+	char *nombre;			// Nombre de la canción
+	char *genero;			// Género musical
+	char *fechaPublicacion; // Fecha de publicación
+	int duracion;			// Duración en segundos
+	char *url;				// URL de reproducción
+	int popularidad;		// Veces añadida a playlists
+	int reproducciones;		// Reproducciones totales
+};
+
+struct Album
+{
+	int id;					// ID único
+	const Artista *artista; // Artista propietario
+	char *nombre;			// Nombre del álbum
+	char *fechaCreacion;	// Fecha de creación
+	Lista canciones;		// Lista de canciones (Lista de Cancion)
+};
+
+// ---------- Artista ----------
+
+struct Artista
+{
+	const Usuario *usuario; // Perfil de usuario asociado
+	char *nombre;			// Nombre artístico
+	Lista albumes;			// Lista de álbumes (Lista de Album)
+};
+
+// ---------- Playlist ----------
+
+struct Playlist
+{
+	int id;			 // ID único
+	char *nombre;	 // Nombre de la playlist
+	Lista canciones; // Lista de canciones (Lista de Cancion)
+};
+
+// ---------- Anuncios ----------
+
 struct Anuncio
 {
-	// Usuario anunciante
-	Usuario *anunciante;
-	// URL del anuncio
-	char *url;
+	const Usuario *anunciante; // Usuario que publica el anuncio
+	char *url;				   // URL del anuncio
 };
 
-// Estructura para representar un usuario
+// ---------- Usuario ----------
+
 struct Usuario
 {
-	// Identificador único de usuario (utilizado en la base de datos)
-	int id;
-	
-	// Usuario para iniciar sesión
-	char *username;
-	// Dirección de correo electrónico registrado
-	char *email;
-	// Contraseña para iniciar sesión
-	char *password;
+	int id;			// ID único
+	char *username; // Nombre de usuario
+	char *email;	// Correo electrónico
+	char *password; // Contraseña
 
-	// Nombre visible
-	char *nickname;
-	// Pais de origen del usuario
-	char *pais;
-	// Plan vigente de la cuenta
-	Plan plan;
+	char *nickname; // Nombre visible
+	char *pais;		// País de origen
+	Plan plan;		// Plan actual
 
-	// Perfil de artista
-	Artista *artista;
+	Artista *artista; // Perfil de artista (opcional)
 
-	// Lista de amigos del usuario
-	Lista amigos;
-	// Lista de playlists creadas por el usuario
-	Lista playlists;
-	// Historial de reproducciones del usuario
-	Historial historial;
+	Lista amigos;		 // Lista de amigos (Lista de Usuario)
+	Lista playlists;	 // Playlists creadas (Lista de Playlist)
+	Historial historial; // Historial de reproducción
 };
 
-#endif // ESTRUCTURAS_DB_H
+// ==========================================
+// Constructores de estructuras
+// ==========================================
+
+Usuario *newUsuario(void);
+Artista *newArtista(void);
+Album *newAlbum(void);
+Cancion *newCancion(void);
+Playlist *newPlaylist(void);
+Reproduccion *newReproduccion(void);
+Anuncio *newAnuncio(void);
+
+#endif // VIBECAST_DB_ESTRUCTURAS_H

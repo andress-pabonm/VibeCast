@@ -1,0 +1,13 @@
+#ifndef VIBECAST_NODOS_CONSTANTS_H
+#define VIBECAST_NODOS_CONSTANTS_H 1
+
+typedef enum
+{
+    FOREACH_CONTINUE = 0,
+    FOREACH_BREAK,
+    FOREACH_STAY,
+} foreach_flag_t;
+
+#define INSERT_FAILED -1
+
+#endif // VIBECAST_NODOS_CONSTANTS_H
