@@ -1,5 +1,4 @@
 #include <utils/nodos/lista.h>
-#include <utils/nodos/nodo.h>
 #include <utils/nodos/constants.h>
 
 #include <utils/memmgr.h>
@@ -10,6 +9,12 @@
 // ========================================
 // Estructuras internas
 // ========================================
+
+typedef struct Nodo
+{
+    struct Nodo *r;
+    void *v;
+} *Nodo;
 
 typedef struct __Lista
 {
@@ -36,6 +41,27 @@ typedef struct
     void *value_ptr;
     void *found;
 } search_wrapper_arg_t;
+
+// ========================================
+// Funciones auxiliares
+// ========================================
+
+static Nodo newNodo(void *value_ptr)
+{
+    return value_ptr
+               ? alloc(
+                     struct Nodo,
+                     &cast(
+                         struct Nodo,
+                         .r = NULL,
+                         .v = value_ptr))
+               : NULL;
+}
+
+static void destroyNodo(Nodo nodo)
+{
+    freem(nodo);
+}
 
 // ========================================
 // Recorridos internos (Nodo*)
@@ -201,7 +227,7 @@ static new_operfn(search_wrapper_Lista_Ref)
     return FOREACH_BREAK;
 }
 
-void *searchValueInLista(Lista lista, void *value_ptr, cmpfn_t cmp)
+void *searchValueInLista(Lista lista, const void *value_ptr, cmpfn_t cmp)
 {
     if (!lista || !value_ptr || !cmp)
         return NULL;
@@ -233,7 +259,7 @@ static Nodo *searchValueInLista_Ref(Lista lista, void *value_ptr, cmpfn_t cmp)
 // API Pública - Eliminación
 // ========================================
 
-void *deleteValueInLista(Lista lista, void *value_ptr, cmpfn_t cmp)
+void *deleteValueInLista(Lista lista, const void *value_ptr, cmpfn_t cmp)
 {
     Nodo *ref = searchValueInLista_Ref(lista, value_ptr, cmp);
     if (!ref)

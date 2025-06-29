@@ -1,5 +1,4 @@
 #include <utils/nodos/abb.h>
-#include <utils/nodos/nodo.h>
 #include <utils/nodos/constants.h>
 #include <utils/memmgr.h>
 #include <utils/macros.h>
@@ -8,6 +7,13 @@
 // ========================================
 // Estructuras internas
 // ========================================
+
+typedef struct Nodo
+{
+    struct Nodo *l;
+    struct Nodo *r;
+    void *v;
+} *Nodo;
 
 typedef struct __ABB
 {
@@ -20,6 +26,27 @@ typedef struct
     operfn_t callback;
     void *arg;
 } foreach_wrapper_arg_t;
+
+// ========================================
+// Funciones auxiliares
+// ========================================
+
+static Nodo newNodo(void *value_ptr)
+{
+    return value_ptr
+               ? alloc(
+                     struct Nodo,
+                     &cast(struct Nodo,
+                           .l = NULL,
+                           .r = NULL,
+                           .v = value_ptr))
+               : NULL;
+}
+
+static void destroyNodo(Nodo nodo)
+{
+    freem(nodo);
+}
 
 // ========================================
 // API Pública - Creación
@@ -67,7 +94,7 @@ int insertValueInABB(ABB abb, void *value_ptr)
 // API Pública - Búsqueda
 // ========================================
 
-static Nodo *searchValueInABB_Ref(ABB abb, void *value_ptr, cmpfn_t cmp)
+static Nodo *searchValueInABB_Ref(ABB abb, const void *value_ptr, cmpfn_t cmp)
 {
     if (!abb || !value_ptr || !cmp)
         return NULL;
@@ -83,13 +110,13 @@ static Nodo *searchValueInABB_Ref(ABB abb, void *value_ptr, cmpfn_t cmp)
     return NULL;
 }
 
-static Nodo searchValueInABB_Nodo(ABB abb, void *value_ptr, cmpfn_t cmp)
+static Nodo searchValueInABB_Nodo(ABB abb, const void *value_ptr, cmpfn_t cmp)
 {
     Nodo *ref = searchValueInABB_Ref(abb, value_ptr, cmp);
     return ref ? *ref : NULL;
 }
 
-void *searchValueInABB(ABB abb, void *value_ptr, cmpfn_t cmp)
+void *searchValueInABB(ABB abb, const void *value_ptr, cmpfn_t cmp)
 {
     Nodo nodo = searchValueInABB_Nodo(abb, value_ptr, cmp);
     return nodo ? nodo->v : NULL;
@@ -122,7 +149,7 @@ static void *deleteValueInABB_Rec(Nodo *root)
     return value_ptr;
 }
 
-void *deleteValueInABB(ABB abb, void *value_ptr, cmpfn_t cmp)
+void *deleteValueInABB(ABB abb, const void *value_ptr, cmpfn_t cmp)
 {
     return deleteValueInABB_Rec(searchValueInABB_Ref(abb, value_ptr, cmp));
 }

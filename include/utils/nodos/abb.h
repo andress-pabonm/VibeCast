@@ -39,7 +39,7 @@ int insertValueInABB(ABB abb, void *value_ptr);
  * Busca un valor en el ABB usando la función de comparación dada.
  * @return Un puntero al valor encontrado o NULL si no existe.
  */
-void *searchValueInABB(ABB abb, void *value_ptr, cmpfn_t cmp);
+void *searchValueInABB(ABB abb, const void *value_ptr, cmpfn_t cmp);
 
 // ========================================
 // API Pública - Eliminación
@@ -49,7 +49,7 @@ void *searchValueInABB(ABB abb, void *value_ptr, cmpfn_t cmp);
  * Elimina un valor del ABB si existe.
  * @return El valor eliminado o NULL si no fue encontrado.
  */
-void *deleteValueInABB(ABB abb, void *value_ptr, cmpfn_t cmp);
+void *deleteValueInABB(ABB abb, const void *value_ptr, cmpfn_t cmp);
 
 // ========================================
 // API Pública - Recorridos

@@ -1,5 +1,4 @@
 #include <utils/nodos/cola.h>
-#include <utils/nodos/nodo.h>
 
 #include <utils/memmgr.h>
 #include <utils/macros.h>
@@ -9,11 +8,38 @@
 // Definición interna
 // ========================================
 
+typedef struct Nodo
+{
+    struct Nodo *r;
+    void *v;
+} *Nodo;
+
 typedef struct __Cola
 {
     Nodo head;
     Nodo tail;
 } *__Cola;
+
+// ========================================
+// Funciones auxiliares
+// ========================================
+
+static Nodo newNodo(void *value_ptr)
+{
+    return value_ptr
+               ? alloc(
+                     struct Nodo,
+                     &cast(
+                         struct Nodo,
+                         .r = NULL,
+                         .v = value_ptr))
+               : NULL;
+}
+
+static void destroyNodo(Nodo nodo)
+{
+    freem(nodo);
+}
 
 // ========================================
 // API Pública - Creación

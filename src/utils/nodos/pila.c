@@ -1,5 +1,4 @@
 #include <utils/nodos/pila.h>
-#include <utils/nodos/nodo.h>
 
 #include <utils/memmgr.h>
 #include <utils/macros.h>
@@ -10,10 +9,37 @@
 // Estructuras internas
 // ========================================
 
+typedef struct Nodo
+{
+    struct Nodo *l;
+    void *v;
+} *Nodo;
+
 typedef struct __Pila
 {
     Nodo top;
 } *__Pila;
+
+// ========================================
+// Funciones auxiliares
+// ========================================
+
+static Nodo newNodo(void *value_ptr)
+{
+    return value_ptr
+               ? alloc(
+                     struct Nodo,
+                     &cast(
+                         struct Nodo,
+                         .l = NULL,
+                         .v = value_ptr))
+               : NULL;
+}
+
+static void destroyNodo(Nodo nodo)
+{
+    freem(nodo);
+}
 
 // ========================================
 // API Pública - Creación
