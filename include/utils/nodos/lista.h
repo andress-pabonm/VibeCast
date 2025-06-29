@@ -11,6 +11,7 @@
 #define VIBECAST_NODOS_LISTA_H 1
 
 #include "fntypes.h" // Define cmpfn_t y operfn_t
+#include <stddef.h>
 
 /**
  * @typedef Lista

@@ -2,6 +2,7 @@
 #define VIBECAST_NODOS_ABB_H 1
 
 #include "fntypes.h"
+#include <stddef.h>
 
 // ========================================
 // Definición de tipo ABB

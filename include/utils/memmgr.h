@@ -1,6 +1,8 @@
 #ifndef VIBECAST_MEMMGR_H
 #define VIBECAST_MEMMGR_H 1
 
+#include <stddef.h>
+
 /**
  * Para asignar memoria en HEAP y copiar un valor en ella.
  * @param size: Cantidad de bytes a asignar. Si es 0, no asignará memoria.

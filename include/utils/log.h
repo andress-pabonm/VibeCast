@@ -1,6 +1,8 @@
 #ifndef VIBECAST_LOG_H
 #define VIBECAST_LOG_H 1
 
+#include <stddef.h>
+
 /**
  * Función para añadir un mensaje a un archivo.
  *

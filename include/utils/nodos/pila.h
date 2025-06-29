@@ -2,6 +2,7 @@
 #define VIBECAST_NODOS_PILA_H 1
 
 #include "fntypes.h"
+#include <stddef.h>
 #include <stdbool.h>
 
 // ========================================

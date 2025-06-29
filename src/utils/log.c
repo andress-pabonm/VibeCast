@@ -18,7 +18,7 @@ void log(const char *filename, const char *message)
     }
 }
 
-char *mprintf(const char *fmt, ...)
+char *asprintf(const char *fmt, ...)
 {
     if (!fmt)        // Si no hay un formato
         return NULL; // No hay nada que imprimir
