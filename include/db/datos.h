@@ -3,6 +3,14 @@
 
 #include <db/estructuras.h>
 
+/**
+ * Variables globales
+ * Estas variables estarán disponibles
+ * para todos los archivos que incluyan
+ * datos.h
+ * #include <db/datos.h>
+ */
+
 extern ABB usuarios;
 extern ABB artistas;
 extern Lista canciones;
