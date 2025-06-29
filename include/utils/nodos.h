@@ -47,7 +47,7 @@ typedef struct
     Nodo *root;
 } ABB;
 
-/* ================ Declaración de funciones ================ */
+/* ================ Declaración de funciones ================ */ 
 
 // Para crear un nodo aislado con un valor
 Nodo *nuevoNodo(void *value_ptr);
