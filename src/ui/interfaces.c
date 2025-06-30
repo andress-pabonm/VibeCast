@@ -1,6 +1,7 @@
 #include <ui/interfaces.h>
 #include <db/datos.h>
 #include <db/dbmgr.h>
+#include <utils/utils.h>
 
 #define PCRE2_CODE_UNIT_WIDTH 8 // Para establecer que se manejan caracteres de 8 bits
 #include <pcre2.h>              // Para expresiones regulares
@@ -85,16 +86,16 @@ static bool validar_email(const char *email)
 /* ======== Funcionalidad principal de las interfaces ======== */
 
 // Puntero al usuario que ha iniciado sesión
-static Usuario *usuario = NULL;
+Usuario *usuario = NULL;
 
 // Cola de reproducción
-static Cola cola_repr = {NULL};
+Cola cola_repr = NULL;
 
 /* Funciones principales */
 
 #define send_message(...) \
     if (msg)              \
-    *msg = mprintf(__VA_ARGS__)
+    *msg = asprintf(__VA_ARGS__)
 
 interfaz(IsLoggedIn)
 {
@@ -131,7 +132,7 @@ interfaz(CerrarSesion)
 }
 
 // ======== Helper
-select_handler(obtener_id_usuario)
+static select_handler(obtener_id_usuario)
 {
     sscanf(argv[0], "%d", cast(int *, arg));
     return 0;

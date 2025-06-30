@@ -101,14 +101,14 @@ static message_handler(crear_cuenta)
     init_data_json();
 
     // Recibido: nickname, pais, username, email, password, confirmPassword
-    
+
     const char *nickname = get_string(get_array_idx(data, 0));
     const char *pais = get_string(get_array_idx(data, 1));
     const char *username = get_string(get_array_idx(data, 2));
     const char *email = get_string(get_array_idx(data, 3));
     const char *password = get_string(get_array_idx(data, 4));
     const char *confirmPassword = get_string(get_array_idx(data, 5));
-    
+
     // Enviado: email, username, password, confirmPassword, nickname, pais
 
     const char *datos[] = {
@@ -126,7 +126,7 @@ static message_handler(crear_cuenta)
         send_message(0, *msg);
 
     puts(*msg);
-    free(*msg);
+    freem(*msg);
     *msg = NULL;
 }
 

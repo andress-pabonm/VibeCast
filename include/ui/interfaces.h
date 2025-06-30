@@ -1,10 +1,22 @@
 #ifndef VIBECAST_INTERFACES_H
-#define VIBECAST_INTERFACES_H
+#define VIBECAST_INTERFACES_H 1
 
-#include <utils/utils.h>
+#include <VibeCastConfig.h>
+#include <db/estructuras.h>
 
 // Función para liberar la memoria de la expresión regular utilizada para validar emails.
 void free_re();
+
+/**
+ * Variables globales
+ * Estas estructuras estarán disponibles
+ * para todos los archivos que incluyan
+ * interfaces.h
+ * #include <ui/interfaces.h>
+ */
+
+extern Usuario *usuario;
+extern Cola cola_repr;
 
 /* Funciones principales */
 

@@ -312,9 +312,11 @@ static select_handler(cargarOtrosDatosPorUsuario)
         "Usuarios.username",
         condition,
         cargarAmigosPorUsuario,
-        &usuario->amigos, NULL);
+        usuario->amigos, NULL);
 
     freem(condition);
+
+    puts("Amigos enlazados");
 
     // Cargar playlists
 
@@ -323,7 +325,9 @@ static select_handler(cargarOtrosDatosPorUsuario)
     obtener_registros(
         "Playlist", "id, nombre", condition,
         cargarPlaylistsPorUsuario,
-        &usuario->playlists, NULL);
+        usuario->playlists, NULL);
+
+    puts("Playlists cargadas");
 
     // Cargar historial
 
@@ -333,6 +337,8 @@ static select_handler(cargarOtrosDatosPorUsuario)
         &usuario->historial, NULL);
 
     freem(condition);
+
+    puts("Historial cargado");
 
     return 0;
 }
@@ -392,6 +398,8 @@ bool func(LoadData)
     if (!usuarios || !artistas || !canciones || !anuncios)
         return false;
 
+    puts("Variables globales inicializadas");
+
     char *errmsg = NULL;
 
     // Iniciar la base de datos
@@ -402,6 +410,8 @@ bool func(LoadData)
         return false;
     }
 
+    puts("Base de datos inicializada");
+
     // showData(); // Descomenta esta linea si quieres ver todos los datos guardados en la base de datos
 
     // Cargar usuarios, artistas, álbumes y canciones
@@ -409,15 +419,21 @@ bool func(LoadData)
         "Usuarios", "*", NULL,
         cargarUsuarios, NULL, NULL);
 
+    puts("Usuarios cargados");
+
     // Cargar amigos, playlists, historiales
     obtener_registros(
         "Usuarios", "id, username", NULL,
         cargarOtrosDatosPorUsuario, NULL, NULL);
 
+    puts("Amigos, playlists e historiales cargados");
+
     // Cargar anuncios
     obtener_registros(
         "Anuncios JOIN Usuarios ON Usuarios.id = Anuncios.id_usuario",
         "Usuarios.username, Anuncios.url", NULL, cargarAnuncios, NULL, NULL);
+
+    puts("Anuncios cargados");
 
     return true; // Datos cargados correctamente
 }

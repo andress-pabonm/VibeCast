@@ -9,7 +9,7 @@
  * @param filename: Nombre del archivo en el que se va a añadir el mensaje.
  * @param message: Mensaje a añadir al archivo.
  */
-void log(const char *filename, const char *message);
+void log_to_file(const char *filename, const char *message);
 
 /**
  * Para asignar memoria en HEAP y copiar un string con un formato y parámetros dados.

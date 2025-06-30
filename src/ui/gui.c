@@ -128,7 +128,7 @@ bool func(SendMsg, const char *id, int status, const char *msg)
         msg = "";
 
     char *json_message =
-        mprintf(
+        asprintf(
             stringify({"message" : "%s"}),
             msg);
     bool ok = webview_return(w, id, status, json_message) == WEBVIEW_ERROR_OK;

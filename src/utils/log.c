@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-void log(const char *filename, const char *message)
+void log_to_file(const char *filename, const char *message)
 {
     if (filename && message)
     {

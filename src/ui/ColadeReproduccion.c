@@ -3,209 +3,62 @@
 #include <string.h>
 
 #include <db/estructuras.h>
-
-#define MAX 100
-#define MAX2 20
-#define MAX3 200
-
-typedef struct Artista Artista;
-typedef struct Album Album;
-typedef struct Cancion Cancion;
-
-typedef struct Playlist Playlist;
-
-typedef struct Historial Historial;
-typedef struct Reproduccion Reproduccion;
-
-typedef enum Plan Plan;
-typedef struct Anuncio Anuncio;
-
-typedef struct Usuario Usuario;
-typedef struct NodoAnuncio NodoAnuncio;
-typedef struct NodoCancion NodoCancion;
-typedef struct NodoPlaylist NodoPlaylist;
-typedef struct NodoColadeReproduccion NodoColadeReproduccion;
-typedef struct NodoCola NodoCola;
-
-struct Artista
-{
-	// Puntero a su perfil de usuario
-	Usuario *usuario;
-	// Nombre del artista
-	char *nombre;
-	// Lista de los álbumes del artista
-	//Lista albumes;
-};
-
-// Estructura para representar un álbum de canciones
-struct Album
-{
-	// Identificador único de álbum (utilizado en la base de datos)
-	int id;
-	// Artista al que pertenece el álbum
-	Artista *artista;
-	// Nombre del álbum
-	char *nombre;
-	// Fecha en la que se creó el álbum
-	char *fechaCreacion;
-	// Lista de canciones del álbum
-	//Lista canciones;
-};
-
-// Estructura para representar una canción
-struct Cancion
-{
-	// Identificador de la canción
-	int id;
-
-	// Álbum al que pertenece la canción
-	Album *album;
-	// Título de la canción
-	char *nombre;
-	// Género musical al que pertenece la canción
-	char *genero;
-	// Fecha en la que se publicó la canción en la app
-	char *fechaPublicacion;
-
-	// Duración de la canción
-	int duracion;
-	// URL donde se encuentra la canción
-	char *url;
-
-	// Cantidad de veces que se ha añadido a una playlist
-	int popularidad;
-	// Cantidad total de reproducciones de la canción
-	int reproducciones;
-
-};
-
-// Estructura para representar una playlist
-struct Playlist
-{
-	// Identificador único de playlist (utilizado en la base de datos)
-	int id;
-	// Nombre de la playlist
-	char *nombre;
-	// Lista con las canciones agregadas a la playlist
-	//Lista canciones;
-};
-
-
-// Estructura para representar el historial de un usuario
-struct Historial
-{
-	// Pila con las reproducciones
-	//Pila reproducciones;
-	// Tiempo total escuchado/reproducido
-	int tiempoEscuchado;
-	// Cantidad de anuncios "vistos" por el usuario (PLAN_FREEMIUM)
-	int cantidadAnuncios;
-};
-
-// Estructura para representar una reproducción de una canción
-struct Reproduccion
-{
-	// Canción reproducida
-	Cancion *cancion;
-	// Fecha de la reproducción
-	char *fechaEscuchado;
-};
-
-// Tipo de dato para representar los planes disponibles
-enum Plan
-{
-	// Plan por defecto (con anuncios)
-	PLAN_FREEMIUM = 0,
-
-	// Plan "pagado" (sin anuncios)
-	PLAN_PREMIUM
-};
-
-// Estructura para representar un anuncio publicitario
-struct Anuncio
-{
-	// Usuario anunciante
-	 const char *anunciante;
-	// URL del anuncio
-	char *url;
-};
-
-// Estructura para representar un usuario
-struct Usuario
-{
-	// Identificador único de usuario (utilizado en la base de datos)
-	int id;
-	
-	// Usuario para iniciar sesión
-	char *username;
-	// Dirección de correo electrónico registrado
-	char *email;
-	// Contraseña para iniciar sesión
-	char *password;
-
-	// Nombre visible
-	char *nickname;
-	// Pais de origen del usuario
-	char *pais;
-	// Plan vigente de la cuenta
-	Plan plan;
-
-	// Perfil de artista
-	Artista *artista;
-
-	// Lista de amigos del usuario
-	//Lista amigos;
-	// Lista de playlists creadas por el usuario
-	//Lista playlists;
-	// Historial de reproducciones del usuario
-	Historial historial;
-};
+#include <nodos.h>
+ 
+//AQUI ESTABAN TODAS LAS ESTRUCTURAS DE ESTRUCTURAS.H
 
 typedef enum {
     TIPO_CANCION,
     TIPO_ANUNCIO
 } ElementoColaTipo;
 
-struct NodoAnuncio{
-    // Anuncio publicitario
-    Anuncio *anuncio;
-    // Puntero al siguiente nodo
-    NodoAnuncio *siguiente;
-};
-struct NodoCola {
-    void* dato;                 // Puntero GENÉRICO. Apuntará a una CancionGobal o a un Anuncio.
-    ElementoColaTipo tipo;      // La ETIQUETA que nos dice qué es 'dato'.
-    struct NodoCola* siguiente; // Puntero al siguiente elemento en la cola.
-} ;
-struct NodoColadeReproduccion
-{
-	NodoCola* frente;  // Apunta al primer elemento (el que saldrá primero).
-	NodoCola* final;   // Apunta al último elemento (para agregar nuevos fácilmente).
-	int contadorCancionesFree; 
-};
+// struct NodoAnuncio{
+//     // Anuncio publicitario
+//     Anuncio *anuncio;
+//     // Puntero al siguiente nodo
+//     NodoAnuncio *siguiente;
+// };
+// struct NodoCola {
+//     void* dato;                 // Puntero GENÉRICO. Apuntará a una CancionGobal o a un Anuncio.
+//     ElementoColaTipo tipo;      // La ETIQUETA que nos dice qué es 'dato'.
+//     struct NodoCola* siguiente; // Puntero al siguiente elemento en la cola.
+// } ;
+// struct NodoColadeReproduccion
+// {
+// 	NodoCola* frente;  // Apunta al primer elemento (el que saldrá primero).
+// 	NodoCola* final;   // Apunta al último elemento (para agregar nuevos fácilmente).
+// 	int contadorCancionesFree; 
+// };
 
-void insertarAnuncioCircular(NodoAnuncio **cabeza, Anuncio *anuncio) {
-    NodoAnuncio *nuevo = (NodoAnuncio *)malloc(sizeof(NodoAnuncio));
-    if (!nuevo) return;
-    nuevo->anuncio = anuncio;
-    nuevo->siguiente = NULL;
+void insertarAnuncioCircular(Lista *inicioLista, Anuncio *anuncio) {
+    //DOCUMENTADO HECHO POR PAULA Y LEO, INCERTAR ANUNCIOS COMO LISTA CIRCULAR
+    // NodoAnuncio *nuevo = (NodoAnuncio *)malloc(sizeof(NodoAnuncio));
 
-    if (*cabeza == NULL) {
-        // Primer nodo: apunta a sí mismo
-        nuevo->siguiente = nuevo;
-        *cabeza = nuevo;
-    } else {
-        NodoAnuncio *temp = *cabeza;
-        // Buscar el último nodo (el que apunta a cabeza)
-        while (temp->siguiente != *cabeza) {
-            temp = temp->siguiente;
-        }
-        temp->siguiente = nuevo;
-        nuevo->siguiente = *cabeza;
-    }
+    //ANUNCIOS INCERTADOS COMO LISTA 
+    insertValueInLista(inicioLista, anuncio);
+
+    // if (!nuevo) return;
+    // nuevo->anuncio = anuncio;
+    // nuevo->siguiente = NULL;
+
+    // if (*cabeza == NULL) {
+    //     // Primer nodo: apunta a sí mismo
+    //     nuevo->siguiente = nuevo;
+    //     *cabeza = nuevo;
+    // } else {
+    //     NodoAnuncio *temp = *cabeza;
+    //     // Buscar el último nodo (el que apunta a cabeza)
+    //     while (temp->siguiente != *cabeza) {
+    //         temp = temp->siguiente;
+    //     }
+    //     temp->siguiente = nuevo;
+    //     nuevo->siguiente = *cabeza;
+    // }
 }
 
-void encolar(NodoColadeReproduccion* cola, void* dato, ElementoColaTipo tipo) {
+void encolar(Cola *colaReproduccion, void* dato, ElementoColaTipo tipo) {
+    insertValueInCola(colaReproduccion, )
+
     NodoCola* nuevoNodo = (NodoCola*)malloc(sizeof(NodoCola));
     if (!nuevoNodo) return; // Manejo de error en caso de falla de memoria
 
@@ -281,7 +134,7 @@ void reproducirCola(NodoColadeReproduccion* cola) {
         } else if (nodoActual->tipo == TIPO_ANUNCIO) {
             // 3. Es un anuncio: casteamos el puntero y lo procesamos.
             Anuncio* anuncio = (Anuncio*)nodoActual->dato;
-            printf("📣 ANUNCIO: %s (%s)\n", anuncio->url, anuncio->anunciante);
+            printf("ANUNCIO: %s (%s)\n", anuncio->url, anuncio->anunciante);
         }
 
         // 4. Liberamos la memoria de la "caja" (el nodo), no del contenido.
