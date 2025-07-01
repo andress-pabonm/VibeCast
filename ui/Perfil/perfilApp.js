@@ -1,5 +1,3 @@
-//NO SE SI HAY UN "ERROR" CUANDO PULSAS  EL ALBUM XQ NO SE MUESTRA COMO OTRA PAGINA SI NO COMO OTRA SECCION EN EL GRID
-
 document.addEventListener('DOMContentLoaded', function() {
     // Verificar si el usuario está logueado
     // window.is_logged_in().then((res) => {
@@ -22,15 +20,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const newAlbumBtn = document.getElementById('newAlbumBtn');
     const newAlbumModal = document.getElementById('newAlbumModal');
     const createAlbumBtn = document.getElementById('createAlbumBtn');
-    const editAlbumModal = document.getElementById('editAlbumModal');
-    const saveAlbumBtn = document.getElementById('saveAlbumBtn');
-    const deleteAlbumBtn = document.getElementById('deleteAlbumBtn');
-    const albumSongsSection = document.getElementById('albumSongsSection');
-    const albumSongsContainer = document.getElementById('albumSongsContainer');
-    const currentAlbumTitle = document.getElementById('currentAlbumTitle');
-    const backToAlbums = document.getElementById('backToAlbums');
-    const addAlbumToQueueBtn = document.getElementById('addAlbumToQueueBtn');
-    let currentAlbumId = null;
 
     // Simulación de datos del usuario
     const userData = {
@@ -88,21 +77,14 @@ document.addEventListener('DOMContentLoaded', function() {
             name: "Primeros Pasos",
             year: "2020",
             genre: "Rock",
-            songs: [
-                { id: 1, title: "Canción de inicio", artist: "John Doe", duration: "3:45" },
-                { id: 2, title: "El camino", artist: "John Doe", duration: "4:12" },
-                { id: 3, title: "Final feliz", artist: "John Doe", duration: "5:23" }
-            ]
+            songs: 8
         },
         {
             id: 2,
             name: "Entre Sombras",
             year: "2022",
             genre: "Pop",
-            songs: [
-                { id: 1, title: "Luz al amanecer", artist: "John Doe", duration: "3:12" },
-                { id: 2, title: "Sombras", artist: "John Doe", duration: "4:45" }
-            ]
+            songs: 12
         }
     ];
 
@@ -199,14 +181,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cargar discos del artista
     function loadAlbums() {
         albumsContainer.innerHTML = '';
-    
+        
         artistAlbums.forEach(album => {
             const albumElement = document.createElement('div');
             albumElement.className = 'album-card';
             albumElement.innerHTML = `
-                <div class="album-options" data-id="${album.id}">
-                    <i class="fas fa-ellipsis-h"></i>
-                </div>
                 <div class="album-image">
                     <i class="fas fa-compact-disc"></i>
                 </div>
@@ -217,122 +196,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span>${album.genre}</span>
                     </div>
                     <div class="album-details">
-                        <span>${album.songs.length} canción${album.songs.length !== 1 ? 'es' : ''}</span>
+                        <span>${album.songs} canción${album.songs !== 1 ? 'es' : ''}</span>
                     </div>
                 </div>
             `;
-            
-            // Evento para mostrar canciones al hacer clic en el álbum
-            albumElement.addEventListener('click', () => showAlbumSongs(album.id, album.name));
-            
-            // Evento para el botón de opciones
-            albumElement.querySelector('.album-options').addEventListener('click', (e) => {
-                e.stopPropagation();
-                const albumId = parseInt(e.currentTarget.getAttribute('data-id'));
-                editAlbum(albumId);
-            });
-            
             albumsContainer.appendChild(albumElement);
         });
     }
-
-    // Función para mostrar las canciones de un álbum
-    function showAlbumSongs(albumId, albumName) {
-        currentAlbumId = albumId;
-        currentAlbumTitle.textContent = albumName;
-        albumSongsContainer.innerHTML = '';
-        
-        const album = artistAlbums.find(a => a.id === albumId);
-        if (!album) return;
-        
-        album.songs.forEach(song => {
-            const songElement = document.createElement('div');
-            songElement.className = 'song-item';
-            songElement.innerHTML = `
-                <div class="song-info">
-                    <strong>${song.title}</strong>
-                    <p>${song.artist}</p>
-                </div>
-                <div class="song-actions">
-                    <span>${song.duration}</span>
-                    <i class="fas fa-play play-btn" title="Reproducir"></i>
-                </div>
-            `;
-            
-            // Evento para reproducir la canción
-            songElement.querySelector('.play-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                // Aquí iría la lógica para reproducir la canción
-                console.log('Reproduciendo:', song.title);
-            });
-            
-            albumSongsContainer.appendChild(songElement);
-        });
-        
-        artistSection.classList.add('hidden');
-        albumSongsSection.classList.remove('hidden');
-    }
-
-    // Evento para volver a la vista de álbumes
-    backToAlbums.addEventListener('click', () => {
-        albumSongsSection.classList.add('hidden');
-        artistSection.classList.remove('hidden');
-    });
-
-    function editAlbum(albumId) {
-        const album = artistAlbums.find(a => a.id === albumId);
-        if (!album) return;
-        
-        currentAlbumId = albumId;
-        document.getElementById('edit-album-name').value = album.name;
-        document.getElementById('edit-album-year').value = album.year;
-        editAlbumModal.classList.remove('hidden');
-    }
-
-    // Añadir eventos para los botones del modal de edición
-    saveAlbumBtn.addEventListener('click', function() {
-        const albumName = document.getElementById('edit-album-name').value.trim();
-        const albumYear = document.getElementById('edit-album-year').value.trim();
-        
-        if (!albumName || !albumYear) {
-            alert('Por favor completa todos los campos');
-            return;
-        }
-        
-        const albumIndex = artistAlbums.findIndex(a => a.id === currentAlbumId);
-        if (albumIndex !== -1) {
-            artistAlbums[albumIndex].name = albumName;
-            artistAlbums[albumIndex].year = albumYear;
-            loadAlbums();
-            editAlbumModal.classList.add('hidden');
-            alert('Álbum actualizado correctamente');
-        }
-    });
-
-    deleteAlbumBtn.addEventListener('click', function() {
-        if (currentAlbumId && confirm('¿Estás seguro de eliminar este álbum?')) {
-            artistAlbums = artistAlbums.filter(a => a.id !== currentAlbumId);
-            loadAlbums();
-            editAlbumModal.classList.add('hidden');
-            alert('Álbum eliminado correctamente');
-        }
-    });
-
-    // Asegurarse de cerrar el modal al hacer clic en la X
-    closeModals.forEach(btn => {
-        btn.addEventListener('click', function() {
-            plansModal.classList.add('hidden');
-            newAlbumModal.classList.add('hidden');
-            editAlbumModal.classList.add('hidden');
-        });
-    });
-
-    // Cerrar modal al hacer clic fuera
-    editAlbumModal.addEventListener('click', (e) => {
-        if (e.target === editAlbumModal) {
-            editAlbumModal.classList.add('hidden');
-        }
-    });
 
     // Cargar planes disponibles
     function loadPlans() {

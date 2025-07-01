@@ -38,7 +38,7 @@ const MusicPlayer = (function() {
             currentAudio.pause();
         }
         
-        currentAudio = new Audio(`../../assets/music/${idol.mp3}`); //LOGICA PARA LAS CANCIONES
+        currentAudio = new Audio(`../canciones/${song.file}`);
         currentAudio.volume = volume;
         
         currentAudio.addEventListener('loadedmetadata', () => {
@@ -51,17 +51,9 @@ const MusicPlayer = (function() {
             currentTimeEl.textContent = formatTime(currentAudio.currentTime);
         });
         
-        //PUES AQUI ESTA SI SE TERMINA LA CANCION
         currentAudio.addEventListener('ended', () => {
-            // Mostrar notificación
-            showNotification(`Canción terminada: ${currentQueue[currentIndex].title}`);
             playNext();
         });
-        
-        //MUESTRA EL MENSAJE Q SE TERMINO XD
-        function showNotification(message) {
-            alert(message);
-        }
         
         currentAudio.play();
         isPlaying = true;
@@ -122,7 +114,7 @@ const MusicPlayer = (function() {
             if (currentAudio) currentAudio.volume = volume;
         });
         
-        // Control de progresoz
+        // Control de progreso
         progressBar.addEventListener('click', (e) => {
             if (!currentAudio.src) return;
             const rect = progressBar.getBoundingClientRect();
