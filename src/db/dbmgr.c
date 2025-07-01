@@ -8,13 +8,10 @@
 // Conexión con la base de datos
 static sqlite3 *db = NULL;
 
-bool func(InitDB, const char *db_name, const char *script_filename, char **errmsg)
+bool VibeCast_InitDB(const char *db_name, char **errmsg)
 {
     if (db)
         return true;
-
-    if (!db_name)
-        return false;
 
     // Verificar si el archivo ya existe
     bool db_existed = (_access(db_name, 0) == 0);
@@ -33,61 +30,31 @@ bool func(InitDB, const char *db_name, const char *script_filename, char **errms
     if (db_existed)
         return true;
 
-    return func(RunScript, script_filename, errmsg) &&
-           func(RunScript, "datos_prueba.sql", errmsg);
+    return VibeCast_RunScript("db_setup.sql", errmsg) &&
+           VibeCast_RunScript("datos_prueba.sql", errmsg);
 }
 
-void func(CloseDB)
+void VibeCast_CloseDB()
 {
     if (db && (sqlite3_close(db) == SQLITE_OK))
         db = NULL;
-
-    if (!db)
-        puts("Base de datos cerrada");
 }
 
-bool func(RunScript, const char *script_filename, char **errmsg)
+bool VibeCast_RunScript(const char *filename, char **errmsg)
 {
-    /* Esta función sirve para cargar datos de prueba desde datos_prueba.sql */
-
-    if (!script_filename)
-        return false; // No se requiere script si la base ya existía
-
-    // Cargar el script
-
-    FILE *script_file = fopen(script_filename, "r");
-    if (!script_file)
+    if (!db)
     {
         if (errmsg)
-            *errmsg = sqlite3_mprintf("Error al abrir el archivo de script: %s", script_filename);
+            *errmsg = sqlite3_mprintf("Base de datos no abierta.");
         return false;
     }
 
-    fseek(script_file, 0, SEEK_END);
-    int script_len = ftell(script_file);
-
-    char *script_str = malloc_cpy(script_len + 1, NULL);
-    if (!script_str)
-    {
-        if (errmsg)
-            *errmsg = sqlite3_mprintf("Error al cargar el script.");
-        fclose(script_file);
+    char *buf = readFile(filename, errmsg);
+    if (!buf)
         return false;
-    }
 
-    rewind(script_file);
-    fread(script_str, 1, script_len, script_file);
-    fclose(script_file);
-    script_str[script_len] = '\0';
-
-    puts(script_str);
-
-    // Ejecutar el script
-    int rc = sqlite3_exec(db, script_str, NULL, NULL, errmsg);
-    free(script_str);
-
-    printf("Script ejecutado: %s\n", script_filename);
-    printf("Resultado: %s\n", ((rc == SQLITE_OK) ? "Éxito" : "Fallo"));
+    int rc = sqlite3_exec(db, buf, NULL, NULL, errmsg);
+    freem(buf);
 
     return rc == SQLITE_OK;
 }
@@ -155,11 +122,6 @@ bool eliminar_registros(const char *table_name, const char *condition, char **er
     sqlite3_free(sql);
 
     return rc == SQLITE_OK;
-}
-
-bool ejecutar_script(const char *script, select_handler_t handler, void *arg, char **errmsg)
-{
-    return script && (sqlite3_exec(db, script, handler, arg, errmsg) == SQLITE_OK);
 }
 
 void free_errmsg(char *errmsg)

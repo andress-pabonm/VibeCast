@@ -1,7 +1,6 @@
 #ifndef VIBECAST_DBMGR_H
 #define VIBECAST_DBMGR_H 1
 
-#include <VibeCastConfig.h>
 #include <stdbool.h>
 
 /* ======== Función para las búsquedas ======== */
@@ -22,13 +21,13 @@ typedef int (*select_handler_t)(void *arg, int argc, char **argv, char **fields)
 /* ======== Funciones para la conexión con la base de datos ======== */
 
 // Abrir base de datos
-bool func(InitDB, const char *db_name, const char *script_filename, char **errmsg);
+bool VibeCast_InitDB(const char *db_name, char **errmsg);
 
 // Cerrar base de datos
-void func(CloseDB);
+void VibeCast_CloseDB();
 
 // Ejecutar un script sobre la base de datos abierta
-bool func(RunScript, const char *script_filename, char **errmsg);
+bool VibeCast_RunScript(const char *filename, char **errmsg);
 
 /* ======== Funciones para las operaciones básicas sobre la base de datos ======== */
 

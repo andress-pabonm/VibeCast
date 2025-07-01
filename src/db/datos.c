@@ -20,16 +20,16 @@ Cola anuncios = NULL;
 
 static new_cmpfn(cmpUsuarios)
 {
-    const Usuario *usuario_1 = value_ptr_1;
-    const Usuario *usuario_2 = value_ptr_2;
+    const Usuario *usuario_1 = val_1;
+    const Usuario *usuario_2 = val_2;
 
     return strcmp(usuario_1->username, usuario_2->username);
 }
 
 static new_cmpfn(cmpArtistas)
 {
-    const Artista *artista_1 = value_ptr_1;
-    const Artista *artista_2 = value_ptr_2;
+    const Artista *artista_1 = val_1;
+    const Artista *artista_2 = val_2;
 
     return strcmp(artista_1->nombre, artista_2->nombre);
 }
@@ -65,19 +65,25 @@ static select_handler(cargarOtrosDatosPorUsuario);
 #define USUARIO_NICKNAME 4
 #define USUARIO_PAIS 5
 #define USUARIO_PLAN 6
+#define USUARIO_TIEMPO_ESCUCHADO 7
+#define USUARIO_CANTIDAD_ANUNCIOS 8
 
 static select_handler(cargarUsuarios)
 {
     Usuario *usuario = newUsuario();
+
     if (!usuario)
         return 1;
 
+    sscanf(argv[USUARIO_ID], "%d", &usuario->id);
     usuario->username = asprintf(argv[USUARIO_USERNAME]);
     usuario->email = asprintf(argv[USUARIO_EMAIL]);
     usuario->password = asprintf(argv[USUARIO_PASSWORD]);
     usuario->nickname = asprintf(argv[USUARIO_NICKNAME]);
     usuario->pais = asprintf(argv[USUARIO_PAIS]);
     sscanf(argv[USUARIO_PLAN], "%d", &usuario->plan);
+    sscanf(argv[USUARIO_TIEMPO_ESCUCHADO], "%d", &usuario->historial.tiempoEscuchado);
+    sscanf(argv[USUARIO_CANTIDAD_ANUNCIOS], "%d", &usuario->historial.cantidadAnuncios);
 
     insertValueInABB(usuarios, usuario);
 
@@ -316,8 +322,6 @@ static select_handler(cargarOtrosDatosPorUsuario)
 
     freem(condition);
 
-    puts("Amigos enlazados");
-
     // Cargar playlists
 
     condition = asprintf("id_usuario = %d", id_usuario);
@@ -327,18 +331,7 @@ static select_handler(cargarOtrosDatosPorUsuario)
         cargarPlaylistsPorUsuario,
         usuario->playlists, NULL);
 
-    puts("Playlists cargadas");
-
-    // Cargar historial
-
-    obtener_registros(
-        "Historiales", "*", condition,
-        cargarHistorialPorUsuario,
-        &usuario->historial, NULL);
-
     freem(condition);
-
-    puts("Historial cargado");
 
     return 0;
 }
@@ -355,7 +348,7 @@ static select_handler(checkData)
 
 static void showData()
 {
-    puts("Datos cargaods:");
+    puts("Datos guardados en la base de datos:");
 
     puts("\tU<suarios:");
     obtener_registros("Usuarios", "*", NULL, checkData, NULL, NULL);
@@ -388,7 +381,7 @@ static void showData()
     obtener_registros("Anuncios", "*", NULL, checkData, NULL, NULL);
 }
 
-bool func(LoadData)
+bool VibeCast_LoadData(char **errmsg)
 {
     usuarios = newABB(cmpUsuarios);
     artistas = newABB(cmpArtistas);
@@ -396,49 +389,50 @@ bool func(LoadData)
     anuncios = newCola();
 
     if (!usuarios || !artistas || !canciones || !anuncios)
+    {
+        if (errmsg)
+            *errmsg = asprintf("Fallo al inicializar las estructuras dinámicas.");
         return false;
+    }
 
     puts("Variables globales inicializadas");
 
-    char *errmsg = NULL;
-
     // Iniciar la base de datos
-    if (!func(InitDB, "data.db", "db_setup.sql", &errmsg))
-    {
-        printf("Error al inicializar la base de datos: %s\n", errmsg);
-        free_errmsg(errmsg);
+    if (!VibeCast_InitDB("data.db", errmsg))
         return false;
-    }
 
     puts("Base de datos inicializada");
 
     // showData(); // Descomenta esta linea si quieres ver todos los datos guardados en la base de datos
 
     // Cargar usuarios, artistas, álbumes y canciones
-    obtener_registros(
-        "Usuarios", "*", NULL,
-        cargarUsuarios, NULL, NULL);
+    if (!obtener_registros(
+            "Usuarios", "*", NULL,
+            cargarUsuarios, NULL, errmsg))
+        return false;
 
     puts("Usuarios cargados");
 
     // Cargar amigos, playlists, historiales
-    obtener_registros(
-        "Usuarios", "id, username", NULL,
-        cargarOtrosDatosPorUsuario, NULL, NULL);
+    if (!obtener_registros(
+            "Usuarios", "id, username", NULL,
+            cargarOtrosDatosPorUsuario, NULL, errmsg))
+        return false;
 
     puts("Amigos, playlists e historiales cargados");
 
     // Cargar anuncios
-    obtener_registros(
-        "Anuncios JOIN Usuarios ON Usuarios.id = Anuncios.id_usuario",
-        "Usuarios.username, Anuncios.url", NULL, cargarAnuncios, NULL, NULL);
+    if (!obtener_registros(
+            "Anuncios JOIN Usuarios ON Usuarios.id = Anuncios.id_usuario",
+            "Usuarios.username, Anuncios.url", NULL, cargarAnuncios, NULL, errmsg))
+        return false;
 
     puts("Anuncios cargados");
 
     return true; // Datos cargados correctamente
 }
 
-bool func(FreeData)
+bool VibeCast_FreeData()
 {
     /* Aquí se libera la memoria de las estructuras de datos */
 
@@ -449,16 +443,16 @@ bool func(FreeData)
 
 new_cmpfn(cmpUsuarioConUsername)
 {
-    const Usuario *usuario = value_ptr_1;
-    const char *username = value_ptr_2;
+    const Usuario *usuario = val_1;
+    const char *username = val_2;
 
     return strcmp(usuario->username, username);
 }
 
 new_cmpfn(cmpCancionConId)
 {
-    const Cancion *cancion = value_ptr_1;
-    const int *id = value_ptr_2;
+    const Cancion *cancion = val_1;
+    const int *id = val_2;
 
     return cancion->id - *id;
 }

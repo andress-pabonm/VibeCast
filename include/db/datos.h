@@ -2,6 +2,7 @@
 #define VIBECAST_DATOS_H 1
 
 #include <db/estructuras.h>
+#include <stdbool.h>
 
 /**
  * Variables globales
@@ -19,10 +20,10 @@ extern Cola anuncios;
 /* ======== Declaración de funciones ======== */
 
 // Función para cargar los datos en las estructuras
-bool func(LoadData);
+bool VibeCast_LoadData(char **errmsg);
 
 // Función para liberar la memoria
-bool func(FreeData);
+bool VibeCast_FreeData();
 
 /* Comparadores */
 
