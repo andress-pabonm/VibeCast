@@ -23,7 +23,7 @@ typedef struct __ABB
 
 typedef struct
 {
-    operfn_t callback;
+    operfn_t cb;
     void *arg;
 } foreach_wrapper_arg_t;
 
@@ -31,15 +31,15 @@ typedef struct
 // Funciones auxiliares
 // ========================================
 
-static Nodo newNodo(void *value_ptr)
+static Nodo newNodo(void *val)
 {
-    return value_ptr
+    return val
                ? alloc(
                      struct Nodo,
                      &cast(struct Nodo,
                            .l = NULL,
                            .r = NULL,
-                           .v = value_ptr))
+                           .v = val))
                : NULL;
 }
 
@@ -61,11 +61,11 @@ ABB newABB(cmpfn_t cmp)
 // API Pública - Inserción
 // ========================================
 
-int insertValueInABB(ABB abb, void *value_ptr)
+int insertValueInABB(ABB abb, void *val)
 {
     if (!abb)
         return INSERT_FAILED;
-    Nodo nodo = newNodo(value_ptr);
+    Nodo nodo = newNodo(val);
     if (!nodo)
         return INSERT_FAILED;
 
@@ -76,7 +76,7 @@ int insertValueInABB(ABB abb, void *value_ptr)
 
     while (*ref)
     {
-        int cmpv = cmp((*ref)->v, value_ptr);
+        int cmpv = cmp((*ref)->v, val);
         if (!cmpv)
         {
             destroyNodo(nodo);
@@ -94,15 +94,15 @@ int insertValueInABB(ABB abb, void *value_ptr)
 // API Pública - Búsqueda
 // ========================================
 
-static Nodo *searchValueInABB_Ref(ABB abb, const void *value_ptr, cmpfn_t cmp)
+static Nodo *searchValueInABB_Ref(ABB abb, const void *val, cmpfn_t cmp)
 {
-    if (!abb || !value_ptr || !cmp)
+    if (!abb || !val || !cmp)
         return NULL;
 
     Nodo *ref = &cast(__ABB, abb)->root;
     while (*ref)
     {
-        int cmpv = cmp((*ref)->v, value_ptr);
+        int cmpv = cmp((*ref)->v, val);
         if (!cmpv)
             return ref;
         ref = (cmpv > 0) ? &(*ref)->l : &(*ref)->r;
@@ -110,15 +110,15 @@ static Nodo *searchValueInABB_Ref(ABB abb, const void *value_ptr, cmpfn_t cmp)
     return NULL;
 }
 
-static Nodo searchValueInABB_Nodo(ABB abb, const void *value_ptr, cmpfn_t cmp)
+static Nodo searchValueInABB_Nodo(ABB abb, const void *val, cmpfn_t cmp)
 {
-    Nodo *ref = searchValueInABB_Ref(abb, value_ptr, cmp);
+    Nodo *ref = searchValueInABB_Ref(abb, val, cmp);
     return ref ? *ref : NULL;
 }
 
-void *searchValueInABB(ABB abb, const void *value_ptr, cmpfn_t cmp)
+void *searchValueInABB(ABB abb, const void *val, cmpfn_t cmp)
 {
-    Nodo nodo = searchValueInABB_Nodo(abb, value_ptr, cmp);
+    Nodo nodo = searchValueInABB_Nodo(abb, val, cmp);
     return nodo ? nodo->v : NULL;
 }
 
@@ -131,7 +131,7 @@ static void *deleteValueInABB_Rec(Nodo *root)
     if (!root || !*root)
         return NULL;
     Nodo nodo = *root;
-    void *value_ptr = nodo->v;
+    void *val = nodo->v;
 
     if (nodo->l && nodo->r)
     {
@@ -146,12 +146,12 @@ static void *deleteValueInABB_Rec(Nodo *root)
         destroyNodo(nodo);
     }
 
-    return value_ptr;
+    return val;
 }
 
-void *deleteValueInABB(ABB abb, const void *value_ptr, cmpfn_t cmp)
+void *deleteValueInABB(ABB abb, const void *val, cmpfn_t cmp)
 {
-    return deleteValueInABB_Rec(searchValueInABB_Ref(abb, value_ptr, cmp));
+    return deleteValueInABB_Rec(searchValueInABB_Ref(abb, val, cmp));
 }
 
 // ========================================
@@ -160,12 +160,12 @@ void *deleteValueInABB(ABB abb, const void *value_ptr, cmpfn_t cmp)
 
 static new_operfn(forEachInABB_PreOrder_Rec)
 {
-    if (!value_ptr)
+    if (!val)
         return FOREACH_CONTINUE;
-    Nodo root = value_ptr;
+    Nodo root = val;
     foreach_wrapper_arg_t *wrapper_arg = arg;
 
-    switch (wrapper_arg->callback(wrapper_arg->arg, index, root->v))
+    switch (wrapper_arg->cb(wrapper_arg->arg, idx, root->v))
     {
     case FOREACH_BREAK:
         return FOREACH_CONTINUE;
@@ -175,7 +175,7 @@ static new_operfn(forEachInABB_PreOrder_Rec)
         return FOREACH_BREAK;
     }
 
-    switch (forEachInABB_PreOrder_Rec(arg, index + 1, root->l))
+    switch (forEachInABB_PreOrder_Rec(arg, idx + 1, root->l))
     {
     case FOREACH_BREAK:
         return FOREACH_BREAK;
@@ -185,7 +185,7 @@ static new_operfn(forEachInABB_PreOrder_Rec)
         return FOREACH_BREAK;
     }
 
-    switch (forEachInABB_PreOrder_Rec(arg, index + 1, root->r))
+    switch (forEachInABB_PreOrder_Rec(arg, idx + 1, root->r))
     {
     case FOREACH_BREAK:
         return FOREACH_BREAK;
@@ -198,22 +198,22 @@ static new_operfn(forEachInABB_PreOrder_Rec)
     return FOREACH_CONTINUE;
 }
 
-void forEachInABB_PreOrder(ABB abb, operfn_t callback, void *arg)
+void forEachInABB_PreOrder(ABB abb, operfn_t cb, void *arg)
 {
-    if (!abb || !callback)
+    if (!abb || !cb)
         return;
-    foreach_wrapper_arg_t wrapper_arg = {.callback = callback, .arg = arg};
+    foreach_wrapper_arg_t wrapper_arg = {.cb = cb, .arg = arg};
     forEachInABB_PreOrder_Rec(&wrapper_arg, 0, cast(__ABB, abb)->root);
 }
 
 static new_operfn(forEachInABB_InOrder_Rec)
 {
-    if (!value_ptr)
+    if (!val)
         return FOREACH_CONTINUE;
-    Nodo root = value_ptr;
+    Nodo root = val;
     foreach_wrapper_arg_t *wrapper_arg = arg;
 
-    switch (forEachInABB_InOrder_Rec(arg, index + 1, root->l))
+    switch (forEachInABB_InOrder_Rec(arg, idx + 1, root->l))
     {
     case FOREACH_BREAK:
         return FOREACH_BREAK;
@@ -223,7 +223,7 @@ static new_operfn(forEachInABB_InOrder_Rec)
         return FOREACH_BREAK;
     }
 
-    switch (wrapper_arg->callback(wrapper_arg->arg, index, root->v))
+    switch (wrapper_arg->cb(wrapper_arg->arg, idx, root->v))
     {
     case FOREACH_BREAK:
         return FOREACH_CONTINUE;
@@ -233,7 +233,7 @@ static new_operfn(forEachInABB_InOrder_Rec)
         return FOREACH_BREAK;
     }
 
-    switch (forEachInABB_InOrder_Rec(arg, index + 1, root->r))
+    switch (forEachInABB_InOrder_Rec(arg, idx + 1, root->r))
     {
     case FOREACH_BREAK:
         return FOREACH_BREAK;
@@ -246,22 +246,22 @@ static new_operfn(forEachInABB_InOrder_Rec)
     return FOREACH_CONTINUE;
 }
 
-void forEachInABB_InOrder(ABB abb, operfn_t callback, void *arg)
+void forEachInABB_InOrder(ABB abb, operfn_t cb, void *arg)
 {
-    if (!abb || !callback)
+    if (!abb || !cb)
         return;
-    foreach_wrapper_arg_t wrapper_arg = {.callback = callback, .arg = arg};
+    foreach_wrapper_arg_t wrapper_arg = {.cb = cb, .arg = arg};
     forEachInABB_InOrder_Rec(&wrapper_arg, 0, cast(__ABB, abb)->root);
 }
 
 static new_operfn(forEachInABB_PostOrder_Rec)
 {
-    if (!value_ptr)
+    if (!val)
         return FOREACH_CONTINUE;
-    Nodo root = value_ptr;
+    Nodo root = val;
     foreach_wrapper_arg_t *wrapper_arg = arg;
 
-    switch (forEachInABB_PostOrder_Rec(arg, index + 1, root->l))
+    switch (forEachInABB_PostOrder_Rec(arg, idx + 1, root->l))
     {
     case FOREACH_BREAK:
         return FOREACH_BREAK;
@@ -271,7 +271,7 @@ static new_operfn(forEachInABB_PostOrder_Rec)
         return FOREACH_BREAK;
     }
 
-    switch (forEachInABB_PostOrder_Rec(arg, index + 1, root->r))
+    switch (forEachInABB_PostOrder_Rec(arg, idx + 1, root->r))
     {
     case FOREACH_BREAK:
         return FOREACH_BREAK;
@@ -281,7 +281,7 @@ static new_operfn(forEachInABB_PostOrder_Rec)
         return FOREACH_BREAK;
     }
 
-    switch (wrapper_arg->callback(wrapper_arg->arg, index, root->v))
+    switch (wrapper_arg->cb(wrapper_arg->arg, idx, root->v))
     {
     case FOREACH_BREAK:
         return FOREACH_CONTINUE;
@@ -294,11 +294,11 @@ static new_operfn(forEachInABB_PostOrder_Rec)
     return FOREACH_CONTINUE;
 }
 
-void forEachInABB_PostOrder(ABB abb, operfn_t callback, void *arg)
+void forEachInABB_PostOrder(ABB abb, operfn_t cb, void *arg)
 {
-    if (!abb || !callback)
+    if (!abb || !cb)
         return;
-    foreach_wrapper_arg_t wrapper_arg = {.callback = callback, .arg = arg};
+    foreach_wrapper_arg_t wrapper_arg = {.cb = cb, .arg = arg};
     forEachInABB_PostOrder_Rec(&wrapper_arg, 0, cast(__ABB, abb)->root);
 }
 
@@ -306,35 +306,35 @@ void forEachInABB_PostOrder(ABB abb, operfn_t callback, void *arg)
 // API Pública - Destrucción
 // ========================================
 
-void destroyABB_Rec_NoCallback(Nodo root)
+void destroyABB_Rec_Nocb(Nodo root)
 {
     if (root)
     {
-        destroyABB_Rec_NoCallback(root->l);
-        destroyABB_Rec_NoCallback(root->r);
+        destroyABB_Rec_Nocb(root->l);
+        destroyABB_Rec_Nocb(root->r);
         destroyNodo(root);
     }
 }
 
-void destroyABB_Rec_Callback(Nodo root, operfn_t callback, void *arg)
+void destroyABB_Rec_cb(Nodo root, operfn_t cb, void *arg)
 {
     if (root)
     {
-        destroyABB_Rec_Callback(root->l, callback, arg);
-        destroyABB_Rec_Callback(root->r, callback, arg);
-        callback(arg, 0, root->v);
+        destroyABB_Rec_cb(root->l, cb, arg);
+        destroyABB_Rec_cb(root->r, cb, arg);
+        cb(arg, 0, root->v);
         destroyNodo(root);
     }
 }
 
-void destroyABB(ABB abb, operfn_t callback, void *arg)
+void destroyABB(ABB abb, operfn_t cb, void *arg)
 {
     if (!abb)
         return;
 
     __ABB __abb = abb;
-    if (callback)
-        destroyABB_Rec_Callback(__abb->root, callback, arg);
+    if (cb)
+        destroyABB_Rec_cb(__abb->root, cb, arg);
     else
-        destroyABB_Rec_NoCallback(__abb->root);
+        destroyABB_Rec_Nocb(__abb->root);
 }
