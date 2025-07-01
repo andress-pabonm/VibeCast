@@ -70,7 +70,7 @@ static void centrarVentana(HWND hwnd)
 
 static webview_t w = NULL;
 
-bool func(InitGUI, void *appstate)
+bool VibeCast_InitGUI()
 {
     // Crear la ventana
     w = webview_create(1, NULL);       // Crea la ventana con opción para Debug (Inspecionar)
@@ -97,7 +97,7 @@ bool func(InitGUI, void *appstate)
     // Ícono de la ventana
     setIcon(hwnd, path_to("assets/icon/favicon.ico"));
 
-    func(InitBindings);
+    VibeCast_InitBindings();
 
     // Ir a la primera interfaz
     webview_navigate(w, INTERFAZ("Login/index.html"));
@@ -105,24 +105,24 @@ bool func(InitGUI, void *appstate)
     return true;
 }
 
-bool func(RunGUI, void *appstate)
+bool VibeCast_RunGUI()
 {
     return webview_run(w) == WEBVIEW_ERROR_OK;
 }
 
-bool func(DestroyGUI, void *appstate)
+bool VibeCast_DestroyGUI()
 {
     return webview_destroy(w) == WEBVIEW_ERROR_OK;
 }
 
 // Para enlazar una función a la interfaz gráfica
-bool func(BindFn, const char *name, message_handler_t msgh, void *arg)
+bool VibeCast_BindFn(const char *name, message_handler_t msgh, void *arg)
 {
     return webview_bind(w, name, msgh, arg) == WEBVIEW_ERROR_OK;
 }
 
 /* Para enviar un mensaje a la interfaz gráfica */
-bool func(SendMsg, const char *id, int status, const char *msg)
+bool VibeCast_SendMsg(const char *id, int status, const char *msg)
 {
     if (!msg)
         msg = "";

@@ -3,6 +3,6 @@
 
 #include <utils/utils.h>
 
-bool func(InitBindings);
+bool VibeCast_InitBindings();
 
 #endif // VIBECAST_CONEXIONES_H

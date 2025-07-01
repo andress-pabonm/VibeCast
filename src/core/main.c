@@ -13,7 +13,7 @@
 AppResult VibeCast_AppInit(void **appstate, int argc, const char *argv[])
 {
     // Inicializar la interfaz gráfica
-    if (!func(InitGUI, *appstate))
+    if (!VibeCast_InitGUI())
     {
         puts("Error al inicializar la interfaz gráfica.");
         return VIBECAST_APP_FAILURE;
@@ -21,10 +21,13 @@ AppResult VibeCast_AppInit(void **appstate, int argc, const char *argv[])
 
     puts("Interfaz gráfica inicializada");
 
+    char *errmsg = NULL;
+
     // Cargar datos
-    if (!func(LoadData))
+    if (!VibeCast_LoadData(&errmsg))
     {
-        puts("Error al cargar los datos.");
+        puts(errmsg);
+        freem(errmsg);
         return VIBECAST_APP_FAILURE;
     }
 
@@ -37,16 +40,16 @@ AppResult VibeCast_AppInit(void **appstate, int argc, const char *argv[])
 
 AppResult VibeCast_AppIter(void *appstate)
 {
-    return func(RunGUI, appstate)
+    return VibeCast_RunGUI()
                ? VIBECAST_APP_SUCCESS
                : VIBECAST_APP_FAILURE;
 }
 
 AppResult VibeCast_AppQuit(void *appstate, AppResult appresult)
 {
-    func(DestroyGUI, appstate); // Liberar la memoria de la interfaz gráfica
-    func(FreeData);             // Para liberar la memoria de las estructuras de datos
-    freem(appstate);            // Liberar la memoria de appstate
+    VibeCast_DestroyGUI(appstate); // Liberar la memoria de la interfaz gráfica
+    VibeCast_FreeData();           // Para liberar la memoria de las estructuras de datos
+    freem(appstate);               // Liberar la memoria de appstate
 
     printf("appresult: %d\n", appresult);
 

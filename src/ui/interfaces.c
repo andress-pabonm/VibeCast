@@ -137,9 +137,134 @@ static select_handler(obtener_id_usuario)
     sscanf(argv[0], "%d", cast(int *, arg));
     return 0;
 }
+
+typedef struct
+{
+    bool *check;
+    const char *email;
+} search_email_arg_t;
+
+static new_operfn(checkEmailRepetido)
+{
+    search_email_arg_t *wrapper_arg = arg;
+
+    if (*wrapper_arg->check)
+        return FOREACH_BREAK;
+
+    Usuario *u = val;
+
+    if (strcmp(u->email, wrapper_arg->email))
+        return FOREACH_CONTINUE;
+
+    *wrapper_arg->check = true;
+    return FOREACH_BREAK;
+}
 // ======== Helper
 
 interfaz(CrearCuenta)
 {
+    for (int i = 0; i < argc; i++)
+    {
+        if (!argv[i])
+        {
+            send_message("Todos los campos son obligatorios");
+            return false;
+        }
+    }
+
+    const char *email = argv[0];
+
+    // Verificar que el correo es válido
+
+    if (!validar_email(email))
+    {
+        send_message("Correo no válido");
+        return false;
+    }
+
+    // Verificar que el email no esté registrado
+
+    bool emailRepetido = false;
+
+    search_email_arg_t wrapper_arg = {
+        .check = &emailRepetido,
+        .email = email,
+    };
+
+    forEachInABB_InOrder(usuarios, checkEmailRepetido, &wrapper_arg);
+
+    if (emailRepetido)
+    {
+        send_message("El email ya está registrado.");
+        return false;
+    }
+
+    const char *username = argv[1];
+
+    // Verificar que el username no esté registrado
+
+    if (searchValueInABB(usuarios, username, cmpUsuarioConUsername))
+    {
+        send_message("El username ya existe.");
+        return false;
+    }
+
+    const char *password = argv[2];
+    const char *confirmPassword = argv[3];
+
+    // Verificar que las contraseñas coincidan
+
+    if (strcmp(password, confirmPassword))
+    {
+        send_message("Las contraseñas no coinciden.");
+        return false;
+    }
+
+    const char *nickname = argv[4];
+    const char *pais = argv[5];
+
+    // Se puede continuar con el registro
+
+    // Empaquetar los datos en un único string
+    char *datos = asprintf(
+        stringify("%s", "%s", "%s", "%s", "%s"),
+        username, email, password, nickname, pais);
+
+    // Registrar en la base de datos
+    nuevo_registro(
+        "Usuarios",
+        "username, email, password, nickname, pais",
+        datos, NULL);
+
+    // Crear el nuevo usuario e insertarlo en el árbol
+
+    usuario = newUsuario();
+
+    usuario->username = asprintf(username);
+    usuario->email = asprintf(email);
+    usuario->password = asprintf(password);
+    usuario->nickname = asprintf(nickname);
+    usuario->pais = asprintf(pais);
+
+    // Obtener el id del nuevo usuario
+
+    char *condition = asprintf(
+        stringify(username = "%s"),
+        username);
+
+    obtener_registros(
+        "Usuarios", "id", condition,
+        obtener_id_usuario,
+        &usuario->id,
+        NULL);
+
+    freem(condition);
+
+    insertValueInABB(usuarios, usuario);
+
+    usuario = NULL; // Para indicar que no queda iniciado sesión
+
+    send_message("Cuenta creada exitosamente.");
+
     return true;
 }

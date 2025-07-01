@@ -16,18 +16,18 @@ typedef void (*message_handler_t)(const char *id, const char *req, void *arg);
 
 /* Funciones principales */
 
-bool func(InitGUI, void *appstate);    // Inicializar la interfaz gráfica
-bool func(RunGUI, void *appstate);     // Para ejecutar la interfaz gráfica
-bool func(DestroyGUI, void *appstate); // Liberar la memoria de la interfaz gráfica
+bool VibeCast_InitGUI();    // Inicializar la interfaz gráfica
+bool VibeCast_RunGUI();     // Para ejecutar la interfaz gráfica
+bool VibeCast_DestroyGUI(); // Liberar la memoria de la interfaz gráfica
 
 // Para conectar una función con la interfaz gráfica
-bool func(BindFn, const char *name, message_handler_t msgh, void *arg);
+bool VibeCast_BindFn(const char *name, message_handler_t msgh, void *arg);
 // Macro para facilitar usar BindFN
 #define bind_fn(fn, arg) func(BindFn, stringify(fn), fn, arg)
 
 // Para enviar un mensaje a la interfaz gráfica
-bool func(SendMsg, const char *id, int status, const char *msg);
+bool VibeCast_SendMsg(const char *id, int status, const char *msg);
 // Macro para facilitar el uso de sendMessage
-#define send_message(status, message) func(SendMsg, id, status, message)
+#define send_message(status, message) VibeCast_SendMsg(id, status, message)
 
 #endif // GUI_H

@@ -132,7 +132,7 @@ static message_handler(crear_cuenta)
 
 /* ======== Para conectar las interfaces ======== */
 
-bool func(InitBindings)
+bool VibeCast_InitBindings()
 {
     char *msg = NULL;
 
