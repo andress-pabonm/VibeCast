@@ -101,39 +101,41 @@ void agregarCancionACola(NodoColadeReproduccion *colaReproduccion, Usuario* usua
            
             // Se encola el anuncio, pasándole el anuncio y su TIPO.
             encolar(colaReproduccion, cabezaAnuncio, TIPO_ANUNCIO);
-        
             
-
-            cabezaAnuncio=cabezaAnuncio->siguiente; // Avanzamos al siguiente anuncio.
-            colaReproduccion->contadorCancionesFree = 0; // 5. Se reinicia el contador.
+            //AQUI ANDRES LO QUE DICES XD LA FUNCION
+            // cabezaAnuncio=cabezaAnuncio->siguiente; // Avanzamos al siguiente anuncio.
+            // colaReproduccion->contadorCancionesFree = 0; // 5. Se reinicia el contador.
         }
     }
 }
 
 NodoCola* desencolar(NodoColadeReproduccion *cola) {
+
+
     if (cola->frente == NULL) return NULL; // Cola vacía
 
     NodoCola* nodo = cola->frente;
-    cola->frente = nodo->siguiente;
+    
+    deleteValueInCola(nodo);
 
-    // Si la cola queda vacía, actualiza también el final
-    if (cola->frente == NULL) {
-        cola->final = NULL;
-    }
+    // cola->frente = nodo->siguiente;
 
-    nodo->siguiente = NULL; // Desvincula el nodo de la cola
+    // // Si la cola queda vacía, actualiza también el final
+    // if (cola->frente == NULL) {
+    //     cola->final = NULL;
+    // }
+
+    // nodo->siguiente = NULL; // Desvincula el nodo de la cola
     return nodo;
 }
 
 
 void reproducirCola(NodoColadeReproduccion* cola) {
     if (cola->frente==NULL){
-    printf("La cola de reproducción está vacía.\n");
-    return;
-
+        printf("La cola de reproducción está vacía\n");
+        return;
     }
 
- 
     // 1. Bucle para procesar toda la cola.
     while (cola->frente !=NULL) {
         // Sacamos el primer nodo
@@ -143,7 +145,7 @@ void reproducirCola(NodoColadeReproduccion* cola) {
         if (nodoActual->tipo == TIPO_CANCION) {
             // 3. Es una canción: casteamos el puntero y lo procesamos.
             Cancion* cancion = (Cancion*)nodoActual->dato;
-            printf("🎵 Reproduciendo: '%s' ", cancion->nombre);
+            printf("Reproduciendo: '%s' ", cancion->nombre);
 
         } else if (nodoActual->tipo == TIPO_ANUNCIO) {
             // 3. Es un anuncio: casteamos el puntero y lo procesamos.
@@ -154,5 +156,6 @@ void reproducirCola(NodoColadeReproduccion* cola) {
         // 4. Liberamos la memoria de la "caja" (el nodo), no del contenido.
         free(nodoActual);
     }
+    
     printf("--- FIN DE LA REPRODUCCIÓN ---\n");
 }
