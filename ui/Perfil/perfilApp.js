@@ -1,3 +1,5 @@
+//NO SE SI HAY UN "ERROR" CUANDO PULSAS  EL ALBUM XQ NO SE MUESTRA COMO OTRA PAGINA SI NO COMO OTRA SECCION EN EL GRID
+
 document.addEventListener('DOMContentLoaded', function() {
     // Verificar si el usuario está logueado
     // window.is_logged_in().then((res) => {
