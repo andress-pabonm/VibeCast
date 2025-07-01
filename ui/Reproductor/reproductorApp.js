@@ -38,7 +38,7 @@ const MusicPlayer = (function() {
             currentAudio.pause();
         }
         
-        currentAudio = new Audio(`../../assets/music/${idol.mp3}`);
+        currentAudio = new Audio(`../../assets/music/${idol.mp3}`); //LOGICA PARA LAS CANCIONES
         currentAudio.volume = volume;
         
         currentAudio.addEventListener('loadedmetadata', () => {
