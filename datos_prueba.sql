@@ -1,9 +1,9 @@
-INSERT INTO Usuarios (username, email, password, nickname, pais, plan) VALUES
-("alice123", "alice@mail.com", "pass1", "Alice", "Ecuador", 1),
-("bob321", "bob@mail.com", "pass2", "Bob", "Ecuador", 0),
-("carla_music", "carla@mail.com", "pass3", "Carla", "Colombia", 1),
-("davebeat", "dave@mail.com", "pass4", "Dave", "México", 0),
-("eva88", "eva@mail.com", "pass5", "Eva", "Argentina", 1);
+INSERT INTO Usuarios (username, email, password, nickname, pais, plan, tiempo_escuchado, cantidad_anuncios) VALUES
+("alice123", "alice@mail.com", "pass1", "Alice", "Ecuador", 1, 3600, 5),
+("bob321", "bob@mail.com", "pass2", "Bob", "Ecuador", 0, 1800, 2),
+("carla_music", "carla@mail.com", "pass3", "Carla", "Colombia", 1, 5400, 0),
+("davebeat", "dave@mail.com", "pass4", "Dave", "México", 0, 0, 0),
+("eva88", "eva@mail.com", "pass5", "Eva", "Argentina", 1, 0, 0);
 
 INSERT INTO Amigos (id_usuario_1, id_usuario_2) VALUES
 (1, 2),
@@ -33,11 +33,6 @@ INSERT INTO Playlist_Canciones (id_playlist, id_cancion) VALUES
 (1, 3),
 (2, 2),
 (2, 4);
-
-INSERT INTO Historiales (id_usuario, tiempo_escuchado, cantidad_anuncios) VALUES
-(1, 3600, 5),
-(2, 1800, 2),
-(3, 5400, 0);
 
 INSERT INTO Reproducciones (id_usuario, id_cancion, fecha_escuchado) VALUES
 (1, 1, "2025-06-20 10:00:00"),

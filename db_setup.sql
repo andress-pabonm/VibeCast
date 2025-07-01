@@ -5,7 +5,9 @@ CREATE TABLE IF NOT EXISTS Usuarios (
     password TEXT NOT NULL,
     nickname TEXT NOT NULL,
     pais TEXT NOT NULL,
-    plan INTEGER NOT NULL DEFAULT 0
+    plan INTEGER NOT NULL DEFAULT 0,
+    tiempo_escuchado INTEGER NOT NULL DEFAULT 0,
+    cantidad_anuncios INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS Amigos (
@@ -59,13 +61,6 @@ CREATE TABLE IF NOT EXISTS Playlist_Canciones (
     PRIMARY KEY (id_playlist, id_cancion),
     FOREIGN KEY (id_playlist) REFERENCES Playlists(id),
     FOREIGN KEY (id_cancion) REFERENCES Canciones(id)
-);
-
-CREATE TABLE IF NOT EXISTS Historiales (
-    id_usuario INTEGER PRIMARY KEY,
-    tiempo_escuchado INTEGER NOT NULL DEFAULT 0,
-    cantidad_anuncios INTEGER NOT NULL DEFAULT 0,
-    FOREIGN KEY (id_usuario) REFERENCES Usuarios(id)
 );
 
 CREATE TABLE IF NOT EXISTS Reproducciones (
