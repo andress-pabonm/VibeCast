@@ -146,6 +146,14 @@ message_handler(next_song)
     }
 }
 
+message_handler(crear_artista)
+{
+    const char *nombre;
+
+    Artista *artista = crearArtista(nombre);
+    
+}
+
 /* ======== Para conectar las interfaces ======== */
 
 bool VibeCast_InitBindings()

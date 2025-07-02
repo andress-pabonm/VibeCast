@@ -31,4 +31,8 @@ interfaz(CrearCuenta);   // Para crear una nueva cuenta
 // Función para avanzar en la cola de reproducción
 interfaz(SiguienteCancion);
 
+Artista *crearArtista(const char *nombre);
+void insertarArtistaEnABB(Artista *artista);
+void agregarAlbum(Album *album);
+
 #endif // VIBECAST_INTERFACES_H
