@@ -33,7 +33,7 @@ char *readFile(const char *filename, char **errmsg)
     fseek(file, 0, SEEK_END);
     int len = ftell(file);
 
-    if (len < 0)
+    if (len < 1)
     {
         fclose(file);
         if (errmsg)

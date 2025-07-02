@@ -53,6 +53,8 @@ bool VibeCast_RunScript(const char *filename, char **errmsg)
     if (!buf)
         return false;
 
+    puts(buf);
+    
     int rc = sqlite3_exec(db, buf, NULL, NULL, errmsg);
     freem(buf);
 

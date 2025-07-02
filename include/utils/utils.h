@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-// #include "filemgr.h"       // Gestión de archivos
+#include "filemgr.h"       // Gestión de archivos
 #include "memmgr.h"        // Gestión de memoria en HEAP
 #include "macros.h"        // Macros útiles
 #include "async.h"         // Ejecución de procesos en paralelo
