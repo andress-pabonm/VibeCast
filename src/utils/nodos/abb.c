@@ -105,8 +105,10 @@ static Nodo *searchValueInABB_Ref(ABB abb, const void *val, cmpfn_t cmp)
         int cmpv = cmp((*ref)->v, val);
         if (!cmpv)
             return ref;
+            
         ref = (cmpv > 0) ? &(*ref)->l : &(*ref)->r;
     }
+    
     return NULL;
 }
 
