@@ -254,7 +254,7 @@ void *searchValueInLista(Lista lista, const void *val, cmpfn_t cmp)
     return wrapper_arg.fnd;
 }
 
-static Nodo *searchValueInLista_Ref(Lista lista, void *val, cmpfn_t cmp)
+static Nodo *searchValueInLista_Ref(Lista lista, const void *val, cmpfn_t cmp)
 {
     if (!lista || !val || !cmp)
         return NULL;

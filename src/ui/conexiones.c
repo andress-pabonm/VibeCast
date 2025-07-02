@@ -1,15 +1,10 @@
 #include <ui/conexiones.h>
 #include <ui/interfaces.h>
-#include <ui/gui.h>
 #include <utils/utils.h>
 
-#include <json.h> // Para manejar los mensajes enviados desde JS
+#include <ui/gui.h>
 
-/**
- * Macro para declarar y definir fácilmente funciones de tipo (message_handler_t)
- * @param name: Nombre de la función
- */
-#define message_handler(name) void name(const char *id, const char *req, void *arg)
+#include <json.h> // Para manejar los mensajes enviados desde JS
 
 /* ======== Utilidades ======== */
 
@@ -55,7 +50,7 @@ static message_handler(test)
 
 static message_handler(is_logged_in)
 {
-    if (func(IsLoggedIn, 0, NULL, NULL))
+    if (func(IsLoggedIn, NULL, 0, NULL, NULL))
         send_message(0, TRUE);
     else
         send_message(0, FALSE);
@@ -70,11 +65,9 @@ static message_handler(iniciar_sesion)
     const char *username = get_string(get_array_idx(data, 0));
     const char *password = get_string(get_array_idx(data, 1));
 
-    printf("Datos recibidos en iniciar_sesion():\n\tusername: %s\n\tpassword: %s\n", username, password);
-
     // Llamar a la función para iniciar sesión
     char **msg = arg;
-    if (func(IniciarSesion, 2,
+    if (func(IniciarSesion, NULL, 2,
              cast(const char *[],
                   username, password),
              msg))
@@ -84,13 +77,13 @@ static message_handler(iniciar_sesion)
 
     // Mostrar mensaje y liberar memoria.
     puts(*msg);
-    free(*msg);
+    freem(*msg);
     *msg = NULL;
 }
 
 static message_handler(cerrar_sesion)
 {
-    if (func(CerrarSesion, 0, NULL, NULL))
+    if (func(CerrarSesion, NULL, 0, NULL, NULL))
         send_message(0, STATUS_SUCCESS);
     else
         send_message(0, STATUS_FAILURE);
@@ -120,7 +113,7 @@ static message_handler(crear_cuenta)
         pais};
 
     char **msg = arg;
-    if (func(CrearCuenta, 6, datos, msg))
+    if (func(CrearCuenta, NULL, 6, datos, msg))
         send_message(0, STATUS_SUCCESS);
     else
         send_message(0, *msg);
@@ -128,6 +121,29 @@ static message_handler(crear_cuenta)
     puts(*msg);
     freem(*msg);
     *msg = NULL;
+}
+
+/* ================================================================ */
+
+message_handler(next_song)
+{
+    struct
+    {
+        Cancion *cancion;
+        Anuncio *anuncio;
+    } elm = {NULL, NULL};
+
+    // Extraer el siguiente elemento de la cola de reproducción
+    VibeCast_SiguienteCancion(&elm, 0, NULL, NULL);
+
+    if (elm.cancion)
+    {
+        /* Enviar los datos de la canción */
+    }
+    else if (elm.anuncio)
+    {
+        /* Enviar los datos del anuncio */
+    }
 }
 
 /* ======== Para conectar las interfaces ======== */
@@ -142,6 +158,8 @@ bool VibeCast_InitBindings()
     bind_fn(iniciar_sesion, &msg);
     bind_fn(cerrar_sesion, &msg);
     bind_fn(crear_cuenta, &msg);
+
+    bind_fn(next_song, &msg);
 
     return true;
 }

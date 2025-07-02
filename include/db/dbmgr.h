@@ -1,6 +1,7 @@
 #ifndef VIBECAST_DBMGR_H
 #define VIBECAST_DBMGR_H 1
 
+#include <VibeCastConfig.h>
 #include <stdbool.h>
 
 /* ======== Función para las búsquedas ======== */
@@ -16,7 +17,7 @@
 typedef int (*select_handler_t)(void *arg, int argc, char **argv, char **fields);
 
 // Para declarar y definir fácilmente funciones de tipo (select_handler_t)
-#define select_handler(name) int name(void *arg, int argc, char **argv, char **fields)
+#define select_handler(name) int name(void *arg, int argc, const char *argv[], const char *fields[])
 
 /* ======== Funciones para la conexión con la base de datos ======== */
 

@@ -1,7 +1,6 @@
 #include <ui/interfaces.h>
-#include <db/datos.h>
-#include <db/dbmgr.h>
 #include <utils/utils.h>
+#include <db/dbmgr.h>
 
 #define PCRE2_CODE_UNIT_WIDTH 8 // Para establecer que se manejan caracteres de 8 bits
 #include <pcre2.h>              // Para expresiones regulares

@@ -1,7 +1,8 @@
 #ifndef VIBECAST_CONEXIONES_H
 #define VIBECAST_CONEXIONES_H
 
-#include <utils/utils.h>
+#include <VibeCastConfig.h>
+#include <stdbool.h>
 
 bool VibeCast_InitBindings();
 
