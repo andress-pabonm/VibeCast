@@ -1,6 +1,8 @@
 #include <ui/interfaces.h>
 #include <utils/utils.h>
 
+//SUPONGO QUE TODOS LOS ARGUMENTOS QUE LLEGAN A LAS FUNCIONES, VIENE DE LA BASE DE DATOS O DE LA INTERFAZ GRAFICA
+
 new_cmpfn(cmpArtistaConNombre){
     const Artista *a = val_1;
     const char *n = val_2;
@@ -15,19 +17,19 @@ new_cmpfn(cmpAlbumConNombre){
     return strcmp(a->nombre, n);
 }
 
-bool *crearArtista(const char *nombreArtista)
+bool crearNombreArtista(const char *nombreArtista)
 {
     //Buscamos si el nombre del artista ya existe
     if(searchValueInABB(artistas, nombreArtista, cmpArtistaConNombre))
     {
         printf("Error: El artista '%s' ya existe\n", nombreArtista);
 
-        return NULL; // No se puede crear un artista con un nombre ya existente
+        return false; // No se puede crear un artista con un nombre ya existente
     }
 
     //CREAMOS ARTISTA
     Artista *artista = newArtista(); //Todos sus datos inician en null
-    if (!artista) return;
+    if (!artista) return false;
 
     usuario->artista = artista; //Agregamos la estructura artista al usuario
     artista->nombre = asprintf(nombreArtista);
@@ -35,42 +37,48 @@ bool *crearArtista(const char *nombreArtista)
 
     //Insertamos en el arbol
     insertValueInABB(artistas, artista);
+
+    return true;
 }
 
 bool crearAlbum(const char *nombreAlbum){
     //Buscamos si el album ya existe en los albumes del artista
     if(searchValueInLista(usuario->artista->albumes, nombreAlbum, cmpAlbumConNombre)){
         printf("Error: El álbum '%s' ya existe en el artista '%s'\n", nombreAlbum, usuario->artista->nombre);
-        return NULL; // No se puede crear un álbum con un nombre ya existente
+        return false; // No se puede crear un álbum con un nombre ya existente
     }
 
     //CREAMOS NUEVO ALBUM
     Album *album = newAlbum(); // Todos sus datos inician en null
+    if(!album) return false;
 
-    usuario->artista->albumes = album; //Agregamos la estructura album al artista
     album->nombre = asprintf(nombreAlbum);  
     album->artista = usuario->artista; //AGREGAMOS ALBUM A ARTISTA
 
-    //Insertamos en la lista
+    //Insertamos en la lista, agregamos la estructura album al artista
     insertValueInLista(usuario->artista->albumes, album);
+
+    return true;
 }
 
 bool agregarCancionAlbum(const char *nombreAlbum, const char *nombreCancion){
     //Buscamos el album
     if (!searchValueInLista(usuario->artista->albumes, nombreAlbum, cmpAlbumConNombre)) {
         printf("Error: El álbum '%s' no existe en el artista '%s'\n", nombreAlbum, usuario->artista->nombre);
-        return NULL; // No se puede agregar una canción a un álbum que no existe
+        return false; // No se puede agregar una canción a un álbum que no existe
     }
 
-    //Creamos nueva canción(No se si la logica seria aqui)
+    //Creamos nueva canción(No se si la logica seria aqui, por que faltaria mas campos, genero, fecha, duracion, etc)
     Cancion *cancion = newCancion(); // Todos sus datos inician en null
+    if(!cancion) return false;
 
-    usuario->artista->albumes = cancion->album; //Agregamos la estructura cancion al album (creo q esta bien)
     cancion->nombre = asprintf(nombreCancion);
-    cancion->album = usuario->artista->albumes; //AGREGAMOS CANCION A ALBUM
-
+    cancion->album->nombre = usuario->artista->albumes; 
+        
     //Insertamos en la lista
     insertValueInLista(cancion->album, cancion);
+
+    return true;
 }
 
 //MOSTRAR ALBUMES DEL ARTISTA
@@ -87,10 +95,10 @@ void mostrarAlbum(Album *album){
     printf("Canciones: \n");
 
     while(album->canciones != NULL){
-        printf("\t%d) %s\n", indice, album->canciones->start->val->nombre); //Referenciar bien el nombre de cada cancion por que la plena no se como xd
+        //printf("\t%d) %s\n", indice, album->canciones->start->val->nombre); //Referenciar bien el nombre de cada cancion por que la plena no se como xd
     }
 
-    if(!album->canciones == NULL){
+    if(album->canciones == NULL){
         printf("No hay canciones en este album\n");
     }
 }

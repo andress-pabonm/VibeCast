@@ -30,7 +30,7 @@ static message_handler(test)
 static message_handler(is_logged_in)
 {
     bool result = VibeCast_IsLoggedIn(NULL, 0, NULL, NULL);
-    VibeCast_SendBool(id, result ? HTTP_OK : HTTP_UNAUTHORIZED, result, NULL, STATE_SUCCESS;
+    VibeCast_SendBool(id, result ? HTTP_OK : HTTP_UNAUTHORIZED, result, NULL, STATE_SUCCESS);
 }
 
 static message_handler(iniciar_sesion)
