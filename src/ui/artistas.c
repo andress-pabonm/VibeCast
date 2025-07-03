@@ -106,7 +106,12 @@ bool agregarCancionAlbum(const char *nombreAlbum, const char *nombreCancion)
     cancion->album = album;
 
     // Insertamos en la lista
+
+    // Esto no es válido por las siguientes razones:
+    // 1. cancion->album es (Album *), cuando la función espera (Lista)
+    // 2. No se puede modificar la variable album desde la canción, ya que es (const)
     // insertValueInLista(cancion->album, cancion);
+
     insertValueInLista(album->canciones, cancion);
 
     return true;
