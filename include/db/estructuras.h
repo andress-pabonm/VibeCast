@@ -54,7 +54,7 @@ struct Historial
 
 struct Cancion
 {
-	int id;					// ID único
+	int id;					// ID único 
 	const Album *album;		// Álbum al que pertenece
 	char *nombre;			// Nombre de la canción
 	char *genero;			// Género musical
