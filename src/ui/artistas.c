@@ -1,6 +1,8 @@
 #include <ui/interfaces.h>
 #include <utils/utils.h>
 
+static new_operfn(mostrar_canciones);
+
 // SUPONGO QUE TODOS LOS ARGUMENTOS QUE LLEGAN A LAS FUNCIONES, VIENE DE LA BASE DE DATOS O DE LA INTERFAZ GRAFICA
 
 new_cmpfn(cmpArtistaConNombre)
@@ -69,23 +71,7 @@ bool crearAlbum(const char *nombreAlbum)
 
 bool agregarCancionAlbum(const char *nombreAlbum, const char *nombreCancion)
 {
-    // Buscamos el album
-    //  if (!searchValueInLista(usuario->artista->albumes, nombreAlbum, cmpAlbumConNombre)) {
-    //      printf("Error: El álbum '%s' no existe en el artista '%s'\n", nombreAlbum, usuario->artista->nombre);
-    //      return false; // No se puede agregar una canción a un álbum que no existe
-    //  }
-
-    // Así se utiliza:
-
-    // 1. Buscar el álbum:
-
-    Album *album =
-        searchValueInLista(
-            usuario->artista->albumes,
-            nombreAlbum,
-            cmpAlbumConNombre);
-
-    // 2. Verificar si encontró el álbum:
+    Album *album = searchValueInLista(usuario->artista->albumes, nombreAlbum, cmpAlbumConNombre); // Buscamos el álbum y lo asignamos a la variable album
 
     if (!album)
     {
@@ -99,64 +85,37 @@ bool agregarCancionAlbum(const char *nombreAlbum, const char *nombreCancion)
         return false;
 
     cancion->nombre = asprintf(nombreCancion);
-
-    // Esto no funciona, ya que album->nombre es (char *) y artista->albumes es (Lista)
-    // cancion->album->nombre = usuario->artista->albumes;
-
-    cancion->album = album;
+    cancion->album = album; // AGREGAMOS CANCION A ALBUM
 
     // Insertamos en la lista
-
-    // Esto no es válido por las siguientes razones:
-    // 1. cancion->album es (Album *), cuando la función espera (Lista)
-    // 2. No se puede modificar la variable album desde la canción, ya que es (const)
-    // insertValueInLista(cancion->album, cancion);
-
     insertValueInLista(album->canciones, cancion);
 
     return true;
 }
 
-static new_operfn(mostrar_canciones)
-{
-    // void *arg, int idx, void *val
-
-    Cancion *cancion = val; // Canción actual (parecido a canciones[idx])
-
-    printf("[%d]: %s\n", idx, cancion->nombre);
-
-    return FOREACH_CONTINUE; // Para seguir con el bucle
-}
-
 // MOSTRAR ALBUMES DEL ARTISTA
-void mostrarAlbum(Album *album)
+void mostrarAlbum(const char *nombreAlbum)
 {
-    // int indice = 1; // No es necesario
+    Album *album = searchValueInLista(usuario->artista->albumes, nombreAlbum, cmpAlbumConNombre); // Buscamos el álbum y lo asignamos a la variable album
 
-    if (!album)
-    {
-        printf("Album no existente");
-        return; // Supongo que esto debería ir, ¿no?
-    }
+    if (!album) printf("Album no existente");
 
-    printf("Artista: %s\n", album->artista->nombre);            // Bien
-    printf("Fecha de lanzamiento: %s\n", album->fechaCreacion); // Bien
-    printf("Album: %s\n", album->nombre);                       // Bien
+    printf("Artista: %s\n", album->artista->nombre);      
+    printf("Fecha de lanzamiento: %s\n", album->fechaCreacion);
+    printf("Album: %s\n", album->nombre);               
     printf("Canciones: \n");
 
-    // while (album->canciones != NULL)
-    // {
-    //     printf("\t%d) %s\n", indice, album->canciones->start->val->nombre); // Referenciar bien el nombre de cada cancion por que la plena no se como xd
-    // }
-    // Ve a la linea 120
-    // Entonces, lo que tienes que hacer es:
-    forEachInLista(album->canciones, mostrar_canciones, NULL);
+    // Funcion que actua como bucle para mostrar todas las canciones que haya en el album
+    // Si no hay canciones en la lista simplemente no se ejecutará mostrar_canciones()
+    forEachInLista(album->canciones, mostrar_canciones, NULL); 
+    
+}
 
-    // Nota: Si no hay canciones en la lista simplemente no se ejecutará mostrar_canciones()
+static new_operfn(mostrar_canciones)
+{
+    Cancion *cancion = val; // Canción actual
 
-    // No es necesario
-    // if (album->canciones == NULL)
-    // {
-    //     printf("No hay canciones en este album\n");
-    // }
+    printf("[%d]: %s\n", idx, cancion->nombre); // Muestra cancion actual
+
+    return FOREACH_CONTINUE; // Para seguir con el bucle
 }
