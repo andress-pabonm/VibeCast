@@ -1,4 +1,0 @@
-Comandos para iniciar con el proyecto:
-
-Paso 1:     cmake --preset console
-Paso 2:     cmake --build --preset console
