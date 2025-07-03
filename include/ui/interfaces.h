@@ -4,6 +4,7 @@
 #include <VibeCastConfig.h>
 #include <stdbool.h>
 #include <db/datos.h>
+#include <ui/conexiones.h>
 
 // Función para liberar la memoria de la expresión regular utilizada para validar emails.
 void free_re();

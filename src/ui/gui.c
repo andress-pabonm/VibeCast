@@ -121,17 +121,91 @@ bool VibeCast_BindFn(const char *name, message_handler_t msgh, void *arg)
     return webview_bind(w, name, msgh, arg) == WEBVIEW_ERROR_OK;
 }
 
-/* Para enviar un mensaje a la interfaz gráfica */
-bool VibeCast_SendMsg(const char *id, int status, const char *msg)
-{
-    if (!msg)
-        msg = "";
+/* ================================================================ */
 
-    char *json_message =
-        asprintf(
-            stringify({"message" : "%s"}),
-            msg);
-    bool ok = webview_return(w, id, status, json_message) == WEBVIEW_ERROR_OK;
-    free(json_message);
+// Función base: acepta json_object* para data
+bool VibeCast_SendObj(const char *id, int status_code, const char *type, json_object *data, const char *msg, const char *status)
+{
+    if (!type)
+        type = "text";
+    if (!status)
+        status = "ok";
+
+    json_object *root = json_object_new_object();
+
+    json_object_object_add(root, "type", json_object_new_string(type));
+    json_object_object_add(root, "data", data ? json_object_get(data) : json_object_new_null());
+    json_object_object_add(root, "status", json_object_new_string(status));
+    json_object_object_add(root, "code", json_object_new_int(status_code));
+    json_object_object_add(root, "message", msg ? json_object_new_string(msg) : json_object_new_null());
+
+    const char *json_str = json_object_to_json_string(root);
+    int logic_error = (status_code >= 400);
+    bool ok = webview_return(w, id, logic_error, json_str) == WEBVIEW_ERROR_OK;
+
+    json_object_put(root); // libera el objeto raíz (los hijos quedan liberados si se hizo get)
+    return ok;
+}
+
+// Envía un valor booleano (true/false)
+bool VibeCast_SendBool(const char *id, int status_code, bool value, const char *msg, const char *status)
+{
+    json_object *val = json_object_new_boolean(value);
+    bool ok = VibeCast_SendObj(id, status_code, "boolean", val, msg, status);
+    json_object_put(val);
+    return ok;
+}
+
+// Envía un número entero
+bool VibeCast_SendInt(const char *id, int status_code, int value, const char *msg, const char *status)
+{
+    json_object *val = json_object_new_int(value);
+    bool ok = VibeCast_SendObj(id, status_code, "int", val, msg, status);
+    json_object_put(val);
+    return ok;
+}
+
+// Envía un número decimal (double)
+bool VibeCast_SendFloat(const char *id, int status_code, double value, const char *msg, const char *status)
+{
+    json_object *val = json_object_new_double(value);
+    bool ok = VibeCast_SendObj(id, status_code, "float", val, msg, status);
+    json_object_put(val);
+    return ok;
+}
+
+// Envía una cadena de texto (más directo que SendMsg)
+bool VibeCast_SendText(const char *id, int status_code, const char *text, const char *msg, const char *status)
+{
+    json_object *val = text ? json_object_new_string(text) : json_object_new_null();
+    bool ok = VibeCast_SendObj(id, status_code, "text", val, msg, status);
+    json_object_put(val);
+    return ok;
+}
+
+// Envía un array JSON
+bool VibeCast_SendArray(const char *id, int status_code, json_object *array, const char *msg, const char *status)
+{
+    if (!array || !json_object_is_type(array, json_type_array))
+        array = json_object_new_array(); // fallback
+
+    return VibeCast_SendObj(id, status_code, "array", array, msg, status);
+}
+
+// Envía un objeto JSON
+bool VibeCast_SendJSON(const char *id, int status_code, json_object *object, const char *msg, const char *status)
+{
+    if (!object || !json_object_is_type(object, json_type_object))
+        object = json_object_new_object(); // fallback
+
+    return VibeCast_SendObj(id, status_code, "json", object, msg, status);
+}
+
+// Envía un valor nulo explícito
+bool VibeCast_SendNull(const char *id, int status_code, const char *msg, const char *status)
+{
+    json_object *val = json_object_new_null();
+    bool ok = VibeCast_SendObj(id, status_code, "null", val, msg, status);
+    json_object_put(val);
     return ok;
 }
