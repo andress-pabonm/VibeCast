@@ -72,3 +72,37 @@ bool agregarCancionAlbum(const char *nombreAlbum, const char *nombreCancion){
     //Insertamos en la lista
     insertValueInLista(cancion->album, cancion);
 }
+
+void mostrarAlbum(const Album *album){
+    if(!album){
+        printf("Album invalido");
+
+    }
+
+    printf("Album: %s\n", album->nombre);
+    printf("Fecha de creacion: %s\n", album->fechaCreacion);
+
+    if(album->artista && album->artista->nombre){
+        printf("Artista: %s\n", album->artista->nombre);
+
+    }else{
+        printf("Artista: (desconocido)\n");
+    }
+
+    printf("Canciones: \n");
+    if(!album->canciones || cast(_Lista, album->canciones)->start==NULL){
+        printf(" (No hay canciones en este album) \n");
+    }else{
+        forEachInLista(album->canciones, , NULL);
+    }
+}
+
+Playlist* crearPlaylist(const char* nombre){
+    Playlist* nueva= newPlaylist();
+    if(!nueva) return NULL;
+
+    nueva->nombre=strdup(nombre);
+    nueva->canciones = newLista(NULL);
+
+    return nueva;
+}
