@@ -73,36 +73,24 @@ bool agregarCancionAlbum(const char *nombreAlbum, const char *nombreCancion){
     insertValueInLista(cancion->album, cancion);
 }
 
-void mostrarAlbum(const Album *album){
+//MOSTRAR ALBUMES DEL ARTISTA
+void mostrarAlbum(Album *album){
+    int indice = 1;
+
     if(!album){
-        printf("Album invalido");
-
+        printf("Album no existente");
     }
 
+    printf("Artista: %s\n", album->artista->nombre);
+    printf("Fecha de lanzamiento: %s\n", album->fechaCreacion);
     printf("Album: %s\n", album->nombre);
-    printf("Fecha de creacion: %s\n", album->fechaCreacion);
-
-    if(album->artista && album->artista->nombre){
-        printf("Artista: %s\n", album->artista->nombre);
-
-    }else{
-        printf("Artista: (desconocido)\n");
-    }
-
     printf("Canciones: \n");
-    if(!album->canciones || cast(_Lista, album->canciones)->start==NULL){
-        printf(" (No hay canciones en este album) \n");
-    }else{
-        forEachInLista(album->canciones, , NULL);
+
+    while(album->canciones != NULL){
+        printf("\t%d) %s\n", indice, album->canciones->start->val->nombre); //Referenciar bien el nombre de cada cancion por que la plena no se como xd
     }
-}
 
-Playlist* crearPlaylist(const char* nombre){
-    Playlist* nueva= newPlaylist();
-    if(!nueva) return NULL;
-
-    nueva->nombre=strdup(nombre);
-    nueva->canciones = newLista(NULL);
-
-    return nueva;
+    if(!album->canciones == NULL){
+        printf("No hay canciones en este album\n");
+    }
 }
