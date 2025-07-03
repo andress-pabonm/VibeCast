@@ -117,28 +117,46 @@ bool agregarCancionAlbum(const char *nombreAlbum, const char *nombreCancion)
     return true;
 }
 
+static new_operfn(mostrar_canciones)
+{
+    // void *arg, int idx, void *val
+
+    Cancion *cancion = val; // Canción actual (parecido a canciones[idx])
+
+    printf("[%d]: %s\n", idx, cancion->nombre);
+
+    return FOREACH_CONTINUE; // Para seguir con el bucle
+}
+
 // MOSTRAR ALBUMES DEL ARTISTA
 void mostrarAlbum(Album *album)
 {
-    int indice = 1;
+    // int indice = 1; // No es necesario
 
     if (!album)
     {
         printf("Album no existente");
+        return; // Supongo que esto debería ir, ¿no?
     }
 
-    printf("Artista: %s\n", album->artista->nombre);
-    printf("Fecha de lanzamiento: %s\n", album->fechaCreacion);
-    printf("Album: %s\n", album->nombre);
+    printf("Artista: %s\n", album->artista->nombre);            // Bien
+    printf("Fecha de lanzamiento: %s\n", album->fechaCreacion); // Bien
+    printf("Album: %s\n", album->nombre);                       // Bien
     printf("Canciones: \n");
 
-    while (album->canciones != NULL)
-    {
-        // printf("\t%d) %s\n", indice, album->canciones->start->val->nombre); //Referenciar bien el nombre de cada cancion por que la plena no se como xd
-    }
+    // while (album->canciones != NULL)
+    // {
+    //     printf("\t%d) %s\n", indice, album->canciones->start->val->nombre); // Referenciar bien el nombre de cada cancion por que la plena no se como xd
+    // }
+    // Ve a la linea 120
+    // Entonces, lo que tienes que hacer es:
+    forEachInLista(album->canciones, mostrar_canciones, NULL);
 
-    if (album->canciones == NULL)
-    {
-        printf("No hay canciones en este album\n");
-    }
+    // Nota: Si no hay canciones en la lista simplemente no se ejecutará mostrar_canciones()
+
+    // No es necesario
+    // if (album->canciones == NULL)
+    // {
+    //     printf("No hay canciones en este album\n");
+    // }
 }
