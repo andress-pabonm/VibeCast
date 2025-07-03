@@ -3,6 +3,7 @@
 
 #include <VibeCastConfig.h>
 #include <stdbool.h>
+#include <utils/utils.h>
 #include <json.h>
 
 /* ======== Comunicación con webview ======== */
@@ -80,9 +81,28 @@ bool VibeCast_SendObj(const char *id, int status_code, const char *type, json_ob
 #define HTTP_INTERNAL_ERROR 500
 #define HTTP_NOT_IMPLEMENTED 501
 
+/* ================ Utilidades ================ */
+
+// JSON-C helpers
+#define get_json json_tokener_parse
+#define get_array_idx json_object_array_get_idx
+
+static inline json_object *get_field(json_object *src, const char *field)
+{
+    json_object *dest;
+    json_object_object_get_ex(src, field, &dest);
+    return dest;
+}
+
+#define init_json(dest, src) json_object *dest = src
+#define init_data_json() init_json(data, get_json(req))
+#define get_string(src) json_object_get_string(src)
+
 /* ================================================================ */
 
 // Funciones de conexión
+
+message_handler(crear_artista);
 
 /* ================================================================ */
 

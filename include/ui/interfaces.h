@@ -24,6 +24,11 @@ extern Cola cola_repr;
 
 #define interfaz(name) bool func(name, void *arg, int argc, const char *argv[], char **msg)
 
+// Macro para facilitar enviar mensajes a las conexiones (message_handler)
+#define send_message(...) \
+    if (msg)              \
+    *msg = asprintf(__VA_ARGS__)
+
 interfaz(IsLoggedIn);    // Para verificar si se ha iniciado sesión
 interfaz(IniciarSesion); // Para iniciar sesión
 interfaz(CerrarSesion);  // Para cerrar sesión
