@@ -1,157 +1,151 @@
 document.addEventListener("DOMContentLoaded", () => {
-  window.is_logged_in().then((res) => {
-    if (res.message === "0") {
+  checkUserLoggedIn();
+
+  loadSongs();
+  loadRecommendations();
+
+  setupSongClickEvents();
+});
+
+/**
+ * Verifica si hay sesión iniciada.
+ */
+async function checkUserLoggedIn() {
+  try {
+    const res = await window.is_logged_in();
+    console.log("is_logged_in():", res);
+
+    if (res.status !== "ok" || res.type !== "boolean" || res.data !== true) {
       window.location.replace("../Login/index.html");
     }
-  });
+  } catch (err) {
+    console.error("Error al verificar sesión:", err);
+  }
+}
 
-  /* AQUI IRIA TODA LA LOGICA PARA CARGAR LOS DATOS DEL SQLITE */
-  //   window.canciones().then((res) => {
-  //     const recommendationsContainer = document.getElementById(
-  //       "recommendations-container"
-  //     );
-  //     message.forEach((song) => {
-  //       const songElement = document.createElement("div");
-  //       songElement.className = "song-item";
-  //       songElement.innerHTML = `
-  //             <div class="song-info">
-  //                 <strong>${song.title}</strong>
-  //                 <p>${song.artist} · Recomendado por ${song.friend}</p>
-  //             </div>
-  //             <div class="song-actions">
-  //                 <span>${song.duration}</span>
-  //                 <i class="fas fa-play"></i>
-  //             </div>
-  //         `;
-  //       recommendationsContainer.appendChild(songElement);
-  //     });
-  //   });
-
-  /* Aquí se cargarían las recomendaciones */
-  //   window.recomendaciones().then((res) => {
-  //     const songsContainer = document.getElementById("songs-container");
-  //     message.forEach((song) => {
-  //       const songElement = document.createElement("div");
-  //       songElement.className = "song-item";
-  //       songElement.innerHTML = `
-  //             <div class="song-info">
-  //                 <strong>${song.title}</strong>
-  //                 <p>${song.artist}</p>
-  //             </div>
-  //             <div class="song-actions">
-  //                 <span>${song.duration}</span>
-  //                 <i class="fas fa-play"></i>
-  //                 <i class="fas fa-plus"></i>
-  //             </div>
-  //         `;
-  //       songsContainer.appendChild(songElement);
-  //     });
-  //   });
-
-  // Simulación de datos
-  const mockData = {
-    songs: [
-      { id: 1, title: "Bohemian Rhapsody", artist: "Queen", duration: "5:55" },
-      { id: 2, title: "Imagine", artist: "John Lennon", duration: "3:04" },
-      {
-        id: 3,
-        title: "Billie Jean",
-        artist: "Michael Jackson",
-        duration: "4:54",
-      },
-      {
-        id: 4,
-        title: "Sweet Child O'Mine",
-        artist: "Guns N' Roses",
-        duration: "5:56",
-      },
-      { id: 5, title: "AYAYA", artist: "SI", duration: "2:00" },
-    ],
-    recommendations: [
-      {
-        id: 1,
-        title: "Dancing Queen",
-        artist: "ABBA",
-        friend: "María García",
-        duration: "3:50",
-      },
-      {
-        id: 2,
-        title: "Hotel California",
-        artist: "Eagles",
-        friend: "Carlos López",
-        duration: "6:30",
-      },
-    ],
-  };
-
-  // Cargar canciones
+/**
+ * Carga las canciones disponibles desde el backend.
+ */
+async function loadSongs() {
   const songsContainer = document.getElementById("songs-container");
-  mockData.songs.forEach((song) => {
-    const songElement = document.createElement("div");
-    songElement.className = "song-item";
-    songElement.innerHTML = `
-            <div class="song-info">
-                <strong>${song.title}</strong>
-                <p>${song.artist}</p>
-            </div>
-            <div class="song-actions">
-                <span>${song.duration}</span>
-                <i class="fas fa-play"></i>
-                <i class="fas fa-plus"></i>
-            </div>
-        `;
-    songsContainer.appendChild(songElement);
-  });
+  if (!songsContainer) return;
 
-  // Cargar recomendaciones
+  try {
+    const res = await window.get_canciones(); // ← reemplaza mock
+    console.log("canciones():", res);
+
+    if (
+      res.status === "ok" &&
+      res.type === "array" &&
+      Array.isArray(res.data)
+    ) {
+      res.data.forEach((song) => {
+        const songElement = createSongElement(song);
+        songsContainer.appendChild(songElement);
+      });
+    } else {
+      console.warn(
+        "No se pudo cargar canciones:",
+        res.message || "Respuesta inválida."
+      );
+    }
+  } catch (err) {
+    console.error("Error al cargar canciones:", err);
+  }
+}
+
+/**
+ * Carga las canciones recomendadas desde el backend.
+ */
+async function loadRecommendations() {
   const recommendationsContainer = document.getElementById(
     "recommendations-container"
   );
-  mockData.recommendations.forEach((song) => {
-    const songElement = document.createElement("div");
-    songElement.className = "song-item";
-    songElement.innerHTML = `
-            <div class="song-info">
-                <strong>${song.title}</strong>
-                <p>${song.artist} · Recomendado por ${song.friend}</p>
-            </div>
-            <div class="song-actions">
-                <span>${song.duration}</span>
-                <i class="fas fa-play"></i>
-            </div>
-        `;
-    recommendationsContainer.appendChild(songElement);
+  if (!recommendationsContainer) return;
+
+  try {
+    const res = await window.get_recomendaciones(); // ← reemplaza mock
+    console.log("recomendaciones():", res);
+
+    if (
+      res.status === "ok" &&
+      res.type === "array" &&
+      Array.isArray(res.data)
+    ) {
+      res.data.forEach((song) => {
+        const songElement = createRecommendationElement(song);
+        recommendationsContainer.appendChild(songElement);
+      });
+    } else {
+      console.warn(
+        "No se pudo cargar recomendaciones:",
+        res.message || "Respuesta inválida."
+      );
+    }
+  } catch (err) {
+    console.error("Error al cargar recomendaciones:", err);
+  }
+}
+
+/**
+ * Crea un elemento DOM para una canción.
+ */
+function createSongElement(song) {
+  const div = document.createElement("div");
+  div.className = "song-item";
+  div.innerHTML = `
+    <div class="song-info">
+        <strong>${song.title}</strong>
+        <p>${song.artist}</p>
+    </div>
+    <div class="song-actions">
+        <span>${song.duration}</span>
+        <i class="fas fa-play"></i>
+        <i class="fas fa-plus"></i>
+    </div>`;
+  return div;
+}
+
+/**
+ * Crea un elemento DOM para una canción recomendada.
+ */
+function createRecommendationElement(song) {
+  const div = document.createElement("div");
+  div.className = "song-item";
+  div.innerHTML = `
+    <div class="song-info">
+        <strong>${song.title}</strong>
+        <p>${song.artist} · Recomendado por ${song.friend}</p>
+    </div>
+    <div class="song-actions">
+        <span>${song.duration}</span>
+        <i class="fas fa-play"></i>
+    </div>`;
+  return div;
+}
+
+/**
+ * Configura eventos para manejar clics en canciones.
+ */
+function setupSongClickEvents() {
+  document.addEventListener("click", (e) => {
+    const item = e.target.closest(".song-item");
+    if (!item) return;
+
+    // Ignorar si se hizo clic en los íconos
+    if (
+      e.target.classList.contains("fa-play") ||
+      e.target.classList.contains("fa-plus")
+    ) {
+      return;
+    }
+
+    const title = item.querySelector("strong")?.textContent;
+    if (title) {
+      console.log(`Reproduciendo: ${title}`);
+      // Aquí iría la lógica para:
+      // - añadir a la cola: window.add_to_queue(id);
+      // - o reproducir directamente
+    }
   });
-
-  // Eventos para las canciones
-  document.querySelectorAll(".song-item").forEach((item) => {
-    item.addEventListener("click", (e) => {
-      if (
-        !e.target.classList.contains("fa-play") &&
-        !e.target.classList.contains("fa-plus")
-      ) {
-        const songTitle = item.querySelector("strong").textContent;
-        console.log(`Reproduciendo: ${songTitle}`);
-        // En realidad esta forma de incluir la canción a la cola de reproducción está interesante
-        // Aquí iría la lógica para reproducir la canción
-
-        // Idealmente así se añadiría la canción a la cola de reproducción
-        // window.add_to_queue(id_cancion);
-      }
-    });
-  });
-
-  // Creo que habría que añadirle algo más para saber en qué momento empezar a reproducir las canciones
-  // Así como un botón para desplegar el reproductor de canciones
-  // Entonces, cuando se pulse ese botón haría algo como:
-  // window.next_song().then((res) => {
-  //   if (!res.message) {
-  //     console.log("No hay más canciones");
-  //   } else {
-  //     console.log("Reproduciendo siguiente canción.");
-  //   }
-  // });
-  // Y eso sería en bucle cada vez que termine una canción
-  // Espero que haya un evento para detectar si se acabó de reproducir un audio.
-});
+}

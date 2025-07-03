@@ -1,73 +1,59 @@
-/*
- * Manejo del registro
- * Efectos interactivos
- * Validación básica
- */
-
 document.addEventListener("DOMContentLoaded", () => {
-  window.is_logged_in().then((res) => {
-    if (res.message === 1) {
-      location.hrem = "../Menu/menu.html";
-    }
-  });
-
-  registerForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const nickname = registerForm.querySelector("#name");
-    const pais = registerForm.querySelector("#country");
-    const username = registerForm.querySelector("#username");
-    const email = registerForm.querySelector("#email");
-    const password = registerForm.querySelector("#password");
-    const confirmPassword = registerForm.querySelector("#confirmPassword");
-
-    simulateRegister(
-      nickname.value,
-      pais.value,
-      username.value,
-      email.value,
-      password.value,
-      confirmPassword.value
-    );
-  });
-
-  // ========== SELECTORES ==========
-
-  // ========== MOSTRAR/OCULTAR CONTRASEÑA ==========
-  document.querySelectorAll(".toggle-password").forEach((btn) => {
-    btn.addEventListener("click", function () {
-      // Encontrar el input asociado a este botón
-      const input = this.closest(".input-group").querySelector("input");
-
-      // Cambiar el tipo de input
-      const type =
-        input.getAttribute("type") === "password" ? "text" : "password";
-      input.setAttribute("type", type);
-
-      // Cambiar el icono
-      this.classList.toggle("fa-eye");
-      this.classList.toggle("fa-eye-slash");
-    });
-  });
-
-  // ========== EFECTOS DE BOTÓN ==========
-  const registerBtn = document.querySelector(".register-btn");
-  if (registerBtn) {
-    // Efecto hover
-    registerBtn.addEventListener("mouseenter", () => {
-      registerBtn.style.transform = "translateY(-3px)";
-    });
-
-    registerBtn.addEventListener("mouseleave", () => {
-      registerBtn.style.transform = "translateY(0)";
-    });
-  }
+  checkUserLoggedIn();
+  setupRegisterForm();
+  setupPasswordToggle();
+  setupRegisterButtonHover();
 });
 
 /**
- * Simula el proceso de registro
+ * Verifica si ya hay sesión activa.
  */
-function simulateRegister(
+async function checkUserLoggedIn() {
+  try {
+    const res = await window.is_logged_in();
+    console.log("is_logged_in():", res);
+
+    if (res.status === "ok" && res.type === "boolean" && res.data === true) {
+      window.location.replace("../Menu/menu.html");
+    }
+  } catch (err) {
+    console.error("Error al verificar sesión:", err);
+  }
+}
+
+/**
+ * Configura el envío del formulario de registro.
+ */
+function setupRegisterForm() {
+  const registerForm = document.querySelector(".register-form");
+  if (!registerForm) return;
+
+  registerForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const nickname = registerForm.querySelector("#name").value.trim();
+    const pais = registerForm.querySelector("#country").value.trim();
+    const username = registerForm.querySelector("#username").value.trim();
+    const email = registerForm.querySelector("#email").value.trim();
+    const password = registerForm.querySelector("#password").value;
+    const confirmPassword =
+      registerForm.querySelector("#confirmPassword").value;
+
+    await handleRegister(
+      nickname,
+      pais,
+      username,
+      email,
+      password,
+      confirmPassword
+    );
+  });
+}
+
+/**
+ * Maneja el proceso de registro de usuario.
+ */
+async function handleRegister(
   nickname,
   pais,
   username,
@@ -75,27 +61,121 @@ function simulateRegister(
   password,
   confirmPassword
 ) {
-  // Simulación de carga
   const registerBtn = document.querySelector(".register-btn");
   const originalText = registerBtn.innerHTML;
 
   registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Validando...';
   registerBtn.disabled = true;
 
-  window
-    .crear_cuenta(nickname, pais, username, email, password, confirmPassword)
-    .then((res) => {
-      registerBtn.innerHTML = originalText;
-      registerBtn.disabled = false;
-      console.log("crear_cuenta(): ", res);
-      if (res.message === "1") {
-        // showSuccess("¡Registro completo!");
-        setTimeout(() => {
-          window.location.replace("../Login/index.html");
-        }, 500);
-      } else {
-        console.log(res.message);
-        // showError("Usuario o contraseña incorrectos.");
-      }
+  try {
+    const res = await window.crear_cuenta(
+      nickname,
+      pais,
+      username,
+      email,
+      password,
+      confirmPassword
+    );
+    console.log("crear_cuenta():", res);
+
+    const success =
+      res.status === "ok" && res.type === "boolean" && res.data === true;
+
+    if (success) {
+      showSuccess(res.message || "¡Cuenta creada exitosamente!");
+      setTimeout(() => {
+        window.location.replace("../Login/index.html");
+      }, 500);
+    } else {
+      showError(res.message || "No se pudo crear la cuenta.");
+    }
+  } catch (err) {
+    showError("Error de conexión. Intenta más tarde.");
+    console.error(err);
+  } finally {
+    registerBtn.innerHTML = originalText;
+    registerBtn.disabled = false;
+  }
+}
+
+/**
+ * Activa el efecto de mostrar/ocultar contraseña.
+ */
+function setupPasswordToggle() {
+  document.querySelectorAll(".toggle-password").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const input = btn.closest(".input-group").querySelector("input");
+      const newType = input.type === "password" ? "text" : "password";
+      input.type = newType;
+      btn.classList.toggle("fa-eye");
+      btn.classList.toggle("fa-eye-slash");
     });
+  });
+}
+
+/**
+ * Activa efecto de hover en el botón de registro.
+ */
+function setupRegisterButtonHover() {
+  const registerBtn = document.querySelector(".register-btn");
+  if (!registerBtn) return;
+
+  registerBtn.addEventListener("mouseenter", () => {
+    registerBtn.style.transform = "translateY(-3px)";
+  });
+
+  registerBtn.addEventListener("mouseleave", () => {
+    registerBtn.style.transform = "translateY(0)";
+  });
+}
+
+/**
+ * Muestra un mensaje de error debajo del formulario.
+ * @param {string} message
+ */
+function showError(message) {
+  clearMessages(".error-message");
+  createMessage(message, "error-message", "#ff6b6b");
+}
+
+/**
+ * Muestra un mensaje de éxito debajo del formulario.
+ * @param {string} message
+ */
+function showSuccess(message) {
+  clearMessages(".success-message");
+  createMessage(message, "success-message", "#4cc9f0");
+}
+
+/**
+ * Crea y muestra un mensaje temporal debajo del formulario.
+ * @param {string} text
+ * @param {string} className
+ * @param {string} color
+ */
+function createMessage(text, className, color) {
+  const form = document.querySelector(".register-form");
+  if (!form) return;
+
+  const messageEl = document.createElement("div");
+  messageEl.className = className;
+  messageEl.textContent = text;
+  messageEl.style.color = color;
+  messageEl.style.marginTop = "1rem";
+
+  form.appendChild(messageEl);
+
+  setTimeout(() => {
+    messageEl.style.opacity = "0";
+    setTimeout(() => messageEl.remove(), 300);
+  }, 3000);
+}
+
+/**
+ * Elimina mensajes existentes de un tipo.
+ * @param {string} selector
+ */
+function clearMessages(selector) {
+  const existingMessages = document.querySelectorAll(selector);
+  existingMessages.forEach((msg) => msg.remove());
 }
