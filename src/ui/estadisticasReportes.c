@@ -13,6 +13,8 @@ new_operfn(obtener_reproducciones)
     Cancion *cancion = val;
     int *reproducciones = arg;
 
+    longitud = getListaLength(canciones);
+
     if (cancion)
         reproducciones[idx] = cancion->reproducciones; // Guardamos la popularidad en el vector
 
