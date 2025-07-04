@@ -48,7 +48,7 @@ int insertValueInLista(Lista lista, void *value_ptr);
  * @param cmp Función de comparación.
  * @return Puntero al valor encontrado, o NULL si no se encuentra.
  */
-void *searchValueInLista(Lista lista, const void *value_ptr, cmpfn_t cmp);
+void *searchValueInLista(Lista lista, const void *value_ptr, cmpfn_t cmp); 
 
 /**
  * @brief Elimina un valor de la lista.
@@ -79,5 +79,13 @@ void forEachInLista(Lista lista, operfn_t callback, void *arg);
  * @param arg Argumento adicional para el callback.
  */
 void destroyLista(Lista lista, operfn_t callback, void *arg);
+
+/**
+ * @brief Obtiene la longitud de la lista.
+ *
+ * @param lista Lista a consultar.
+ * @return Longitud de la lista, o 0 si es NULL.
+ */
+int getListaLength(Lista lista);
 
 #endif // VIBECAST_NODOS_LISTA_H

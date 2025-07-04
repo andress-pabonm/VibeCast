@@ -3,7 +3,7 @@
 // SUPONGO QUE TODOS LOS ARGUMENTOS QUE LLEGAN A LAS FUNCIONES, VIENE DE LA BASE DE DATOS O DE LA INTERFAZ GRAFICA
 
 static new_cmpfn(cmpArtistaConNombre)
-{
+{ 
     const Artista *a = val_1;
     const char *n = val_2;
 
