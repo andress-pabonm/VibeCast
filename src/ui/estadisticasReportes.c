@@ -8,5 +8,7 @@ void generarTop5Canciones(){
 
     fpringtf(archivo, "Top 5 Canciones más reproducidas:\n");
 
-    longitud = getListaLength(usuario->playlists->canciones);
+    longitud = getListaLength(canciones);
+
+    
 }
