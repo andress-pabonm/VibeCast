@@ -1,36 +1,51 @@
 #include <ui/interfaces.h>
+#include <utils/utils.h>
+#include<db/dbmgr.h>
 
-//  Inserta una canci´ on en una lista.
-void insertarCancion(Album *album, Cancion cancion ){
-    Lista tmp = album->canciones;
-    while (tmp->sig != NULL) {
-        tmp = tmp->sig;
-    }
-    tmp->dato = cancion;
+new_cmpfn (cmpCancionConNombre) 
+{
+    const Cancion *c = val_1;
+    const char *nombre = val_2;
+    return strcmp(c->nombre, nombre);
+}
+
+new_cmpfn (cmpAlbumConNombre) 
+{
+    const Album *A = val_1;
+    const char *nombre = val_2;
+    return strcmp(A->nombre, nombre);
+}
+
+select_handler (obteneridCancion) 
+{
+    sscanf(argv[0], "%d", cast(int*, arg));
+    return 0;
+}
+
+select_handler (obteneridCancion) 
+{
+    sscanf(argv[0], "%d", cast(int*, arg));
+    return 0;
 }
 
 //  Crea y devuelve una nueva canci´ on.
 bool crearCancion(Album *album, int id, const char *nombre, const char *genero, int duracion, const char *url)
 {
     // Un álbum no puede tener canciones repetidas
-    Lista *tmp = album->canciones;
-    while (tmp->sig != NULL) {
-        tmp = tmp->sig;
-        if (strcmp(tmp->dato, nombre)) {
-            printf("Una cancion con ese nombre ya existe en el album\n");
-            return false;
-        }
+    Cancion *cancion = searchValueInLista(album->canciones, canciones, cmpCancionConNombre);
+    if (cancion){
+        printf("Una cancion con ese nombre ya existe en el album\n");
+        return false;
     }
 
     // Una canción se crea así:
-    Cancion *cancion = newCancion(); // Inicia con sus valores en null
+    cancion = newCancion(); // Inicia con sus valores en null
     if (!cancion)
         return false;
-    cancion->id = id;
-	cancion->album = album;		// Álbum al que pertenece
-	strcpy(cancion->nombre, nombre);			// Nombre de la canción
-	strcpy(cancion->genero, genero);	//char *genero;			// Género musical
-	char *fechaPublicacion; // Fecha de publicación
+
+	cancion->album = album;
+	cancion->nombre = asprintf(nombre);
+	cancion->genero = asprintf(genero);
     
     //Se ingresa la hora
 
@@ -52,21 +67,20 @@ bool crearCancion(Album *album, int id, const char *nombre, const char *genero, 
         // Formatear la fecha: YYYY/MM/DD HH:MM:SS
         strftime(fecha_formateada, 20, "%Y/%m/%d %H:%M:%S", info_tiempo);
     
-	strcpy(cancion->fechaPublicacion, fecha_formateada);    
+    cancion->fechaPublicacion = asprintf(fecha_formateada);
 	cancion->duracion = duracion;
-	strcpy(cancion->url, url);
+    cancion->url = asprintf(url);
 
     // Entonces aquí inicializas la canción
 
 
     // Luego tienes que enlazarla a su álbum
-    //insertarCancion(album, cancion);
     insertValueInLista(album->canciones, cancion);
-    
 
+    //Inserta en la lista global de canciones
+    insertValueInLista(canciones, cancion);
     
     //Inserta la cancion en su base de datos
-    //Me falta ver como insertar el id del album
     char *datos = asprintf(
     stringify("%s", "%s", "%s", "%s", "%s"),
     album->id, cancion->nombre, cancion->genero, cancion->fechaPublicacion, cancion->duracion, cancion->url);
@@ -75,63 +89,56 @@ bool crearCancion(Album *album, int id, const char *nombre, const char *genero, 
         "Canciones",
         "id_album, nombre, genero, fecha_publicacion, duracion, url",
         datos, NULL);
+    
+    //Inserta el id
+    obtener_registros(
+        "Canciones ORDER BY id DESC LIMIT 1",
+        "id",
+        NULL,
+        obteneridCancion,
+        &cancion->id,
+        NULL
+    );
 
     return true;
 }
-
 
 //  Busca una canci´ on por nombre.
 //Me falta saber cual es el puntero global a la lista de canciones
 Cancion *buscarCancion(Lista canciones, int *id) {
     return searchValueInLista(canciones, &id, cmpCancionConId);
-    
-    /*
-    Lista tmp = canciones;
-    while (tmp->sig != NULL) {
-        tmp = tmp->sig;
-        if (strcmp(tmp->dato.nombre, nombre) == 0) {
-            return cancion;
-        }
-    }
-    printf ("La cancion no esta en la lista\n");
-    return NULL;*/
 }
 
 //  Elimina una canci´on si no est´ a en una playlist.
-void eliminarCancion(Lista **canciones, const char *nombre) {
-    if (canciones == NULL || *canciones == NULL || nombre == NULL) {
+void eliminarCancion(int id) {
+    Cancion *cancion = searchValueInLista(canciones, &id, cmpCancionConId);
+    
+    if (cancion == NULL){
+        printf ("La cancion con el id %d no existe \n", id);
         return;
     }
 
-    Lista actual = *canciones;
-    Lista anterior = NULL;
+    Album *album = searchValueInLista (usuario->artista->albumes, &(cancion->album->nombre), cmpAlbumConNombre);
+    deleteValueInLista(album->canciones, &id, cmpCancionConId);
+    deleteValueInLista(canciones, &id, cmpCancionConId);
+    free(cancion->fechaPublicacion);
+    free(cancion->genero);
+    free(cancion->nombre);
+    free(cancion->url);  
 
-    // Buscar la canción en la lista
-    while (actual != NULL) {
-        if (strcmp(actual->nombre, nombre) == 0) {
-            // Eliminar de la lista principal
-            if (anterior == NULL) {
-                *canciones = actual->sig;  // Era el primer elemento
-            } else {
-                anterior->sig = actual->sig;
-            }
+    char *condicion = asprintf("ID = %d", id);
+    eliminar_registros(
+        "Canciones",
+        "condicion",
+        NULL
+    );
 
-            // Eliminar la canción de su álbum (si existe)
-            if (actual->album != NULL && actual->album->canciones != NULL) {
-                deleteValueInLista(actual->album->canciones, nombre, NULL);
-            }
-
-            free(actual);
-            return;
-        }
-        anterior = actual;
-        actual = actual->sig;
-    }
+    free(cancion);
 }
 
 //  Modifica datos de una canci´on.
-void actualizarCancion(Cancion cancion, const char *nombre) {
-    strcpy(cancion->nombre, nombre);
+void actualizarCancion(Cancion *cancion, const char *nombre) {
+    cancion->nombre = asprintf(nombre);
 
     //Actualizo en la base de datos
     char *datos = asprintf(
