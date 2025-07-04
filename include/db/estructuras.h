@@ -4,7 +4,7 @@
 #include <utils/nodos.h> // Para Lista, Pila y Cola 
 
 // ==========================================
-// Tipos hacia adelante (punteros a structs)
+// Tipos hacia adelante (punteros a structs) 
 // ==========================================
 
 typedef struct Artista Artista;
