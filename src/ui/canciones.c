@@ -1,6 +1,5 @@
 #include <ui/interfaces.h>
 
-/*
 //  Inserta una canci´ on en una lista.
 void insertarCancion(Album *album, Cancion cancion ){
     Lista tmp = album->canciones;
@@ -9,8 +8,6 @@ void insertarCancion(Album *album, Cancion cancion ){
     }
     tmp->dato = cancion;
 }
-*/
-
 
 //  Crea y devuelve una nueva canci´ on.
 bool crearCancion(Album *album, int id, const char *nombre, const char *genero, int duracion, const char *url)
@@ -31,7 +28,7 @@ bool crearCancion(Album *album, int id, const char *nombre, const char *genero, 
         return false;
     cancion->id = id;
 	cancion->album = album;		// Álbum al que pertenece
-	strcpy(cancion->album, nombre);			// Nombre de la canción
+	strcpy(cancion->nombre, nombre);			// Nombre de la canción
 	strcpy(cancion->genero, genero);	//char *genero;			// Género musical
 	char *fechaPublicacion; // Fecha de publicación
     
@@ -64,27 +61,41 @@ bool crearCancion(Album *album, int id, const char *nombre, const char *genero, 
 
     // Luego tienes que enlazarla a su álbum
     //insertarCancion(album, cancion);
-    insertValueInLista(album->canciones, *cancion)
+    insertValueInLista(album->canciones, cancion);
+    
+
+    
+    //Inserta la cancion en su base de datos
+    //Me falta ver como insertar el id del album
+    char *datos = asprintf(
+    stringify("%s", "%s", "%s", "%s", "%s"),
+    album->id, cancion->nombre, cancion->genero, cancion->fechaPublicacion, cancion->duracion, cancion->url);
+
+    nuevo_registro(
+        "Canciones",
+        "id_album, nombre, genero, fecha_publicacion, duracion, url",
+        datos, NULL);
 
     return true;
 }
 
 
-
 //  Busca una canci´ on por nombre.
 //Me falta saber cual es el puntero global a la lista de canciones
-Cancion *buscarCancion(Lista canciones, const char *nombre) {
+Cancion *buscarCancion(Lista canciones, int *id) {
+    return searchValueInLista(canciones, &id, cmpCancionConId);
+    
+    /*
     Lista tmp = canciones;
     while (tmp->sig != NULL) {
         tmp = tmp->sig;
-        if (strcmp(tmp->dato, nombre)) {
+        if (strcmp(tmp->dato.nombre, nombre) == 0) {
             return cancion;
         }
     }
     printf ("La cancion no esta en la lista\n");
-    return NULL;
+    return NULL;*/
 }
-
 
 //  Elimina una canci´on si no est´ a en una playlist.
 void eliminarCancion(Lista **canciones, const char *nombre) {
@@ -118,10 +129,16 @@ void eliminarCancion(Lista **canciones, const char *nombre) {
     }
 }
 
-
-
-
 //  Modifica datos de una canci´on.
 void actualizarCancion(Cancion cancion, const char *nombre) {
     strcpy(cancion->nombre, nombre);
+
+    //Actualizo en la base de datos
+    char *datos = asprintf(
+    stringify("%s"), nombre);
+
+    nuevo_registro(
+        "Canciones",
+        "nombre",
+        datos, NULL);
 }
