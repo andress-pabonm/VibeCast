@@ -1,6 +1,5 @@
 #include <ui/interfaces.h>
 #include <db/dbmgr.h>
-#include <time.h>
 
 #define PCRE2_CODE_UNIT_WIDTH 8 // Para establecer que se manejan caracteres de 8 bits
 #include <pcre2.h>              // Para expresiones regulares
@@ -55,7 +54,7 @@ static pcre2_code *get_password_re()
     PCRE2_SIZE erroroffset;
 
     // Expresión regular para email
-    PCRE2_SPTR pattern = (PCRE2_SPTR) "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$";
+    PCRE2_SPTR pattern = (PCRE2_SPTR) "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$";
 
     // Compilar la expresión regular
     re = pcre2_compile(
@@ -427,19 +426,15 @@ interfaz(ActualizarNickname)
 
 interfaz(ActualizarEmail)
 {
-    return true;
 }
 
 interfaz(ActualizarPassword)
 {
-    return true;
 }
 
 interfaz(ActualizarPais)
 {
-    return true;
 }
-
 message_handler(actualizar_usuario)
 {
     init_data_json();
