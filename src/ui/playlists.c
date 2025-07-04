@@ -75,9 +75,21 @@ bool eliminarCancionPlaylist(Cancion* cancion, Playlist* playlist){
 }
 
 bool eliminarPlaylist(){
+ if (!usuario || !playlist || !usuario->playlists)
+        return false;
 
+    void* eliminado = deleteValueInLista(usuario->playlists, playlist, NULL); 
+    return eliminado != NULL;
 }
 
 void mostrarCancionesPlaylist(){
     //SE MOTRARIA EN CONSOLA
+    int i = 1;
+
+    void mostrarCancion(void* _, int idx, void* val) {
+        Cancion* c = (Cancion*)val;
+        printf("%d. %s - %s (%d segundos)\n", idx + 1, c->nombre, c->genero, c->duracion);
+    }
+
+    forEachInLista(playlist->canciones, mostrarCancion, NULL);
 }
