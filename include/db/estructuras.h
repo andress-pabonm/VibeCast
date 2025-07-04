@@ -1,7 +1,7 @@
 #ifndef VIBECAST_DB_ESTRUCTURAS_H
 #define VIBECAST_DB_ESTRUCTURAS_H 1
 
-#include <utils/nodos.h> // Para Lista, Pila y Cola
+#include <utils/nodos.h> // Para Lista, Pila y Cola 
 
 // ==========================================
 // Tipos hacia adelante (punteros a structs)

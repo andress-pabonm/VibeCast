@@ -1,23 +1,34 @@
-//FUNCIONES A CREAR, CREARPLAYLIST, AGREGARCANCIONPLAYLIST, ELIMINARCANCIONPLAYLIST, MOSTRARCANCIONESPLAYLIST, ELIMINARPLAYLIST
-//CUANDO CREEN TODO, COMPILEN CON EL COMANDO CMAKE --BUILD --PRESET CONSOLE PARA VER SI NO HAY ERRORES O PRECAUCIONES
-
 #include <ui/interfaces.h>
 #include <utils/utils.h>
 
-bool crearPlaylist(const char* nombre){
-    Playlist* nueva= newPlaylist();
-    if(!nueva) return false;
+static new_cmpfn(cmpPlaylistConNombre)
+{
+    const Playlist *a = val_1;
+    const char *n = val_2;
 
-    nueva->nombre=strdup(nombre);
-    nueva->canciones = newLista(NULL);
-
-    return nueva;
+    return strcmp(a->nombre, n);
 }
 
-bool agregarCancionPlaylist(Cancion* cancion, Playlist* playlist){
-    // Verifica que la canción y la playlist no sean nulas
-    // y que la lista de canciones de la playlist esté inicializada
-    if(!cancion || !playlist || !playlist->canciones) return false;
+bool crearPlaylist(const char* nombre){
+    Playlist *nuevaPlaylist = newPlaylist(); // Inicaliza como null
+
+    if(!nuevaPlaylist) return false;
+
+    nuevaPlaylist->nombre = asprintf(nombre); 
+
+    return true;
+}
+
+bool agregarCancionPlaylist(const char *nombrePlaylist, const char *nombreCanciones){
+    Playlist *playlist = searchValueInLista(usuario->playlists, nombrePlaylist, cmpPlaylistConNombre);
+
+    if(!playlist){
+        prinf("Error: La playlist '%s' no existe\n", nombrePlaylist);
+
+        return false;
+    }
+
+    Cancion *cancion = newCancion(); // Inicaliza como null
 
     // Agrega la canción a la lista de canciones de la playlist
     agregarALista(playlist->canciones, cancion);
@@ -47,6 +58,9 @@ void agregarALista(Lista lista, Cancion* cancion){
     // Esta función debería agregar la canción a la lista
     // Implementación de agregar a la lista
 }
+
+
+
 
 bool eliminarCancionPlaylist(Cancion* cancion, Playlist* playlist){
     //SE PODRIA HACER CON UNA FUNCION QUE RECIBA EL ID DE LA CANCION A ELIMINAR
