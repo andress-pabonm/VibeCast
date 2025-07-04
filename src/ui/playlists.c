@@ -21,7 +21,7 @@ bool crearPlaylist(const char* nombre){
     return true;
 }
 
-bool agregarCancionPlaylist(const char *nombrePlaylist, const char *nombreCanciones){
+bool agregarCancionPlaylist(const char *nombrePlaylist, int ideCancion){
     Playlist *playlist = searchValueInLista(usuario->playlists, nombrePlaylist, cmpPlaylistConNombre);
 
     if(!playlist){
@@ -30,10 +30,16 @@ bool agregarCancionPlaylist(const char *nombrePlaylist, const char *nombreCancio
         return false;
     }
 
-    Cancion *cancion = newCancion(); // Inicaliza como null
+   
 
-    cancion->nombre = asprintf(nombreCanciones);
+    //BUSCAREMOS EL IDE DE LA CANCION EN LA LISTA GLOBLA DE CANCIONES 
 
+    Cancion *cancion=searchValueInLista(canciones, &ideCancion, cmpCancionConId );
+    // verificamos si la cancion existe 
+    if(!cancion){
+        printf("Error: La canción con ID %d no existe\n", ideCancion);
+        return false;
+    }
     // Agrega la canción a la lista de canciones de la playlist
     insertValueInLista(playlist->canciones, cancion);
     return true;
