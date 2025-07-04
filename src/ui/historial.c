@@ -30,13 +30,19 @@ void mostrarHistorial(Usuario *usuario) {
 
     if (!usuario || !usuario->historial.reproducciones) return;
 
-    Pila *actual = usuario->historial.reproducciones->top;
-    while (actual) {
-        Reproduccion *reproduccion = actual->data;
-        if (!reproduccion || !reproduccion->cancion) continue;
-        printf("Canción: %s, Fecha: %s\n", reproduccion->cancion->nombre, reproduccion->fechaEscuchado);
-        actual = actual->next;
-    }
+    //Pila *actual = usuario->historial.reproducciones->top;
+    Pila historial = usuario->historial.reproducciones;
+    Reproduccion *repr = NULL;
+    
+    do{
+       repr = deleteValueInPila(historial); 
+
+       if(repr){
+            printf("Canción: %s, Fecha: %s\n", repr->cancion->nombre, repr->fechaEscuchado);
+            // Aquí podrías liberar repr si ya no lo necesitas
+        }
+
+    }while(repr != NULL);
 }
 
 void vaciarHistorial(Usuario *usuario) {
