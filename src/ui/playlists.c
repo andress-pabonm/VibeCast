@@ -9,10 +9,12 @@ static new_cmpfn(cmpPlaylistConNombre)
     return strcmp(a->nombre, n);
 }
 
-bool crearPlaylist(const char* nombre){
+bool crearPlaylist(const char *nombre)
+{
     Playlist *nuevaPlaylist = newPlaylist(); // Inicaliza como null
 
-    if(!nuevaPlaylist) return false;
+    if (!nuevaPlaylist)
+        return false;
 
     nuevaPlaylist->nombre = asprintf(nombre);
 
@@ -21,23 +23,24 @@ bool crearPlaylist(const char* nombre){
     return true;
 }
 
-bool agregarCancionPlaylist(const char *nombrePlaylist, int ideCancion){
+bool agregarCancionPlaylist(const char *nombrePlaylist, int IdCancion)
+{
     Playlist *playlist = searchValueInLista(usuario->playlists, nombrePlaylist, cmpPlaylistConNombre);
 
-    if(!playlist){
+    if (!playlist)
+    {
         prinf("Error: La playlist '%s' no existe\n", nombrePlaylist);
 
         return false;
     }
 
-   
+    // BUSCAREMOS EL IDE DE LA CANCION EN LA LISTA GLOBLA DE CANCIONES
 
-    //BUSCAREMOS EL IDE DE LA CANCION EN LA LISTA GLOBLA DE CANCIONES 
-
-    Cancion *cancion=searchValueInLista(canciones, &ideCancion, cmpCancionConId );
-    // verificamos si la cancion existe 
-    if(!cancion){
-        printf("Error: La canción con ID %d no existe\n", ideCancion);
+    Cancion *cancion = searchValueInLista(canciones, &IdCancion, cmpCancionConId);
+    // verificamos si la cancion existe
+    if (!cancion)
+    {
+        printf("Error: La canción con ID %d no existe\n", IdCancion);
         return false;
     }
     // Agrega la canción a la lista de canciones de la playlist
@@ -45,55 +48,65 @@ bool agregarCancionPlaylist(const char *nombrePlaylist, int ideCancion){
     return true;
 }
 
-void agregarALista(Lista lista, Cancion* cancion){
-    if (!lista || !cancion) return;  
+bool eliminarCancionPlaylist(int Idcancion, Playlist *playlist)
+{
 
-    Lista* nuevoNodo = newLista(cancion);
+    Cancion *cancionEliminada = deleteValueInLista(playlist->canciones, &Idcancion, cmpCancionConId);
 
-    Lista* actual = lista->start;
+    if (cancionEliminada == NULL)
+    {
+        printf("Error: La canción %s no se encuentra en la playlist\n", cancionEliminada->nombre);
+        return false;
+    }
+    else
+    {
+        printf("Canción %s eliminada de la playlist '%s'\n", cancionEliminada->nombre, playlist->nombre);
+        return true;
+    }
+}
 
-    if (!actual) {
-        lista->start = nuevoNodo; // Si la lista está vacía, el nuevo nodo es el inicio
-        return;
+bool eliminarPlaylist(const char *nombrePlaylist)
+{
+    // Buscamos la playlist por nombre
+    Playlist *playlist = searchValueInLista(usuario->playlists, nombrePlaylist, cmpPlaylistConNombre);
 
-    }else{
-        while (actual->next) {
-            actual = actual->next; // Recorre hasta el final de la lista
+    if (!playlist)
+    {
+        printf("Error: La playlist '%s' no existe\n", nombrePlaylist);
+        return false;
+    }
+    else
+    {
+        Playlist *playlisteliminada = deleteValueInLista(usuario->playlists, nombrePlaylist, cmpPlaylistConNombre); // Eliminamos la playlist de lalista de playlists
+        if (playlisteliminada == NULL)
+        {
+            printf("Error: No se pudo eliminar la playlist '%s'\n", nombrePlaylist);
+            return false;
+        }else{
+            printf("Playlist '%s' eliminada correctamente\n", nombrePlaylist);
+            // Liberamos la memoria asociada a la playlist
+            destroyLista(playlisteliminada->canciones, NULL, NULL); // Liberamos la lista de canciones
+            return true;
         }
-        actual->next = nuevoNodo; // Agrega el nuevo nodo al final
     }
 
-    cancion->popularidad++;
-
-    // Esta función debería agregar la canción a la lista
-    // Implementación de agregar a la lista
-}
-
-
-
-
-bool eliminarCancionPlaylist(Cancion* cancion, Playlist* playlist){
-    //SE PODRIA HACER CON UNA FUNCION QUE RECIBA EL ID DE LA CANCION A ELIMINAR
-    //Y LA PLAYLIST EN LA QUE SE QUIERE ELIMINAR
-    if(!cancion || !playlist || !playlist->canciones) return false;
-
-    Cancion* actual = playlist->canciones->start;
-}
-
-bool eliminarPlaylist(){
- if (!usuario || !playlist || !usuario->playlists)
+    // Eliminamos la playlist de la lista de playlists del usuario
+    // y liberamos la memoria asociada a la playlist
+    if (!usuario || !playlist || !usuario->playlists)
         return false;
 
-    void* eliminado = deleteValueInLista(usuario->playlists, playlist, NULL); 
+    void *eliminado = deleteValueInLista(usuario->playlists, playlist, NULL);
     return eliminado != NULL;
 }
 
-void mostrarCancionesPlaylist(){
-    //SE MOTRARIA EN CONSOLA
+void mostrarCancionesPlaylist()
+{
+    // SE MOTRARIA EN CONSOLA
     int i = 1;
 
-    void mostrarCancion(void* _, int idx, void* val) {
-        Cancion* c = (Cancion*)val;
+    void mostrarCancion(void *_, int idx, void *val)
+    {
+        Cancion *c = (Cancion *)val;
         printf("%d. %s - %s (%d segundos)\n", idx + 1, c->nombre, c->genero, c->duracion);
     }
 

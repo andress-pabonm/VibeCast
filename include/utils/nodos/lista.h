@@ -48,7 +48,7 @@ int insertValueInLista(Lista lista, void *value_ptr);
  * @param cmp Función de comparación.
  * @return Puntero al valor encontrado, o NULL si no se encuentra.
  */
-void *searchValueInLista(Lista lista, const void *value_ptr, cmpfn_t cmp);
+void *searchValueInLista(Lista lista, const void *value_ptr, cmpfn_t cmp); 
 
 /**
  * @brief Elimina un valor de la lista.

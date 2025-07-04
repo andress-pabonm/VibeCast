@@ -102,7 +102,20 @@ static inline json_object *get_field(json_object *src, const char *field)
 
 // Funciones de conexión
 
+message_handler(is_logged_in);        // Verificar si ha iniciado sesión
+message_handler(iniciar_sesion);      // Iniciar sesión
+message_handler(cerrar_sesion);       // Cerrar sesión
+message_handler(crear_cuenta);        // Crear cuenta
+message_handler(get_user_data);       // Para mostrar la información en la sección Perfil
+message_handler(actualizar_usuario);  // Para actualizar los datos del usuario
+message_handler(actualizar_password); // Para actualizar la contraseña
+
 message_handler(crear_artista);
+
+message_handler(get_canciones);       // Para el menú principal
+message_handler(get_recomendaciones); // Para el menú principal
+
+message_handler(next_song); // Para avanzar en la cola de reproducción
 
 /* ================================================================ */
 
