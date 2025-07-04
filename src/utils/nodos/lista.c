@@ -20,6 +20,7 @@ typedef struct __Lista
 {
     Nodo start;
     cmpfn_t cmp; // Función de comparación asociada a esta lista
+    int length;
 } *__Lista;
 
 typedef struct
@@ -208,8 +209,12 @@ int insertValueInLista(Lista lista, void *val)
 
     forEachInLista_Ref(lista, insert_wrapper_Lista, &wrapper_arg);
 
+    cast(__Lista, lista)->length++;
+
     if (idx == INSERT_FAILED)
         destroyNodo(nodo);
+
+    lista->length++;
 
     return idx;
 }
@@ -280,6 +285,9 @@ void *deleteValueInLista(Lista lista, const void *val, cmpfn_t cmp)
 
     Nodo nodo = *ref;
     *ref = nodo->der;
+
+    lista->length--;
+
     return destroyNodo(nodo);
 }
 
@@ -314,4 +322,12 @@ void destroyLista(Lista lista, operfn_t cb, void *arg)
 
     forEachInLista_Ref(lista, destroy_wrapper_Ref, &wrapper_arg);
     freem(lista);
+}
+
+int getListaLength(Lista lista)
+{
+    if (!lista)
+        return 0;
+
+    return lista->length;
 }

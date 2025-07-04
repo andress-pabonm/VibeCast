@@ -27,6 +27,7 @@ char *readFile(const char *filename, char **errmsg)
     printf("Leyendo archivo: '%s'\n", filename);
 
     FILE *file = getFile(filename, errmsg);
+    
     if (!file)
         return NULL;
 

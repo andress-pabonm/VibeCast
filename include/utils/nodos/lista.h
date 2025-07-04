@@ -80,4 +80,12 @@ void forEachInLista(Lista lista, operfn_t callback, void *arg);
  */
 void destroyLista(Lista lista, operfn_t callback, void *arg);
 
+/**
+ * @brief Obtiene la longitud de la lista.
+ *
+ * @param lista Lista a consultar.
+ * @return Longitud de la lista, o 0 si es NULL.
+ */
+int getListaLength(Lista lista);
+
 #endif // VIBECAST_NODOS_LISTA_H
