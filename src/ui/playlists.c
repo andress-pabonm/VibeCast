@@ -14,7 +14,9 @@ bool crearPlaylist(const char* nombre){
 
     if(!nuevaPlaylist) return false;
 
-    nuevaPlaylist->nombre = asprintf(nombre); 
+    nuevaPlaylist->nombre = asprintf(nombre);
+
+    insertValueInLista(usuario->playlists, nuevaPlaylist); // Insertamos las playlist en lista
 
     return true;
 }
@@ -30,8 +32,10 @@ bool agregarCancionPlaylist(const char *nombrePlaylist, const char *nombreCancio
 
     Cancion *cancion = newCancion(); // Inicaliza como null
 
+    cancion->nombre = asprintf(nombreCanciones);
+
     // Agrega la canción a la lista de canciones de la playlist
-    agregarALista(playlist->canciones, cancion);
+    insertValueInLista(playlist->canciones, cancion);
     return true;
 }
 
