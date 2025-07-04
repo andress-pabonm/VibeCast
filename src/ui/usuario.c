@@ -435,7 +435,6 @@ interfaz(ActualizarPassword)
 interfaz(ActualizarPais)
 {
 }
-
 message_handler(actualizar_usuario)
 {
     init_data_json();
@@ -448,5 +447,8 @@ message_handler(actualizar_usuario)
     const char *argv[] = {username};
 
     char **msg = arg;
-    VibeCast_ActualizarUsername(usuario, 1, argv, msg);
+    if (!VibeCast_ActualizarUsername(usuario, 1, argv, msg)){
+        VibeCast_SendText(id, HTTP_OK, *msg, "",STATE_FAILURE);
+        return ;
+    }
 }
