@@ -51,6 +51,9 @@ void agregarALista(Lista lista, Cancion* cancion){
 bool eliminarCancionPlaylist(Cancion* cancion, Playlist* playlist){
     //SE PODRIA HACER CON UNA FUNCION QUE RECIBA EL ID DE LA CANCION A ELIMINAR
     //Y LA PLAYLIST EN LA QUE SE QUIERE ELIMINAR
+    if(!cancion || !playlist || !playlist->canciones) return false;
+
+    Cancion* actual = playlist->canciones->start;
 }
 
 bool eliminarPlaylist(){
