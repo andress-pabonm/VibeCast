@@ -1,5 +1,8 @@
 #include <ui/interfaces.h>
-#include <utils/utils.h>
+
+Cola cola_repr = NULL;
+
+/* ================================================================ */
 
 typedef enum
 {
@@ -12,6 +15,42 @@ typedef struct NodoColaRepr
     void *dato;            // Puntero GENÉRICO. Apuntará a una CancionGobal o a un Anuncio.
     ElementoColaTipo tipo; // La ETIQUETA que nos dice qué es 'dato'.
 } *NodoColaRepr;
+
+/* ================================================================ */
+
+message_handler(next_song)
+{
+    if (!cola_repr)
+        cola_repr = newCola();
+
+    NodoColaRepr nodo = deleteValueInCola(cola_repr);
+
+    if (!nodo)
+    {
+        VibeCast_SendNull(
+            id,
+            HTTP_NO_CONTENT,
+            "La cola está vacia",
+            STATE_FAILURE);
+        return;
+    }
+
+    switch (nodo->tipo)
+    {
+    case TIPO_CANCION:
+        break;
+
+    case TIPO_ANUNCIO:
+        break;
+
+    default:
+        puts("Tipo de dato inseperado.");
+    }
+
+    freem(nodo);
+}
+
+/* ================================================================ */
 
 static void encolar(void *dato, ElementoColaTipo tipo)
 {
@@ -49,6 +88,8 @@ void agregarCancionACola(Cancion *cancion)
     }
 }
 
+/* ================================================================ */
+
 interfaz(SiguienteCancion)
 {
     struct
@@ -56,24 +97,6 @@ interfaz(SiguienteCancion)
         Cancion *cancion;
         Anuncio *anuncio;
     } *elm = arg;
-
-    NodoColaRepr nodo = deleteValueInCola(cola_repr);
-
-    switch (nodo->tipo)
-    {
-    case TIPO_CANCION:
-        elm->cancion = nodo->dato;
-        break;
-
-    case TIPO_ANUNCIO:
-        elm->anuncio = nodo->dato;
-        break;
-
-    default:
-        puts("Tipo de dato inseperado.");
-    }
-
-    freem(nodo);
 
     return true;
 }

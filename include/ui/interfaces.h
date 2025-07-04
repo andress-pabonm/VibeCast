@@ -34,6 +34,12 @@ interfaz(IniciarSesion); // Para iniciar sesión
 interfaz(CerrarSesion);  // Para cerrar sesión
 interfaz(CrearCuenta);   // Para crear una nueva cuenta
 
+interfaz(ActualizarUsername);
+interfaz(ActualizarNickname);
+interfaz(ActualizarEmail);
+interfaz(ActualizarPassword);
+interfaz(ActualizarPais);
+
 // Función para avanzar en la cola de reproducción
 interfaz(SiguienteCancion);
 
