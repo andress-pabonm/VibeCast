@@ -1,11 +1,25 @@
 #include <ui/interfaces.h>
 
+typedef struct PopularidadArtista
+{
+    const char *artista;       // Artista
+    int numCancionesGuardadas; // Cantidad de reproducciones
+} PopularidadArtista;
+
 new_cmpfn(cmpIntDesc)
 {
     const int *n1 = val_1;
     const int *n2 = val_2;
 
     return *n1 - *n2; // Orden descendente
+}
+
+static new_cmpfn(cmpArtistaConNombre)
+{
+    const Artista *a = val_1;
+    const char *n = val_2;
+
+    return strcmp(a->nombre, n);
 }
 
 new_operfn(obtener_reproducciones)
@@ -26,7 +40,7 @@ new_operfn(ObtenerHistorial)
     Pila historial = usuario->historial.reproducciones;
     Pila tempHistorial = newPila();
     // Obtenemos la pila de reproducciones del historial del usuario
-    Artista *artistaTemp;
+    PopularidadArtista *artistaTemp;
     Reproduccion *reproducciontemp;
 
     reproducciontemp = deleteValueInPila(historial);
@@ -34,8 +48,18 @@ new_operfn(ObtenerHistorial)
     while (reproducciontemp != NULL)
     {
         // Recorremos la pila de reproducciones del usuario
-        artistaTemp = reproducciontemp->cancion->album->artista; // Obtenemos el artista de la cancion
-        insertValueInLista(listaArtistas, artistaTemp);
+        artistaTemp->artista = reproducciontemp->cancion->album->artista;
+        artistaTemp->artista = searchValueInABB(artistas, artistaTemp->artista, cmpArtistaConNombre); // Buscamos el artista en la lista de artistas
+
+        insertValueInLista(listaArtistas, artistaTemp); // Obtenemos el artista de la cancion
+
+        if (!artistas) // Si el artista no esta en la lista de artistas
+        {
+        }
+        else
+        {
+        }
+
         insertValueInPila(tempHistorial, reproducciontemp); // Insertamos la reproduccion en la pila temporal
 
         reproducciontemp = deleteValueInPila(historial); // Obtenemos la siguiente reproduccion
