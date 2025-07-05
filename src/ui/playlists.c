@@ -1,5 +1,4 @@
 #include <ui/interfaces.h>
-#include <utils/utils.h>
 
 static new_cmpfn(cmpPlaylistConNombre)
 {
@@ -45,7 +44,7 @@ bool agregarCancionPlaylist(const char *nombrePlaylist, int IdCancion)
 
     if (!playlist)
     {
-        prinf("Error: La playlist '%s' no existe\n", nombrePlaylist);
+        printf("Error: La playlist '%s' no existe\n", nombrePlaylist);
 
         return false;
     }
