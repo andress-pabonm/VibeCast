@@ -143,7 +143,7 @@ bool crearAlbum(const char *nombreAlbum)
     return true;
 }
 
-bool agregarCancionAlbum(const char *nombreAlbum, const char *nombreCancion)
+bool agregarCancionAlbum(const char *nombreAlbum, const char *nombreCancion, const char *genero, int duracion, const char *url)
 {
     Album *album = searchValueInLista(usuario->artista->albumes, nombreAlbum, cmpAlbumConNombre); // Buscamos el álbum y lo asignamos a la variable album
 
@@ -155,12 +155,12 @@ bool agregarCancionAlbum(const char *nombreAlbum, const char *nombreCancion)
 
     // Creamos nueva canción
     // (No se si la logica seria aqui, por que faltaria mas campos, genero, fecha, duracion, etc)
-    Cancion *cancion = newCancion(); // Todos sus datos inician en null
+    Cancion *cancion =crearCancion(album,nombreAlbum,genero,duracion,url); 
     if (!cancion)
-        return false;
-
-    cancion->nombre = asprintf(nombreCancion);
-    cancion->album = album; // AGREGAMOS CANCION A ALBUM
+    {
+        printf("Error: No se pudo crear la canción '%s' en el álbum '%s'\n", nombreCancion, nombreAlbum);
+        return false; // No se pudo crear la canción
+    }
 
     // Insertamos en la lista
     insertValueInLista(album->canciones, cancion);
