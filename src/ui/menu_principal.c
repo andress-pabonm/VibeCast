@@ -18,8 +18,6 @@ json_object *cancion_to_json(Cancion *cancion)
 
 new_operfn(getCanciones)
 {
-    Cancion *cancion = val;
-    printf("%d. %s\n", idx, cancion->nombre);
     json_object_array_add(arg, cancion_to_json(val));
     return FOREACH_CONTINUE;
 }
@@ -39,6 +37,19 @@ message_handler(get_canciones)
         "Canciones"
         "Lista de canciones",
         STATE_SUCCESS);
+
+    json_object_put(array);
 }
 
-/* ==== */
+/* ================================================================ */
+
+message_handler(get_recomendaciones)
+{
+    Lista recomendaciones = recomendarCanciones();
+
+    json_object *array = json_object_new_array();
+    VibeCast_SendArray(id, HTTP_OK, array, "Recomendaciones cargadas", STATE_SUCCESS);
+    json_object_put(array);
+
+    destroyLista(recomendaciones, NULL, NULL);
+}
