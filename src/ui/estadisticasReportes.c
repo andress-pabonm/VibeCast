@@ -49,18 +49,12 @@ new_operfn(ObtenerHistorial)
 
     while (reproducciontemp)
     {
-<<<<<<< HEAD
-        reproducciontemp->cancion->album->artista
-            // comentario random del segundo dia comiendo chaulafan//
-            if (artistas) // Si el artista no esta en la lista de artistas
-=======
         // Recorremos la pila de reproducciones del usuario
         artistaTemp->artista = reproducciontemp->cancion->album->artista;
 
         PopularidadArtista *artistas = searchValueInLista(artistas, artistaTemp->artista, cmpArtistaConNombre); // Buscamos el artista en la lista de artistas
                                                                                                                 // comentario random del segundo dia comiendo chaulafan
         if (artistas)                                                                                           // Si el artista no esta en la lista de artistas
->>>>>>> cc63b9f4a03f12148750079535b2a5f6a525bee7
         {
             artistas->numCancionesGuardadas++;
         }
