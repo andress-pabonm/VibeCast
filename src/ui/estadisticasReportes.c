@@ -2,8 +2,8 @@
 
 typedef struct PopularidadArtista
 {
-    const char *artista;       // Artista
-    int numCancionesGuardadas; // Cantidad de reproducciones
+    const char *artista;           // Artista
+    int numCancionesGuardadas = 0; // Cantidad de reproducciones
 } PopularidadArtista;
 
 new_cmpfn(cmpIntDesc)
@@ -49,15 +49,16 @@ new_operfn(ObtenerHistorial)
     {
         // Recorremos la pila de reproducciones del usuario
         artistaTemp->artista = reproducciontemp->cancion->album->artista;
-        artistaTemp->artista = searchValueInABB(artistas, artistaTemp->artista, cmpArtistaConNombre); // Buscamos el artista en la lista de artistas
 
-        insertValueInLista(listaArtistas, artistaTemp); // Obtenemos el artista de la cancion
+        PopularidadArtista *artistas = searchValueInLista(artistas, artistaTemp->artista, cmpArtistaConNombre); // Buscamos el artista en la lista de artistas
 
-        if (!artistas) // Si el artista no esta en la lista de artistas
+        if (artistas) // Si el artista no esta en la lista de artistas
         {
+            artistas->numCancionesGuardadas++;
         }
         else
         {
+            insertValueInLista(listaArtistas, artistaTemp); // Obtenemos el artista de la cancion
         }
 
         insertValueInPila(tempHistorial, reproducciontemp); // Insertamos la reproduccion en la pila temporal
