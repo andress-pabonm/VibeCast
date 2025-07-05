@@ -1,6 +1,6 @@
 #include <ui/interfaces.h>
-#include <utils/utils.h>
 #include <db/dbmgr.h>
+#include <time.h>
 
 new_cmpfn(cmpCancionConNombre)
 {
@@ -14,12 +14,6 @@ new_cmpfn(cmpAlbumConNombre)
     const Album *A = val_1;
     const char *nombre = val_2;
     return strcmp(A->nombre, nombre);
-}
-
-select_handler(obteneridCancion)
-{
-    sscanf(argv[0], "%d", cast(int *, arg));
-    return 0;
 }
 
 select_handler(obteneridCancion)
