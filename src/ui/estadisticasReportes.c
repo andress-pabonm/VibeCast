@@ -33,6 +33,13 @@ new_operfn(obtener_reproducciones)
     return FOREACH_CONTINUE; // Continuar iterando
 }
 
+new_cmpfn(cmpPopularidadArtista)
+{
+    const PopularidadArtista *pa = val_1;
+    const char *n = val_2;
+    return strcmp(pa->artista, n);
+}
+
 new_operfn(ObtenerHistorial)
 {
     Usuario *usuario = val;    // val=void *val, que es un puntero a Usuario que estan en la lista de amigos
@@ -50,20 +57,23 @@ new_operfn(ObtenerHistorial)
     while (reproducciontemp)
     {
         // Recorremos la pila de reproducciones del usuario
-        artistaTemp->artista = reproducciontemp->cancion->album->artista;
+        artistaTemp = searchValueInLista(
+            listaArtistas,
+            reproducciontemp->cancion->album->artista,
+            cmpPopularidadArtista);
 
-        PopularidadArtista *artistas = searchValueInLista(artistas, artistaTemp->artista, cmpArtistaConNombre); // Buscamos el artista en la lista de artistas
-                                                                                                                // comentario random del segundo dia comiendo chaulafan
-        if (artistas)                                                                                           // Si el artista no esta en la lista de artistas
+        if (artistaTemp) // Si el artista no esta en la lista de artistas
         {
-            artistas->numCancionesGuardadas++;
+            artistaTemp->numCancionesGuardadas++;
         }
         else
         {
+            artistaTemp = alloc(PopularidadArtista, NULL);
+            artistaTemp->artista = reproducciontemp->cancion->album->artista->nombre;
+            artistaTemp->numCancionesGuardadas = 1;
+
             insertValueInLista(listaArtistas, artistaTemp); // Obtenemos el artista de la cancion
         }
-
-        printf("La paula es lesbiana");
 
         insertValueInPila(tempHistorial, reproducciontemp); // Insertamos la reproduccion en la pila temporal
 
@@ -85,11 +95,11 @@ new_operfn(ObtenerHistorial)
 
 new_operfn(obtener_artistas)
 {
-    PopularidadArtista *artistas = val;
+    PopularidadArtista *pa = val;
     int *guardados = arg;
 
-    if (artistas)
-        guardados[idx] = artistas->numCancionesGuardadas; // Guardamos la popularidad en el vector
+    if (pa)
+        guardados[idx] = pa->numCancionesGuardadas; // Guardamos la popularidad en el vector
 
     return FOREACH_CONTINUE; // Continuar iterando
 }
@@ -125,7 +135,8 @@ void generarTop5Canciones()
 
 void generarTop3Artistas()
 {
-    PopularidadArtista *listaArtistas; // Crear una nueva lista para los artistas
+    Lista listaArtistas = newLista(NULL); // Crear una nueva lista para los artistas
+    ObtenerHistorial(listaArtistas, 0, usuario);
     int longitud = getListaLength(listaArtistas);
 
     if (longitud == 0)
@@ -135,11 +146,11 @@ void generarTop3Artistas()
         return;
     }
 
-    int *artistas = malloc_cpy(longitud * sizeof(int), 0); // vector en el heap
+    int *popuArtistas = malloc_cpy(longitud * sizeof(int), 0); // vector en el heap
 
-    forEachInLista(listaArtistas, obtener_artistas, artistas);
+    forEachInLista(listaArtistas, obtener_artistas, popuArtistas);
 
-    qsort(artistas, longitud, sizeof(int), cmpIntDesc); // Buffer, tamaño del buffer, tamaño de cada elemento, funcion de comparacion
+    qsort(popuArtistas, longitud, sizeof(int), cmpIntDesc); // Buffer, tamaño del buffer, tamaño de cada elemento, funcion de comparacion
 
     FILE *archivo = newFile("top3_artitas.txt", NULL);
 
@@ -147,7 +158,7 @@ void generarTop3Artistas()
 
     for (int i = 0; i < longitud && i < 3; i++)
     {
-        fprintf(archivo, "%d) %s - %d canciones guardadas\n", i + 1, listaArtistas[i].artista, artistas[i]);
+        // fprintf(archivo, "%d) %s - %d canciones guardadas\n", i + 1, listaArtistas[i].artista, artistas[i]);
 
         // Top 3 artistas mas preferidos:
 
