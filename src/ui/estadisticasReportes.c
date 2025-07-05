@@ -61,6 +61,8 @@ new_operfn(ObtenerHistorial)
             insertValueInLista(listaArtistas, artistaTemp); // Obtenemos el artista de la cancion
         }
 
+        printf("La paula es lesbiana");
+
         insertValueInPila(tempHistorial, reproducciontemp); // Insertamos la reproduccion en la pila temporal
 
         reproducciontemp = deleteValueInPila(historial); // Obtenemos la siguiente reproduccion
