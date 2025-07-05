@@ -1,24 +1,4 @@
 #include <ui/interfaces.h>
-#include <time.h>
-
-/* ================================ Interfaces ================================ */
-
-static message_handler(crear_artista)
-{
-    // A implementar
-}
-
-message_handler(get_canciones)
-{
-    puts("Obteniendo canciones");
-    VibeCast_SendArray(id, HTTP_OK, NULL, "Canciones cargadas", STATE_SUCCESS);
-}
-
-message_handler(get_recomendaciones)
-{
-    puts("Obteniendo recomendaciones");
-    VibeCast_SendArray(id, HTTP_OK, NULL, "Recomendaciones cargadas", STATE_SUCCESS);
-}
 
 /* ======== Para conectar las interfaces ======== */
 

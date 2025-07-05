@@ -18,6 +18,8 @@ json_object *cancion_to_json(Cancion *cancion)
 
 new_operfn(getCanciones)
 {
+    Cancion *cancion = val;
+    printf("%d. %s\n", idx, cancion->nombre);
     json_object_array_add(arg, cancion_to_json(val));
     return FOREACH_CONTINUE;
 }
