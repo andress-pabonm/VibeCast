@@ -50,4 +50,7 @@ bool crearCancion(Album *album, const char *nombre, const char *genero, int dura
 
 Lista recomendarCanciones();
 
+json_object *cancion_to_json(Cancion *cancion);
+new_operfn(getCanciones);
+
 #endif // VIBECAST_INTERFACES_H
