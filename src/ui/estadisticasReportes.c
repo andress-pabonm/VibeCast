@@ -51,8 +51,8 @@ new_operfn(ObtenerHistorial)
         artistaTemp->artista = reproducciontemp->cancion->album->artista;
 
         PopularidadArtista *artistas = searchValueInLista(artistas, artistaTemp->artista, cmpArtistaConNombre); // Buscamos el artista en la lista de artistas
-
-        if (artistas) // Si el artista no esta en la lista de artistas
+                                                                                                                // comentario random del segundo dia comiendo chaulafan//
+        if (artistas)                                                                                           // Si el artista no esta en la lista de artistas
         {
             artistas->numCancionesGuardadas++;
         }
