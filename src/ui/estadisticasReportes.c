@@ -19,6 +19,41 @@ new_operfn(obtener_reproducciones)
     return FOREACH_CONTINUE; // Continuar iterando
 }
 
+new_operfn(ObtenerHistorial)
+{
+    Usuario *usuario = val;    // val=void *val, que es un puntero a Usuario que estan en la lista de amigos
+    Lista listaArtistas = arg; // argumento para la funcion de reccorrer la lista de amigos
+    Pila historial = usuario->historial.reproducciones;
+    Pila tempHistorial = newPila();
+    // Obtenemos la pila de reproducciones del historial del usuario
+    Artista *artistaTemp;
+    Reproduccion *reproducciontemp;
+
+    reproducciontemp = deleteValueInPila(historial);
+
+    while (reproducciontemp != NULL)
+    {
+        // Recorremos la pila de reproducciones del usuario
+        artistaTemp = reproducciontemp->cancion->album->artista; // Obtenemos el artista de la cancion
+        insertValueInLista(listaArtistas, artistaTemp);
+        insertValueInPila(tempHistorial, reproducciontemp); // Insertamos la reproduccion en la pila temporal
+
+        reproducciontemp = deleteValueInPila(historial); // Obtenemos la siguiente reproduccion
+    }
+
+    reproducciontemp = deleteValueInPila(tempHistorial); // Obtenemos la ultima reproduccion
+
+    while (reproducciontemp != NULL)
+    {
+        insertValueInPila(historial, reproducciontemp);
+        reproducciontemp = deleteValueInPila(tempHistorial); // Insertamos las reproducciones de la pila temporal en la pila de reproducciones del historial
+    }
+
+    destroyPila(tempHistorial, NULL, NULL); // Destruimos la pila temporal
+
+    return FOREACH_CONTINUE; // Continuar recorriendo la lista de amigos
+}
+
 void generarTop5Canciones()
 {
     int longitud = getListaLength(canciones);
@@ -74,4 +109,12 @@ void generarTop3Artistas()
     }
 
     fclose(archivo);
+}
+
+Lista recomendarCanciones()
+{
+    Lista ListaCancionesRecomendadas = newLista(NULL); // Crear una nueva lista para las canciones recomendadas
+    forEachInLista(usuario->amigos, ObtenerHistorial, ListaCancionesRecomendadas);
+    // recorrer la lista de amigos y llamar a la funcion recomendar_canciones
+    return ListaCancionesRecomendadas; // Retornar la lista de canciones recomendadas
 }
