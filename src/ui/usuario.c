@@ -386,7 +386,7 @@ message_handler(crear_cuenta)
 }
 
 /* ================================================================ */
-
+//Modificaciones de usuario desde la 389 hasta la 514
 interfaz(ActualizarUsername)
 {
     // arg, argc, argv, msg
@@ -426,15 +426,46 @@ interfaz(ActualizarNickname)
 
 interfaz(ActualizarEmail)
 {
+    const char *nickname = argv[0];
+
+    // Validación que no sea null
+
+    /*if (searchValueInABB(usuarios, email, cmpUsuarioConEmail))
+    {
+        send_message("El email ya existe");
+        return false;
+    }*/
+
+    freem(usuario->nickname);
+    usuario->nickname = asprintf(nickname);
+
+    return true;
 }
 
 interfaz(ActualizarPassword)
 {
+    const char *nickname = argv[0];
+
+    // Validación que no sea null
+
+    freem(usuario->nickname);
+    usuario->nickname = asprintf(nickname);
+
+    return true;
 }
 
 interfaz(ActualizarPais)
 {
+    const char *nickname = argv[0];
+
+    // Validación que no sea null
+
+    freem(usuario->nickname);
+    usuario->nickname = asprintf(nickname);
+
+    return true;
 }
+
 message_handler(actualizar_usuario)
 {
     init_data_json();
@@ -452,6 +483,36 @@ message_handler(actualizar_usuario)
         VibeCast_SendText(id, HTTP_OK, *msg, "", STATE_FAILURE);
         return;
     }
+}
+
+/*=====funciones de liberar la memoria=====*/
+
+void destruirUsuario(Usuario *u)
+{
+    if (!u)
+        return;
+
+    freem(u->username);
+    freem(u->email);
+    freem(u->password);
+    freem(u->nickname);
+    freem(u->pais);
+
+    // Destruir el perfil de artista si existe
+    if (u->artista)
+    {
+        destroyLista(u->artista->albumes, NULL, NULL);
+        freem(u->artista->nombre);
+        freem(u->artista);
+    }
+
+    destroyLista(u->amigos, NULL, NULL);
+    destroyLista(u->playlists, NULL, NULL);
+
+    // Destruir el historial de reproducciones
+    destroyPila(u->historial.reproducciones,NULL,NULL);
+
+    freem(u);
 }
 
 /* ================================================================ */
