@@ -2,8 +2,8 @@
 
 typedef struct PopularidadArtista
 {
-    const char *artista;           // Artista
-    int numCancionesGuardadas = 0; // Cantidad de reproducciones
+    const char *artista;       // Artista
+    int numCancionesGuardadas; // Cantidad de reproducciones
 } PopularidadArtista;
 
 new_cmpfn(cmpIntDesc)
@@ -37,22 +37,21 @@ new_operfn(ObtenerHistorial)
 {
     Usuario *usuario = val;    // val=void *val, que es un puntero a Usuario que estan en la lista de amigos
     Lista listaArtistas = arg; // argumento para la funcion de reccorrer la lista de amigos
+
     Pila historial = usuario->historial.reproducciones;
     Pila tempHistorial = newPila();
+
     // Obtenemos la pila de reproducciones del historial del usuario
     PopularidadArtista *artistaTemp;
     Reproduccion *reproducciontemp;
 
     reproducciontemp = deleteValueInPila(historial);
 
-    while (reproducciontemp != NULL)
+    while (reproducciontemp)
     {
-        // Recorremos la pila de reproducciones del usuario
-        artistaTemp->artista = reproducciontemp->cancion->album->artista;
-
-        PopularidadArtista *artistas = searchValueInLista(artistas, artistaTemp->artista, cmpArtistaConNombre); // Buscamos el artista en la lista de artistas
-                                                                                                                // comentario random del segundo dia comiendo chaulafan//
-        if (artistas)                                                                                           // Si el artista no esta en la lista de artistas
+        reproducciontemp->cancion->album->artista
+            // comentario random del segundo dia comiendo chaulafan//
+            if (artistas) // Si el artista no esta en la lista de artistas
         {
             artistas->numCancionesGuardadas++;
         }
