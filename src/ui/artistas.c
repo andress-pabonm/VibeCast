@@ -1,5 +1,5 @@
 #include <ui/interfaces.h>
-
+#include <db/dbmgr.h>
 // SUPONGO QUE TODOS LOS ARGUMENTOS QUE LLEGAN A LAS FUNCIONES, VIENE DE LA BASE DE DATOS O DE LA INTERFAZ GRAFICA
 
 static new_cmpfn(cmpArtistaConNombre)
@@ -143,24 +143,28 @@ bool crearAlbum(const char *nombreAlbum)
     return true;
 }
 
-bool agregarCancionAlbum(const char *nombreAlbum, const char *nombreCancion)
+bool agregarCancionAlbum(const char *nombreAlbum, const char *nombreCancion, const char *genero, int duracion, const char *url)
 {
     Album *album = searchValueInLista(usuario->artista->albumes, nombreAlbum, cmpAlbumConNombre); // Buscamos el álbum y lo asignamos a la variable album
 
-    if (!album)
+    if (!album) 
     {
         printf("Error: El álbum '%s' no existe en el artista '%s'\n", nombreAlbum, usuario->artista->nombre);
         return false; // No se puede agregar una canción a un álbum que no existe
     }
+    if(getListaLength(album->canciones)==0){
+       // registro de album en la base de datos , hay que que agregar la funcion de guardar album en la base de datos
+       
+    }
 
     // Creamos nueva canción
     // (No se si la logica seria aqui, por que faltaria mas campos, genero, fecha, duracion, etc)
-    Cancion *cancion = newCancion(); // Todos sus datos inician en null
+    Cancion *cancion = crearCancion(album,nombreCancion,genero,duracion,url);
     if (!cancion)
-        return false;
-
-    cancion->nombre = asprintf(nombreCancion);
-    cancion->album = album; // AGREGAMOS CANCION A ALBUM
+    {
+        printf("Error: No se pudo crear la canción '%s' en el álbum '%s'\n", nombreCancion, nombreAlbum);
+        return false; // No se pudo crear la canción
+    }
 
     // Insertamos en la lista
     insertValueInLista(album->canciones, cancion);

@@ -37,6 +37,20 @@ message_handler(get_canciones)
         "Canciones"
         "Lista de canciones",
         STATE_SUCCESS);
+    
+
+    json_object_put(array);
 }
 
-/* ==== */
+/* ================================================================ */
+
+message_handler(get_recomendaciones)
+{
+    Lista recomendaciones = recomendarCanciones();
+
+    json_object *array = json_object_new_array();
+    VibeCast_SendArray(id, HTTP_OK, array, "Recomendaciones cargadas", STATE_SUCCESS);
+    json_object_put(array);
+
+    destroyLista(recomendaciones, NULL, NULL);
+}
