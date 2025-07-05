@@ -23,7 +23,7 @@ select_handler(obteneridCancion)
 }
 
 //  Crea y devuelve una nueva canci´ on.
-bool crearCancion(Album *album, int id, const char *nombre, const char *genero, int duracion, const char *url)
+bool crearCancion(Album *album,const char *nombre, const char *genero, int duracion, const char *url)
 {
     // Un álbum no puede tener canciones repetidas
     Cancion *cancion = searchValueInLista(album->canciones, canciones, cmpCancionConNombre);
