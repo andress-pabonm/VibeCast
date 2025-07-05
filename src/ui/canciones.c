@@ -1,6 +1,7 @@
 #include <ui/interfaces.h>
 #include <utils/utils.h>
-#include<db/dbmgr.h>
+#include <db/dbmgr.h>
+#include <time.h>
 
 new_cmpfn (cmpCancionConNombre) 
 {
@@ -70,7 +71,7 @@ bool crearCancion(Album *album, const char *nombre, const char *genero, int dura
 	cancion->genero = asprintf(genero);
     
     //Se ingresa la hora
-    char *fecha_formateada = obtenerFecha();
+    const char *fecha_formateada = obtenerFecha();
     cancion->fechaPublicacion = asprintf(fecha_formateada);
 	cancion->duracion = duracion;
     cancion->url = asprintf(url);
@@ -160,7 +161,7 @@ void actualizarCancion(Cancion *cancion, const char *nombre) {
 
 void crearAlbumDB (Artista *artista, const char *nombre) 
 {
-    char *fecha_creacion = obtenerFecha();
+    const char *fecha_creacion = obtenerFecha();
     char *datos = asprintf(
     stringify("%s"),
     artista->usuario->id, artista->nombre, fecha_creacion);
@@ -180,7 +181,7 @@ void crearAlbum (Artista *artista, const char *nombre) {
     nuevoAlbum->id = artista->usuario->id;
     nuevoAlbum->artista = artista;
 
-    char *fecha_creacion = obtenerFecha();   
+    const char *fecha_creacion = obtenerFecha();   
     nuevoAlbum->fechaCreacion = asprintf(fecha_creacion);
 
     nuevoAlbum->canciones = NULL; 
