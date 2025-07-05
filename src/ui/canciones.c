@@ -28,30 +28,8 @@ select_handler (obteneridCancion)
     return 0;
 }
 
-const char *obtenerFecha () {
-        time_t tiempo_actual;
-        struct tm *info_tiempo;
-        
-        // Obtener el tiempo actual
-        time(&tiempo_actual);
-        info_tiempo = localtime(&tiempo_actual);
-        
-        // Reservar memoria para el string (20 caracteres son suficientes)
-        char *fecha_formateada = (char*)malloc(20 * sizeof(char));
-        
-        if (fecha_formateada == NULL) {
-            fprintf(stderr, "Error al asignar memoria\n");
-            return NULL;
-        }
-        
-        // Formatear la fecha: YYYY/MM/DD HH:MM:SS
-        strftime(fecha_formateada, 20, "%Y/%m/%d %H:%M:%S", info_tiempo);
-
-        return fecha_formateada;
-}
-
 //  Crea y devuelve una nueva canci´ on.
-bool crearCancion(Album *album, const char *nombre, const char *genero, int duracion, const char *url)
+bool crearCancion(Album *album, int id, const char *nombre, const char *genero, int duracion, const char *url)
 {
     // Un álbum no puede tener canciones repetidas
     Cancion *cancion = searchValueInLista(album->canciones, canciones, cmpCancionConNombre);
@@ -70,8 +48,25 @@ bool crearCancion(Album *album, const char *nombre, const char *genero, int dura
 	cancion->genero = asprintf(genero);
     
     //Se ingresa la hora
-    char *fecha_formateada = obtenerFecha();
- 
+
+        time_t tiempo_actual;
+        struct tm *info_tiempo;
+        
+        // Obtener el tiempo actual
+        time(&tiempo_actual);
+        info_tiempo = localtime(&tiempo_actual);
+        
+        // Reservar memoria para el string (20 caracteres son suficientes)
+        char *fecha_formateada = (char*)malloc(20 * sizeof(char));
+        
+        if (fecha_formateada == NULL) {
+            fprintf(stderr, "Error al asignar memoria\n");
+            return NULL;
+        }
+        
+        // Formatear la fecha: YYYY/MM/DD HH:MM:SS
+        strftime(fecha_formateada, 20, "%Y/%m/%d %H:%M:%S", info_tiempo);
+    
     cancion->fechaPublicacion = asprintf(fecha_formateada);
 	cancion->duracion = duracion;
     cancion->url = asprintf(url);
@@ -104,13 +99,6 @@ bool crearCancion(Album *album, const char *nombre, const char *genero, int dura
         &cancion->id,
         NULL
     );
-
-    //Inserta enlaza la cancion a su album en la base de datos
-
-    if (album == NULL) {
-        crearAlbum (&album, nombre);
-    }
-
 
     return true;
 }
@@ -160,39 +148,4 @@ void actualizarCancion(Cancion *cancion, const char *nombre) {
         "Canciones",
         "nombre",
         datos, NULL);
-}
-
-/*
-
-
-
-CREATE TABLE IF NOT EXISTS Albumes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    id_artista INTEGER NOT NULL,
-    nombre TEXT NOT NULL,
-    fecha_creacion TEXT NOT NULL,
-    UNIQUE (id_artista, nombre),
-    FOREIGN KEY (id_artista) REFERENCES Artistas(id_usuario)
-);
-
-
-*/
-
-
-void crearAlbum (Album *album,const char *nombre, ) 
-{
-    //Lo añado al heap 
-    char *fecha_formateada = obtenerFecha();
-
-    //Ingreso el album a su base de datos
-    char *datos = asprintf(
-    stringify("%s"),
-    cancion->nombre, cancion->genero, cancion->fechaPublicacion, cancion->duracion, cancion->url);
-
-    nuevo_registro(
-        "Albumes",
-        "id_artista, nombre, fecha_creacion",
-        datos, NULL);
-
-
 }
