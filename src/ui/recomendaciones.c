@@ -43,9 +43,4 @@ Lista recomendarCanciones()
     return ListaCancionesRecomendadas; // Retornar la lista de canciones recomendadas
 }
 
-message_handler(get_recomendaciones)
-{
-    json_object *array = json_object_new_array();
-    VibeCast_SendArray(id, HTTP_OK, array, "Recomendaciones cargadas", STATE_SUCCESS);
-    json_object_put(array);
-}
+/* ================================================================ */

@@ -46,6 +46,8 @@ interfaz(SiguienteCancion);
 Artista *crearArtista(const char *nombre);
 void insertarArtistaEnABB(Artista *artista);
 void agregarAlbum(Album *album);
-bool crearCancion(Album *album,const char *nombre, const char *genero, int duracion, const char *url);
+bool crearCancion(Album *album, const char *nombre, const char *genero, int duracion, const char *url);
+
+Lista recomendarCanciones();
 
 #endif // VIBECAST_INTERFACES_H
