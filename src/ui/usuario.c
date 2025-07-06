@@ -575,3 +575,34 @@ message_handler(get_user_data)
 }
 
 /* ================================================================ */
+
+interfaz(actualizarContra)
+{
+    const char *actualPassword = argv[0];
+    const char *newPassword = argv[1];
+    const char *confirmPassword = argv[2];
+
+    if (strcmp(usuario->password, actualPassword))
+    {
+        send_message("La contraseña actual es incorrecta");
+        return false;
+    }
+
+    if (!validar_password(newPassword))
+    {
+        send_message("La contraseña no es valida");
+        return false;
+    }
+
+    if (strcmp(newPassword, confirmPassword))
+    {
+        send_message("Las contraseñas no coinciden");
+        return false;
+    }
+
+    freem(usuario->password);
+    usuario->password = asprintf(newPassword);
+
+    send_message("Contraseña actualizada exitosamente");
+    return true;
+}
