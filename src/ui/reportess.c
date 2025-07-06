@@ -172,9 +172,10 @@ void generarTop3Artistas()
 // Callback para recorrer el ABB de usuarios y guardar su tiempo total reproducido en el archivo.
 new_operfn(listar_tiempo)
 {
-    Usuario *u = val;    // Puntero hacia el usuario actual desde el nodo del ABB
+    Usuario *u = val;    // Puntero hacia el usuario actual desde el nodo del ABBS
     FILE *archivo = arg; //'arg' es el archivo donde se redactan los datos.
     fprintf(archivo, "- %s: %d segundos\n", u->username, u->historial.tiempoEscuchado);
+
     return FOREACH_CONTINUE; // Indica que el recorrido debe continuar con el siguiente usuario.
 }
 
@@ -182,7 +183,8 @@ new_operfn(listar_tiempo)
 void generarTiempoTotalReproduccion()
 {
     // Crea un nuevo archivo de salida, si falla se detiene.
-    FILE *archivo = newFile("Tiempo total de reproduccion.txt", NULL);
+    FILE *archivo = newFile("Tiempo_total_reproduccion.txt", NULL);
+
     if (!archivo)
         return;
 
@@ -204,12 +206,13 @@ new_operfn(listar_anuncios)
     // Solo se imprime si el usuario está en plan FREE
     if (u->plan == PLAN_FREEMIUM)
         fprintf(archivo, "- %s: %d anuncios\n", u->username, u->historial.cantidadAnuncios);
+
     return FOREACH_CONTINUE;
 }
 
 void generarCantidadAnunciosEscuchados()
 {
-    FILE *archivo = newFile("anuncios_escuchados.txt", NULL);
+    FILE *archivo = newFile("Anuncios_escuchados.txt", NULL);
     if (!archivo)
         return;
 

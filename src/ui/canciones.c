@@ -3,52 +3,48 @@
 #include <db/dbmgr.h>
 #include <time.h>
 
-new_cmpfn (cmpCancionConNombre) 
+new_cmpfn(cmpCancionConNombre)
 {
     const Cancion *c = val_1;
     const char *nombre = val_2;
     return strcmp(c->nombre, nombre);
 }
 
-new_cmpfn (cmpAlbumConNombre) 
+new_cmpfn(cmpAlbumConNombre)
 {
     const Album *A = val_1;
     const char *nombre = val_2;
     return strcmp(A->nombre, nombre);
 }
 
-select_handler (obteneridCancion) 
+select_handler(obteneridCancion)
 {
-    sscanf(argv[0], "%d", cast(int*, arg));
+    sscanf(argv[0], "%d", cast(int *, arg));
     return 0;
 }
 
-select_handler (obteneridCancion) 
+const char *obtenerFecha()
 {
-    sscanf(argv[0], "%d", cast(int*, arg));
-    return 0;
-}
+    time_t tiempo_actual;
+    struct tm *info_tiempo;
 
-const char *obtenerFecha () {
-        time_t tiempo_actual;
-        struct tm *info_tiempo;
-        
-        // Obtener el tiempo actual
-        time(&tiempo_actual);
-        info_tiempo = localtime(&tiempo_actual);
-        
-        // Reservar memoria para el string (20 caracteres son suficientes)
-        char *fecha_formateada = (char*)malloc(20 * sizeof(char));
-        
-        if (fecha_formateada == NULL) {
-            fprintf(stderr, "Error al asignar memoria\n");
-            return NULL;
-        }
-        
-        // Formatear la fecha: YYYY/MM/DD HH:MM:SS
-        strftime(fecha_formateada, 20, "%Y/%m/%d %H:%M:%S", info_tiempo);
+    // Obtener el tiempo actual
+    time(&tiempo_actual);
+    info_tiempo = localtime(&tiempo_actual);
 
-        return fecha_formateada;
+    // Reservar memoria para el string (20 caracteres son suficientes)
+    char *fecha_formateada = (char *)malloc(20 * sizeof(char));
+
+    if (fecha_formateada == NULL)
+    {
+        fprintf(stderr, "Error al asignar memoria\n");
+        return NULL;
+    }
+
+    // Formatear la fecha: YYYY/MM/DD HH:MM:SS
+    strftime(fecha_formateada, 20, "%Y/%m/%d %H:%M:%S", info_tiempo);
+
+    return fecha_formateada;
 }
 
 //  Crea y devuelve una nueva canci´ on.
@@ -56,7 +52,8 @@ bool crearCancion(Album *album, const char *nombre, const char *genero, int dura
 {
     // Un álbum no puede tener canciones repetidas
     Cancion *cancion = searchValueInLista(album->canciones, canciones, cmpCancionConNombre);
-    if (cancion){
+    if (cancion)
+    {
         printf("Una cancion con ese nombre ya existe en el album\n");
         return false;
     }
@@ -66,92 +63,91 @@ bool crearCancion(Album *album, const char *nombre, const char *genero, int dura
     if (!cancion)
         return false;
 
-	cancion->album = album;
-	cancion->nombre = asprintf(nombre);
-	cancion->genero = asprintf(genero);
-    
-    //Se ingresa la hora
+    cancion->album = album;
+    cancion->nombre = asprintf(nombre);
+    cancion->genero = asprintf(genero);
+
+    // Se ingresa la hora
     const char *fecha_formateada = obtenerFecha();
     cancion->fechaPublicacion = asprintf(fecha_formateada);
-	cancion->duracion = duracion;
+    cancion->duracion = duracion;
     cancion->url = asprintf(url);
 
     // Entonces aquí inicializas la canción
 
-
     // Luego tienes que enlazarla a su álbum
     insertValueInLista(album->canciones, cancion);
 
-    //Inserta en la lista global de canciones
+    // Inserta en la lista global de canciones
     insertValueInLista(canciones, cancion);
-    
-    //Inserta la cancion en su base de datos
+
+    // Inserta la cancion en su base de datos
     char *datos = asprintf(
-    stringify("%s", "%s", "%s", "%s", "%s"),
-    album->id, cancion->nombre, cancion->genero, cancion->fechaPublicacion, cancion->duracion, cancion->url);
+        stringify("%s", "%s", "%s", "%s", "%s"),
+        album->id, cancion->nombre, cancion->genero, cancion->fechaPublicacion, cancion->duracion, cancion->url);
 
     nuevo_registro(
         "Canciones",
         "id_album, nombre, genero, fecha_publicacion, duracion, url",
         datos, NULL);
-    
-    //Inserta el id
+
+    // Inserta el id
     obtener_registros(
         "Canciones ORDER BY id DESC LIMIT 1",
         "id",
         NULL,
         obteneridCancion,
         &cancion->id,
-        NULL
-    );
+        NULL);
 
-    //Inserta enlaza la cancion a su album en la base de datos
-
-
+    // Inserta enlaza la cancion a su album en la base de datos
 
     return true;
 }
 
 //  Busca una canci´ on por nombre.
-//Me falta saber cual es el puntero global a la lista de canciones
-Cancion *buscarCancion(Lista canciones, int *id) {
+// Me falta saber cual es el puntero global a la lista de canciones
+Cancion *buscarCancion(Lista canciones, int *id)
+{
     return searchValueInLista(canciones, &id, cmpCancionConId);
 }
 
 //  Elimina una canci´on si no est´ a en una playlist.
-void eliminarCancion(int id) {
+void eliminarCancion(int id)
+{
     Cancion *cancion = searchValueInLista(canciones, &id, cmpCancionConId);
-    
-    if (cancion == NULL){
-        printf ("La cancion con el id %d no existe \n", id);
+
+    if (cancion == NULL)
+    {
+        printf("La cancion con el id %d no existe \n", id);
         return;
     }
 
-    Album *album = searchValueInLista (usuario->artista->albumes, &(cancion->album->nombre), cmpAlbumConNombre);
+    Album *album = searchValueInLista(usuario->artista->albumes, &(cancion->album->nombre), cmpAlbumConNombre);
     deleteValueInLista(album->canciones, &id, cmpCancionConId);
     deleteValueInLista(canciones, &id, cmpCancionConId);
     free(cancion->fechaPublicacion);
     free(cancion->genero);
     free(cancion->nombre);
-    free(cancion->url);  
+    free(cancion->url);
 
     char *condicion = asprintf("ID = %d", id);
     eliminar_registros(
         "Canciones",
         "condicion",
-        NULL
-    );
+        NULL);
 
     free(cancion);
 }
 
 //  Modifica datos de una canci´on.
-void actualizarCancion(Cancion *cancion, const char *nombre) {
+void actualizarCancion(Cancion *cancion, const char *nombre)
+{
     cancion->nombre = asprintf(nombre);
 
-    //Actualizo en la base de datos
+    // Actualizo en la base de datos
     char *datos = asprintf(
-    stringify("%s"), nombre);
+        stringify("%s"), nombre);
 
     nuevo_registro(
         "Canciones",
@@ -159,12 +155,12 @@ void actualizarCancion(Cancion *cancion, const char *nombre) {
         datos, NULL);
 }
 
-void crearAlbumDB (Artista *artista, const char *nombre) 
+void crearAlbumDB(Artista *artista, const char *nombre)
 {
     const char *fecha_creacion = obtenerFecha();
     char *datos = asprintf(
-    stringify("%s"),
-    artista->usuario->id, artista->nombre, fecha_creacion);
+        stringify("%s"),
+        artista->usuario->id, artista->nombre, fecha_creacion);
 
     nuevo_registro(
         "Albumes",
@@ -172,19 +168,20 @@ void crearAlbumDB (Artista *artista, const char *nombre)
         datos, NULL);
 }
 
-void crearAlbum (Artista *artista, const char *nombre) {
+void crearAlbum(Artista *artista, const char *nombre)
+{
 
-    crearAlbumDB (artista, nombre);
+    crearAlbumDB(artista, nombre);
 
-    Album* nuevoAlbum = (Album*)malloc(sizeof(Album));
+    Album *nuevoAlbum = (Album *)malloc(sizeof(Album));
 
     nuevoAlbum->id = artista->usuario->id;
     nuevoAlbum->artista = artista;
 
-    const char *fecha_creacion = obtenerFecha();   
+    const char *fecha_creacion = obtenerFecha();
     nuevoAlbum->fechaCreacion = asprintf(fecha_creacion);
 
-    nuevoAlbum->canciones = NULL; 
+    nuevoAlbum->canciones = NULL;
 
     insertValueInLista(artista->albumes, nuevoAlbum);
 }
