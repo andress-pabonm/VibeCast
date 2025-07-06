@@ -1,10 +1,10 @@
 #ifndef VIBECAST_DB_ESTRUCTURAS_H
 #define VIBECAST_DB_ESTRUCTURAS_H 1
 
-#include <utils/nodos.h> // Para Lista, Pila y Cola 
+#include <utils/nodos.h> // Para Lista, Pila y Cola
 
 // ==========================================
-// Tipos hacia adelante (punteros a structs) 
+// Tipos hacia adelante (punteros a structs)
 // ==========================================
 
 typedef struct Artista Artista;
@@ -54,7 +54,7 @@ struct Historial
 
 struct Cancion
 {
-	int id;					// ID único 
+	int id;					// ID único
 	const Album *album;		// Álbum al que pertenece
 	char *nombre;			// Nombre de la canción
 	char *genero;			// Género musical

@@ -16,6 +16,7 @@ void AgregarAmigo(const char *username)
         printf("El usuario %s ha sido agregado a tu lista de amigos.\n", amigo->username);
     }
 }
+
 void EliminarAmigo(const char *username)
 {
     Lista amigos = usuario->amigos;                                               // Lista de amigos del usuario

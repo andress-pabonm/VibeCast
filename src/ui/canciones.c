@@ -1,7 +1,6 @@
 #include <ui/interfaces.h>
 #include <utils/utils.h>
 #include <db/dbmgr.h>
-#include <time.h>
 
 new_cmpfn(cmpCancionConNombre)
 {
@@ -61,9 +60,8 @@ bool crearCancion(Album *album, const char *nombre, const char *genero, int dura
     // Una canción se crea así:
     cancion = newCancion(); // Inicia con sus valores en null
     if (!cancion)
-        return false;
 
-    cancion->album = album;
+        cancion->album = album;
     cancion->nombre = asprintf(nombre);
     cancion->genero = asprintf(genero);
 
