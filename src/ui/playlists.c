@@ -2,16 +2,16 @@
 
 static new_cmpfn(cmpPlaylistConNombre)
 {
-    const Playlist *a = val_1;
-    const char *n = val_2;
+    const Playlist *a = val_1; // Playlist a comparar
+    const char *n = val_2;     // Nombre de la playlist a comparar
 
-    return strcmp(a->nombre, n);
+    return strcmp(a->nombre, n); // Compara el nombre de la playlist con el nombre dado
 }
 
 new_operfn(restar_popularidad)
 {
-    Cancion *cancion = val;
-    cancion->popularidad--;
+    Cancion *cancion = val;  // Canción actual
+    cancion->popularidad--;  // Restamos la popularidad de la canción eliminada
     return FOREACH_CONTINUE; // constante que indica que se sigue iterando con el bucle de reccorer la lista
 }
 
@@ -26,14 +26,11 @@ new_operfn(mostrar_canciones)
 
 bool crearPlaylist(const char *nombre)
 {
-    Playlist *nuevaPlaylist = newPlaylist(); // Inicaliza como null
-
-    if (!nuevaPlaylist)
-        return false;
+    Playlist *nuevaPlaylist = newPlaylist(); // Creamos una nueva playlist
 
     nuevaPlaylist->nombre = asprintf(nombre);
 
-    insertValueInLista(usuario->playlists, nuevaPlaylist); // Insertamos las playlist en lista
+    insertValueInLista(usuario->playlists, nuevaPlaylist); // Insertamos la nueva playlist en la lista de playlists del usuario
 
     return true;
 }

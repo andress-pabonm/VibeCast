@@ -387,7 +387,7 @@ message_handler(crear_cuenta)
 }
 
 /* ================================================================ */
-//Modificaciones de usuario desde la 389 hasta la 514
+// Modificaciones de usuario desde la 389 hasta la 514
 interfaz(ActualizarUsername)
 {
     // arg, argc, argv, msg
@@ -511,7 +511,7 @@ void destruirUsuario(Usuario *u)
     destroyLista(u->playlists, NULL, NULL);
 
     // Destruir el historial de reproducciones
-    destroyPila(u->historial.reproducciones,NULL,NULL);
+    destroyPila(u->historial.reproducciones, NULL, NULL);
 
     freem(u);
 }

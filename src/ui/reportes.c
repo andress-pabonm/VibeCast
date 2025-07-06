@@ -101,6 +101,27 @@ new_cmpfn(cmpArtistasPorPopularidad)
     return FOREACH_CONTINUE;
 }
 
+new_operfn(listar_anuncios)
+{
+    Usuario *u = val;
+    FILE *archivo = arg;
+
+    // Solo se imprime si el usuario está en plan FREE
+    if (u->plan == PLAN_FREEMIUM)
+        fprintf(archivo, "- %s: %d anuncios\n", u->username, u->historial.cantidadAnuncios);
+
+    return FOREACH_CONTINUE;
+}
+
+new_operfn(listar_tiempo)
+{
+    Usuario *u = val;    // Puntero hacia el usuario actual desde el nodo del ABBS
+    FILE *archivo = arg; //'arg' es el archivo donde se redactan los datos.
+    fprintf(archivo, "- %s: %d segundos\n", u->username, u->historial.tiempoEscuchado);
+
+    return FOREACH_CONTINUE; // Indica que el recorrido debe continuar con el siguiente usuario.
+}
+
 void generarTop5Canciones()
 {
     int longitud = getListaLength(canciones);
@@ -159,30 +180,16 @@ void generarTop3Artistas()
     for (int i = 0; i < longitud && i < 3; i++)
     {
         fprintf(archivo, "%d) %s - %d canciones guardadas\n", i + 1, pArtistas[i]->artista, pArtistas[i]->numCancionesGuardadas);
-
-        // Top 3 artistas mas preferidos:
-
-        // 1) Juanes - 10 canciones guardadas
     }
 
     fclose(archivo);
     freem(pArtistas);
 }
 
-// Callback para recorrer el ABB de usuarios y guardar su tiempo total reproducido en el archivo.
-new_operfn(listar_tiempo)
-{
-    Usuario *u = val;    // Puntero hacia el usuario actual desde el nodo del ABBS
-    FILE *archivo = arg; //'arg' es el archivo donde se redactan los datos.
-    fprintf(archivo, "- %s: %d segundos\n", u->username, u->historial.tiempoEscuchado);
-
-    return FOREACH_CONTINUE; // Indica que el recorrido debe continuar con el siguiente usuario.
-}
-
-// Funcion que genera un archivo .txt con tiempo total de reproduccion del usuario.
+// Funcion que genera un archivo .txt con tiempo total de reproduccion del usuario
 void generarTiempoTotalReproduccion()
 {
-    // Crea un nuevo archivo de salida, si falla se detiene.
+    // Crea un nuevo archivo de salida, si falla se detiene
     FILE *archivo = newFile("Tiempo_total_reproduccion.txt", NULL);
 
     if (!archivo)
@@ -190,24 +197,11 @@ void generarTiempoTotalReproduccion()
 
     fprintf(archivo, "Tiempo total de reproduccion por usuario:\n\n");
 
-    // Recorre todo el ABB de usuarios y llama a `listar_tiempo` con cada uno.
-    //  Pasa `archivo` como argumento para que cada usuario lo use.
+    // Recorre todo el ABB de usuarios y llama a `listar_tiempo` con cada uno
+    //  Pasa `archivo` como argumento para que cada usuario lo use
     forEachInABB(usuarios, listar_tiempo, NULL);
 
     fclose(archivo);
-}
-
-// Callback que lista cuántos anuncios ha escuchado cada usuario FREE
-new_operfn(listar_anuncios)
-{
-    Usuario *u = val;
-    FILE *archivo = arg;
-
-    // Solo se imprime si el usuario está en plan FREE
-    if (u->plan == PLAN_FREEMIUM)
-        fprintf(archivo, "- %s: %d anuncios\n", u->username, u->historial.cantidadAnuncios);
-
-    return FOREACH_CONTINUE;
 }
 
 void generarCantidadAnunciosEscuchados()
@@ -218,7 +212,7 @@ void generarCantidadAnunciosEscuchados()
 
     fprintf(archivo, "Cantidad de anuncios escuchados por usuario (FREE):\n\n");
 
-    // Recorre todo el ABB de usuarios y ejecuta el callback `listar_anuncios` con cada uno.
+    // Recorre todo el ABB de usuarios y ejecuta el callback `listar_anuncios` con cada uno
     forEachInABB(usuarios, listar_anuncios, NULL);
 
     fclose(archivo);
