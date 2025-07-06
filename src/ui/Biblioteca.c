@@ -1,6 +1,5 @@
 #include <ui/interfaces.h>
 
-
 json_bool *playlist_to_json(Playlist *playlist)
 {
     json_object *p = json_object_new_object();
@@ -10,18 +9,14 @@ json_bool *playlist_to_json(Playlist *playlist)
         "name",
         json_object_new_string(
             playlist->nombre));
-    
-    int songCount=getListaLength(playlist->canciones);
+
+    int songCount = getListaLength(playlist->canciones);
     json_object_object_add(
         p,
         "songCount",
         json_object_new_int(songCount)
 
-
     );
-    
-
-
 
     return p;
 }
@@ -37,5 +32,4 @@ message_handler(get_playlists)
     json_object *array = json_object_new_array();
     forEachInLista(usuario->playlists, playlistsJSON, array);
     VibeCast_SendArray(id, HTTP_OK, array, "Playlist cargadas", STATE_SUCCESS);
-    
 }

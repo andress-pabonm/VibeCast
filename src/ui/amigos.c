@@ -8,7 +8,7 @@ new_operfn(mostrar_amigos)
     return FOREACH_CONTINUE; // Continúa el bucle
 }
 
-new_operfn(ObtenerHistorial)
+new_operfn(obtenerHistorial)
 {
     Usuario *u = val;                       // Es un puntero a usuario que esta en la lista de amigos
     Lista ListaCancionesRecomendadas = arg; // Argumento para la funcion de reccorrer la lista de amigos
@@ -107,8 +107,8 @@ void mostrarAmigos()
     forEachInLista(amigos, mostrar_amigos, NULL); // Imprimir cada amigo en la lista
 }
 
-Lista recomendarCanciones()
+void recomendarCanciones()
 {
     Lista listaCancionesRecomendadas = newLista(NULL);                             // Crear una nueva lista para las canciones recomendadas
-    forEachInLista(usuario->amigos, ObtenerHistorial, listaCancionesRecomendadas); // Obtenemos la lista de recomendaciones de amigos
+    forEachInLista(usuario->amigos, obtenerHistorial, listaCancionesRecomendadas); // Obtenemos la lista de recomendaciones de amigos
 }
