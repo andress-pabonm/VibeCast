@@ -18,8 +18,8 @@ new_cmpfn(cmpAlbumConNombre)
 
 new_operfn(mostrar_canciones)
 {
-    Cancion *cancion = val;                     // Puntero a la canción actual
-    printf("[%d]: %s\n", idx, cancion->nombre); // Muestra el índice y el nombre de la canción
+    Cancion *cancion = val;                    // Puntero a la canción actual
+    printf("%d): %s\n", idx, cancion->nombre); // Muestra el índice y el nombre de la canción
 
     return FOREACH_CONTINUE; // Continúa el bucle
 }

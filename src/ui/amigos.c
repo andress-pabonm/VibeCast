@@ -1,5 +1,13 @@
 #include <ui/interfaces.h>
 
+new_operfn(mostrar_amigos)
+{
+    Usuario *amigo = val;                      // Puntero al usuario amigo actual
+    printf("%d): %s\n", idx, amigo->username); // Muestra el índice y el nombre de usuario del amigo
+
+    return FOREACH_CONTINUE; // Continúa el bucle
+}
+
 new_operfn(ObtenerHistorial)
 {
     Usuario *u = val;                       // Es un puntero a usuario que esta en la lista de amigos
@@ -82,6 +90,21 @@ void eliminarAmigo(const char *username)
     {
         printf("El usuario %s no está en tu lista de amigos.\n", username);
     }
+}
+
+void mostrarAmigos()
+{
+    // Obtener lista de amigos del usuario actual
+    Lista amigos = usuario->amigos;
+
+    if (!amigos)
+    {
+        printf("No tienes amigos agregados\n");
+        return;
+    }
+
+    printf("Tus amigos:\n");
+    forEachInLista(amigos, mostrar_amigos, NULL); // Imprimir cada amigo en la lista
 }
 
 Lista *recomendarCanciones()
