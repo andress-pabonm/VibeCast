@@ -62,7 +62,7 @@ new_operfn(ObtenerHistorial)
             reproducciontemp->cancion->album->artista,
             cmpPopularidadArtista);
 
-        if (artistaTemp) // Si el artista no esta en la lista de artistas
+        if (artistaTemp) // Si el artista si esta en la lista de artistas
         {
             artistaTemp->numCancionesGuardadas++;
         }
@@ -93,15 +93,12 @@ new_operfn(ObtenerHistorial)
     return FOREACH_CONTINUE; // Continuar recorriendo la lista de amigos
 }
 
-new_operfn(obtener_artistas)
+new_cmpfn(cmpArtistasPorPopularidad)
 {
-    PopularidadArtista *pa = val;
-    int *guardados = arg;
+    const PopularidadArtista *pa = *(const PopularidadArtista **)val_1;
+    const PopularidadArtista *pb = *(const PopularidadArtista **)val_2;
 
-    if (pa)
-        guardados[idx] = pa->numCancionesGuardadas; // Guardamos la popularidad en el vector
-
-    return FOREACH_CONTINUE; // Continuar iterando
+    return FOREACH_CONTINUE;
 }
 
 void generarTop5Canciones()
@@ -146,19 +143,22 @@ void generarTop3Artistas()
         return;
     }
 
-    int *popuArtistas = malloc_cpy(longitud * sizeof(int), 0); // vector en el heap
+    PopularidadArtista **pArtistas = malloc_cpy(longitud * sizeof(PopularidadArtista *), 0); // vector en el heap
 
-    forEachInLista(listaArtistas, obtener_artistas, popuArtistas);
+    for (int i = 0; i < longitud; i++)
+    {
+        pArtistas[i] = getValueInLista(listaArtistas, i); // Obtenemos los artistas de la lista
+    }
 
-    qsort(popuArtistas, longitud, sizeof(int), cmpIntDesc); // Buffer, tamaño del buffer, tamaño de cada elemento, funcion de comparacion
+    qsort(pArtistas, longitud, sizeof(PopularidadArtista *), cmpArtistasPorPopularidad); // Buffer, tamaño del buffer, tamaño de cada elemento, funcion de comparacion
 
-    FILE *archivo = newFile("top3_artitas.txt", NULL);
+    FILE *archivo = newFile("top3_artistas.txt", NULL);
 
     fprintf(archivo, "Top 3 artistas mas preferidos:\n");
 
     for (int i = 0; i < longitud && i < 3; i++)
     {
-        // fprintf(archivo, "%d) %s - %d canciones guardadas\n", i + 1, listaArtistas[i].artista, artistas[i]);
+        fprintf(archivo, "%d) %s - %d canciones guardadas\n", i + 1, pArtistas[i]->artista, pArtistas[i]->numCancionesGuardadas);
 
         // Top 3 artistas mas preferidos:
 
@@ -166,45 +166,52 @@ void generarTop3Artistas()
     }
 
     fclose(archivo);
+    freem(pArtistas);
 }
 
-//Callback para recorrer el ABB de usuarios y guardar su tiempo total reproducido en el archivo.
-new_operfn(listar_tiempo){
-    Usuario *u=val; //Puntero hacia el usuario actual desde el nodo del ABB
+// Callback para recorrer el ABB de usuarios y guardar su tiempo total reproducido en el archivo.
+new_operfn(listar_tiempo)
+{
+    Usuario *u = val;    // Puntero hacia el usuario actual desde el nodo del ABB
     FILE *archivo = arg; //'arg' es el archivo donde se redactan los datos.
     fprintf(archivo, "- %s: %d segundos\n", u->username, u->historial.tiempoEscuchado);
-    return FOREACH_CONTINUE; //Indica que el recorrido debe continuar con el siguiente usuario.
-    }
+    return FOREACH_CONTINUE; // Indica que el recorrido debe continuar con el siguiente usuario.
+}
 
-//Funcion que genera un archivo .txt con tiempo total de reproduccion del usuario.
-void generarTiempoTotalReproduccion(){
-    //Crea un nuevo archivo de salida, si falla se detiene.
-    FILE *archivo=newFile("Tiempo total de reproduccion.txt", NULL);
-    if(!archivo) return;
+// Funcion que genera un archivo .txt con tiempo total de reproduccion del usuario.
+void generarTiempoTotalReproduccion()
+{
+    // Crea un nuevo archivo de salida, si falla se detiene.
+    FILE *archivo = newFile("Tiempo total de reproduccion.txt", NULL);
+    if (!archivo)
+        return;
 
     fprintf(archivo, "Tiempo total de reproduccion por usuario:\n\n");
 
-    //Recorre todo el ABB de usuarios y llama a `listar_tiempo` con cada uno.
-    // Pasa `archivo` como argumento para que cada usuario lo use.
+    // Recorre todo el ABB de usuarios y llama a `listar_tiempo` con cada uno.
+    //  Pasa `archivo` como argumento para que cada usuario lo use.
     forEachInABB(usuarios, listar_tiempo, NULL);
 
     fclose(archivo);
 }
 
-//Callback que lista cuántos anuncios ha escuchado cada usuario FREE
-new_operfn(listar_anuncios){
+// Callback que lista cuántos anuncios ha escuchado cada usuario FREE
+new_operfn(listar_anuncios)
+{
     Usuario *u = val;
     FILE *archivo = arg;
 
     // Solo se imprime si el usuario está en plan FREE
     if (u->plan == PLAN_FREEMIUM)
-    fprintf(archivo, "- %s: %d anuncios\n", u->username, u->historial.cantidadAnuncios);
+        fprintf(archivo, "- %s: %d anuncios\n", u->username, u->historial.cantidadAnuncios);
     return FOREACH_CONTINUE;
 }
 
-void generarCantidadAnunciosEscuchados(){
+void generarCantidadAnunciosEscuchados()
+{
     FILE *archivo = newFile("anuncios_escuchados.txt", NULL);
-    if(!archivo) return;
+    if (!archivo)
+        return;
 
     fprintf(archivo, "Cantidad de anuncios escuchados por usuario (FREE):\n\n");
 
