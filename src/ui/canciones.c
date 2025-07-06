@@ -47,14 +47,14 @@ const char *obtenerFecha()
 }
 
 //  Crea y devuelve una nueva canci´ on.
-bool crearCancion(Album *album, const char *nombre, const char *genero, int duracion, const char *url)
+Cancion *crearCancion(Album *album, const char *nombre, const char *genero, int duracion, const char *url)
 {
     // Un álbum no puede tener canciones repetidas
     Cancion *cancion = searchValueInLista(album->canciones, canciones, cmpCancionConNombre);
     if (cancion)
     {
         printf("Una cancion con ese nombre ya existe en el album\n");
-        return false;
+        return;
     }
 
     // Una canción se crea así:
@@ -100,7 +100,7 @@ bool crearCancion(Album *album, const char *nombre, const char *genero, int dura
 
     // Inserta enlaza la cancion a su album en la base de datos
 
-    return true;
+    return cancion;
 }
 
 //  Busca una canci´ on por nombre.

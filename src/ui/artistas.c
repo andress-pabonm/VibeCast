@@ -81,6 +81,11 @@ bool agregarCancionAlbum(const char *nombreAlbum, const char *nombreCancion, con
         return false;
     }
 
+    if (getListaLength(album->canciones) == 0)
+    {
+        // registro de album en la base de datos , hay que que agregar la funcion de guardar album en la base de datos
+    }
+
     // Crear nueva canción en canciones.c
     Cancion *cancion = crearCancion(album, nombreCancion, genero, duracion, url);
 
