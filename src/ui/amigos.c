@@ -102,15 +102,20 @@ json_object *amigo_to_json(Usuario *amigo)
     // Revisar "../../ui/Amigos/amigosApp.js"
 
     json_object_object_add(
-        jobj,
+        jobj, 
         "nombre",
         json_object_new_string(amigo->nickname));
 
+         json_object_object_add(
+        jobj, 
+        "id",
+        json_object_new_string(amigo->id));
     // Añadir el resto de campos
 
     /*
-    {
-        "nombre"}: "nickname"
+    {   
+        "nombre": "nickname"
+        "id": "12345",
     }
      */
 
@@ -173,7 +178,5 @@ Lista recomendarCanciones()
     // Retornar la lista de recomendaciones
     return listaCancionesRecomendadas;
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> 2be73525666bb60c1c0baa54f89d765ec8c9f963
+
