@@ -157,6 +157,8 @@ interfaz(ActualizarCancion)
     // Actualizar en base de datos APLICAR LOGICA NECESARIA
     // char *datos = asprintf(stringify("%s"), nombre);
     // nuevo_registro("Canciones", "nombre", datos, NULL);
+
+    return true;
 }
 
 // APLCAR LOGICA NECESARIA

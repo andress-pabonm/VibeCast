@@ -103,6 +103,7 @@ interfaz(EliminarAmigo)
     }
 
     send_message("El usuario %s ha sido eliminado de tu lista de amigos\n", amigo->username);
+
     return true;
 }
 
@@ -115,18 +116,18 @@ json_object *amigo_to_json(Usuario *amigo)
     // Revisar "../../ui/Amigos/amigosApp.js"
 
     json_object_object_add(
-        jobj, 
+        jobj,
         "nombre",
         json_object_new_string(amigo->nickname));
 
-         json_object_object_add(
-        jobj, 
+    json_object_object_add(
+        jobj,
         "id",
         json_object_new_string(amigo->id));
     // Añadir el resto de campos
 
     /*
-    {   
+    {
         "nombre": "nickname"
         "id": "12345",
     }
@@ -191,5 +192,3 @@ Lista recomendarCanciones()
     // Retornar la lista de recomendaciones
     return listaCancionesRecomendadas;
 }
-
-
