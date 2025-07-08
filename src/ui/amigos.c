@@ -79,6 +79,18 @@ interfaz(AgregarAmigo)
 
 interfaz(EliminarAmigo)
 {
+<<<<<<< HEAD
+    Lista listaCancionesRecomendadas = newLista(NULL);                             // Crear una nueva lista para las canciones recomendadas
+    forEachInLista(usuario->amigos, obtenerHistorial, listaCancionesRecomendadas); // Obtenemos la lista de recomendaciones de amigos
+}
+
+
+
+
+int prueba;
+
+// COMENTARIO DE PRUEBA
+=======
     // Obtener el username a eliminar
     const char *username = argv[0];
 
@@ -173,3 +185,4 @@ Lista recomendarCanciones()
     // Retornar la lista de recomendaciones
     return listaCancionesRecomendadas;
 }
+>>>>>>> 367b43e26ebb5c5bcfc527d96c399cb136590d92
