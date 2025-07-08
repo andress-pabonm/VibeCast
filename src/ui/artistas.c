@@ -1,6 +1,6 @@
 #include <ui/interfaces.h>
 
-new_cmpfn(cmpArtistaConNombre)
+static new_cmpfn(cmpArtistaConNombre)
 {
     const Artista *a = val_1; // Puntero a estructura Artista
     const char *n = val_2;    // Puntero a nombre (string) a comparar
@@ -8,7 +8,7 @@ new_cmpfn(cmpArtistaConNombre)
     return strcmp(a->nombre, n); // Compara el nombre del artista con el nombre dado
 }
 
-new_cmpfn(cmpAlbumConNombre)
+static new_cmpfn(cmpAlbumConNombre)
 {
     const Album *a = val_1; // Puntero a estructura Album
     const char *n = val_2;  // Puntero a nombre (string) a comparar
@@ -16,7 +16,7 @@ new_cmpfn(cmpAlbumConNombre)
     return strcmp(a->nombre, n); // Compara el nombre del álbum con el nombre dado
 }
 
-new_operfn(mostrar_canciones)
+static new_operfn(mostrar_canciones)
 {
     Cancion *cancion = val;                    // Puntero a la canción actual
     printf("%d): %s\n", idx, cancion->nombre); // Muestra el índice y el nombre de la canción
@@ -86,7 +86,7 @@ bool agregarCancionAlbum(const char *nombreAlbum, const char *nombreCancion, con
         // registro de album en la base de datos , hay que que agregar la funcion de guardar album en la base de datos
     }
 
-    // Crear nueva canción en canciones.c
+    // Crea una nueva canción en canciones.c
     Cancion *cancion = crearCancion(album, nombreCancion, genero, duracion, url);
 
     // Insertar en la lista de canciones del álbum

@@ -107,8 +107,10 @@ void mostrarAmigos()
     forEachInLista(amigos, mostrar_amigos, NULL); // Imprimir cada amigo en la lista
 }
 
-void recomendarCanciones()
+Lista recomendarCanciones()
 {
     Lista listaCancionesRecomendadas = newLista(NULL);                             // Crear una nueva lista para las canciones recomendadas
     forEachInLista(usuario->amigos, obtenerHistorial, listaCancionesRecomendadas); // Obtenemos la lista de recomendaciones de amigos
+
+    return listaCancionesRecomendadas;
 }
