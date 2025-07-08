@@ -2,6 +2,7 @@
 #define VIBECAST_DATOS_H 1
 
 #include <db/estructuras.h>
+#include <db/dbmgr.h>
 #include <stdbool.h>
 
 /**
@@ -24,6 +25,10 @@ bool VibeCast_LoadData(char **errmsg);
 
 // Función para liberar la memoria
 bool VibeCast_FreeData();
+
+/* Funciones para cargar datos */
+
+select_handler(cargarUsuarios);
 
 /* Comparadores */
 
