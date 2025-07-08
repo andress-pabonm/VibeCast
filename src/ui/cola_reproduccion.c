@@ -102,3 +102,97 @@ interfaz(SiguienteCancion)
 
     return true;
 }
+
+
+
+interfaz(AgregarCancionACola)
+{
+    int id = atoi(argv[0]);
+
+    Cancion *c = searchValueInLista(canciones, &id, cmpCancionConId);
+    if (!c)
+    {
+        send_message("La canción con ID %d no existe.", id);
+        return false;
+    }
+
+    NodoColaRepr nodo = alloc(struct NodoColaRepr, NULL);
+    nodo->dato = c;
+    nodo->tipo = TIPO_CANCION;
+
+    insertValueInCola(cola_repr, nodo);
+
+    send_message("Canción '%s' agregada a la cola.", c->nombre);
+    return true;
+}
+
+message_handler(agregar_cancion_a_cola)
+{
+    init_data_json();
+    int id = json_object_get_int(get_array_idx(data, 0));
+
+    const char *argv[] = { asprintf("%d", id) };
+    char **msg = arg;
+    bool ok = VibeCast_AgregarCancionACola(NULL, 1, argv, msg);
+
+    VibeCast_SendText(id, ok ? HTTP_CREATED : HTTP_BAD_REQUEST, *msg, "Agregar a cola", STATE_BOOL(ok));
+    freem(*msg);
+    *msg = NULL;
+}
+
+
+
+interfaz(VaciarColaReproduccion)
+{
+    destroyCola(cola_repr, NULL, NULL);
+    cola_repr = newCola();
+    send_message("Cola de reproducción vaciada.");
+    return true;
+}
+
+
+
+message_handler(vaciar_cola){
+    VibeCast_VaciarColaReproduccion(NULL, 0, NULL, NULL);
+    VibeCast_SendText(id, HTTP_OK, "", "Cola vaciada", STATE_SUCCESS);
+}
+
+message_handler(mostrar_cola)
+{
+    Cola temp = newCola();
+    json_object *array = json_object_new_array();
+    NodoColaRepr nodo;
+
+    while ((nodo = deleteValueInCola(cola_repr)) != NULL)
+    {
+        json_object *jobj = json_object_new_object();
+
+        if (nodo->tipo == TIPO_CANCION)
+        {
+            Cancion *c = nodo->dato;
+            json_object_object_add(jobj, "tipo", json_object_new_string("cancion"));
+            json_object_object_add(jobj, "nombre", json_object_new_string(c->nombre));
+            json_object_object_add(jobj, "url", json_object_new_string(c->url));
+            json_object_object_add(jobj, "duracion", json_object_new_int(c->duracion));
+        }
+        else if (nodo->tipo == TIPO_ANUNCIO)
+        {
+            Anuncio *a = nodo->dato;
+            json_object_object_add(jobj, "tipo", json_object_new_string("anuncio"));
+            json_object_object_add(jobj, "url", json_object_new_string(a->url));
+        }
+
+        json_object_array_add(array, jobj);
+        insertValueInCola(temp, nodo); // restaurar
+    }
+
+    while ((nodo = deleteValueInCola(temp)) != NULL)
+        insertValueInCola(cola_repr, nodo);
+
+    destroyCola(temp, NULL, NULL);
+
+    VibeCast_SendArray(id, json_object_array_length(array) > 0 ? HTTP_OK : HTTP_NO_CONTENT,
+                       array, "Cola de reproducción", STATE_SUCCESS);
+
+    json_object_put(array);
+}
