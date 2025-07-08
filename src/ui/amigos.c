@@ -61,7 +61,7 @@ interfaz(AgregarAmigo)
     if (amigo)
     {
         send_message("El usuario %s ya es tu amigo.\n", amigo->username);
-        return;
+        return false;
     }
 
     // Buscar usuario en el sistema global
@@ -70,7 +70,7 @@ interfaz(AgregarAmigo)
     if (!amigo)
     {
         send_message("El usuario %s no existe en el sistema\n", username);
-        return;
+        return false;
     }
 
     // Agregar a lista de amigos
