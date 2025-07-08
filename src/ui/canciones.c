@@ -21,8 +21,14 @@ select_handler(obteneridCancion)
     return 0;
 }
 
-Cancion *crearCancion(Album *album, const char *nombre, const char *genero, int duracion, const char *url)
+interfaz(CrearCancion)
 {
+    Album *album; // NO SE COMO MANDAR ESTO COMO MACRO
+    const char *nombre = argv[0];
+    const char *genero = argv[1];
+    int duracion = itoa(duracion, argv[2], 10);
+    const char *url = argv[3];
+
     datetime_buf_t fechaActual;
     getDateTime(fechaActual, now());
 
@@ -30,12 +36,12 @@ Cancion *crearCancion(Album *album, const char *nombre, const char *genero, int 
     Cancion *cancion = searchValueInLista(album->canciones, nombre, cmpCancionConNombre);
     if (cancion)
     {
-        printf("Una cancion con ese nombre ya existe en el album\n");
-        return NULL;
+        send_message("Una cancion con ese nombre ya existe en el album\n");
+        return false;
     }
 
-    // Crear nueva estructura de canción
-    cancion = newCancion();
+    Cancion **cancion = arg;
+    *cancion = newCancion();
 
     // Configurar propiedades de la canción
     cancion->album = album;
@@ -69,7 +75,7 @@ Cancion *crearCancion(Album *album, const char *nombre, const char *genero, int 
         &cancion->id,
         NULL);
 
-    return cancion;
+    return true;
 }
 
 void eliminarCancion(int id)

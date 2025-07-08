@@ -31,7 +31,7 @@ interfaz(CrearArtista)
     // Verificar si el artista ya existe
     if (searchValueInABB(artistas, nombreArtista, cmpArtistaConNombre))
     {
-        printf("Error: El artista '%s' ya existe\n", nombreArtista);
+        send_message("Error: El artista '%s' ya existe\n", nombreArtista);
         return false;
     }
 
@@ -48,57 +48,44 @@ interfaz(CrearArtista)
     return true;
 }
 
-// Ejemplo de creación de canción con la macro (interfaz) =============================================
-interfaz(CrearCancion)
-{
-    const char *nombre = argv[0];
+// message_handler(crear_cancion)
+// {
+//     // Inicializa la información que llega desde la interfaz gráfica
+//     init_data_json();
 
-    Cancion **cancion = arg;
-    *cancion = newCancion();
+//     const char *nombreCancion = get_string(get_array_idx(data, 0)); // Parecido a: nombreCancion = data[0]
 
-    send_message("Canción creada");
+//     // Crea un variable Cancion
+//     Cancion *cancion = NULL;
 
-    return true;
-}
+//     // Empaquetar los argumentos
+//     const char *argv[] = {
+//         nombreCancion,
+//     };
 
-message_handler(crear_cancion)
-{
-    // Inicializa la información que llega desde la interfaz gráfica
-    init_data_json();
+//     // Cantidad de argumentos
+//     int argc = sizeof(argv) / sizeof(*argv);
 
-    const char *nombreCancion = get_string(get_array_idx(data, 0)); // Parecido a: nombreCancion = data[0]
+//     char **msg = arg;
 
-    // Crea un variable Cancion
-    Cancion *cancion = NULL;
+//     // Llamar a la función para crear canción.
+//     bool success = VibeCast_CrearCancion(&cancion, 1, argv, msg);
 
-    // Empaquetar los argumentos
-    const char *argv[] = {
-        nombreCancion,
-    };
+//     if (success)
+//     {
+//         /* Canción creada */
+//         VibeCast_SendText(id, HTTP_OK, "", *msg, STATE_SUCCESS);
 
-    // Cantidad de argumentos
-    int argc = sizeof(argv) / sizeof(*argv);
-
-    char **msg = arg;
-
-    // Llamar a la función para crear canción.
-    bool success = VibeCast_CrearCancion(&cancion, 1, argv, msg);
-
-    if (success)
-    {
-        /* Canción creada */
-        VibeCast_SendText(id, HTTP_OK, "", *msg, STATE_SUCCESS);
-
-        puts(*msg); // Imprimir el mensaje en consola
-        freem(*msg);
-        *msg = NULL;
-    }
-    else
-    {
-        /* Canción no creada */
-        VibeCast_SendText(id, HTTP_OK, "", "", STATE_FAILURE);
-    }
-}
+//         puts(*msg); // Imprimir el mensaje en consola
+//         freem(*msg);
+//         *msg = NULL;
+//     }
+//     else
+//     {
+//         /* Canción no creada */
+//         VibeCast_SendText(id, HTTP_OK, "", "", STATE_FAILURE);
+//     }
+// }
 // Fin ejemplo =============================================
 
 interfaz(CrearAlbum)
@@ -130,8 +117,11 @@ interfaz(CrearAlbum)
 
 interfaz(AgregarCancionAlbum)
 {
-    // const char *nombreCancion = argv[0];
-    const char *nombreAlbum = argv[1];
+    const char *nombreAlbum = argv[0];
+    const char *nombreCancion = argv[1];
+    const char *genero = argv[2];
+    int duracion = itoa(duracion, argv[3], 10);
+    const char *url = argv[4];
 
     // Buscar el álbum
     Album *album = searchValueInLista(usuario->artista->albumes, nombreAlbum, cmpAlbumConNombre);
@@ -148,7 +138,7 @@ interfaz(AgregarCancionAlbum)
     }
 
     // Crea una nueva canción en canciones.c
-    Cancion *cancion = crearCancion(album, nombreCancion, genero, duracion, url);
+    Cancion **cancion = crearCancion(&cancion);
 
     // Insertar en la lista de canciones del álbum
     insertValueInLista(album->canciones, cancion);
@@ -163,23 +153,24 @@ json_object *album_to_json(Album *album)
     return jobj;
 }
 
-void mostrarAlbum(const char *nombreAlbum)
-{
-    Album *album = searchValueInLista(usuario->artista->albumes, nombreAlbum, cmpAlbumConNombre);
-    if (!album)
-    {
-        printf("Album no existente");
-        return;
-    }
+// CON EL JSON
+//  void mostrarAlbum(const char *nombreAlbum)
+//  {
+//      Album *album = searchValueInLista(usuario->artista->albumes, nombreAlbum, cmpAlbumConNombre);
+//      if (!album)
+//      {
+//          printf("Album no existente");
+//          return;
+//      }
 
-    printf("Artista: %s\n", album->artista->nombre);
-    printf("Fecha de lanzamiento: %s\n", album->fechaCreacion);
-    printf("Album: %s\n", album->nombre);
-    printf("Canciones: \n");
+//     printf("Artista: %s\n", album->artista->nombre);
+//     printf("Fecha de lanzamiento: %s\n", album->fechaCreacion);
+//     printf("Album: %s\n", album->nombre);
+//     printf("Canciones: \n");
 
-    // Mostrar todas las canciones del álbum
-    forEachInLista(album->canciones, mostrar_canciones, NULL);
-}
+//     // Mostrar todas las canciones del álbum
+//     forEachInLista(album->canciones, mostrar_canciones, NULL);
+// }
 
 message_handler(crear_artista)
 {
