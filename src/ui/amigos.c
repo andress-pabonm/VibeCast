@@ -106,6 +106,8 @@ json_object *amigo_to_json(Usuario *amigo)
         "nombre",
         json_object_new_string(amigo->nickname));
 
+    // Añadir el resto de campos
+
     /*
     {
         "nombre"}: "nickname"
