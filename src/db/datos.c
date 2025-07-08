@@ -1,5 +1,4 @@
 #include <db/datos.h>
-#include <db/dbmgr.h>
 #include <utils/utils.h>
 
 /* ==== Estructuras de datos ==== */
@@ -38,8 +37,6 @@ static new_cmpfn(cmpArtistas)
 
 // ==== Declaraciones ====
 
-static select_handler(cargarUsuarios);
-
 static select_handler(cargarArtistaPorUsuario);
 static select_handler(cargarAlbumesPorArtista);
 static select_handler(cargarCancionesPorAlbum);
@@ -68,7 +65,7 @@ static select_handler(cargarOtrosDatosPorUsuario);
 #define USUARIO_TIEMPO_ESCUCHADO 7
 #define USUARIO_CANTIDAD_ANUNCIOS 8
 
-static select_handler(cargarUsuarios)
+select_handler(cargarUsuarios)
 {
     Usuario *usuario = newUsuario();
 
