@@ -120,7 +120,8 @@ interfaz(AgregarCancionAlbum)
     const char *nombreAlbum = argv[0];
     const char *nombreCancion = argv[1];
     const char *genero = argv[2];
-    int duracion = itoa(duracion, argv[3], 10);
+    int duracion = 0;                // Variable para la duración
+    sscanf(argv[3], "%d", duracion); // Asignación del valor según argv
     const char *url = argv[4];
 
     // Buscar el álbum
@@ -181,7 +182,7 @@ message_handler(crear_artista)
     int argc = sizeof(argv) / sizeof(*argv);
 
     char **msg = arg;
-    bool success = VibeCast_crearArtista(usuario, argc, argv, msg);
+    bool success = VibeCast_CrearArtista(usuario, argc, argv, msg);
 
     VibeCast_SendText(
         id,

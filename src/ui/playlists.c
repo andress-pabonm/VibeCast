@@ -113,3 +113,49 @@ void mostrarCancionesPlaylist(const char *nombrePlaylist)
 
     forEachInLista(playlist->canciones, mostrar_canciones, NULL);
 }
+
+json_object *playlist_to_json(Playlist *playlist)
+{
+    json_object *jobj = json_object_new_object();
+
+    json_object_object_add(
+        jobj,
+        "nombre",
+        json_object_new_string(playlist->nombre));
+
+    json_object *array = json_object_new_array();
+
+    // forEachInLista(playlist->canciones);
+
+    // getCanciones; // Función para el forEach de playlist.canciones
+
+    /*
+{
+    "nombre": "nombrePlaylist"
+}
+ */
+
+    return jobj;
+}
+
+new_operfn(getPlaylists)
+{
+    json_object_array_add(arg, playlist_to_json(val));
+    return FOREACH_CONTINUE;
+}
+
+message_handler(get_playlists)
+{
+    json_object *array = json_object_new_array();
+
+    forEachInLista(usuario->playlists, getPlaylists, array);
+
+    size_t len = json_object_array_length(array);
+
+    VibeCast_SendArray(
+        id,
+        len ? HTTP_OK : HTTP_NO_CONTENT,
+        array,
+        "Playlists cargadas",
+        STATE_SUCCESS);
+}

@@ -81,6 +81,8 @@ interfaz(AgregarAmigo)
 
     nuevo_registro(
         "Amigos", "id_usuario_1, id_usuario_2", values, NULL);
+
+    return true;
 }
 
 interfaz(EliminarAmigo)
@@ -94,10 +96,14 @@ interfaz(EliminarAmigo)
     // Eliminar de la lista de amigos
     Usuario *amigo = deleteValueInLista(amigos, username, cmpUsuarioConUsername);
 
-    if (amigo)
-        send_message("El usuario %s ha sido eliminado de tu lista de amigos\n", amigo->username);
-    else
+    if (!amigo)
+    {
         send_message("El usuario %s no está en tu lista de amigos.\n", username);
+        return false;
+    }
+
+    send_message("El usuario %s ha sido eliminado de tu lista de amigos\n", amigo->username);
+    return true;
 }
 
 json_object *amigo_to_json(Usuario *amigo)

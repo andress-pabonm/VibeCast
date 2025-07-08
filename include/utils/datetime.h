@@ -1,6 +1,8 @@
 #ifndef VIBECAST_DATETIME_H
 #define VIBECAST_DATETIME_H 1
 
+#include <time.h>
+
 // Tamaño del búfer para getTime()
 #define TIME_BUFSIZ 9
 
@@ -11,7 +13,7 @@
 #define DATETIME_BUFSIZ 21
 
 // Tipo para la fecha y hora
-typedef void *datetime_t;
+typedef struct tm *datetime_t;
 
 // Tipo de búfer para getTime()
 typedef char time_buf_t[TIME_BUFSIZ];

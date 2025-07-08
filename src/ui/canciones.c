@@ -23,14 +23,22 @@ select_handler(obteneridCancion)
 
 interfaz(CrearCancion)
 {
-    Album *album; // NO SE COMO MANDAR ESTO COMO MACRO
-    const char *nombre = argv[0];
-    const char *genero = argv[1];
-    int duracion = itoa(duracion, argv[2], 10);
-    const char *url = argv[3];
+    // Album *album; // NO SE COMO MANDAR ESTO COMO MACRO
+    // Bien, tengo una idea, se podría implementar así:
+    const char *nombreAlbum = argv[0];
 
-    datetime_buf_t fechaActual;
-    getDateTime(fechaActual, now());
+    const char *nombre = argv[1];
+    const char *genero = argv[2];
+    // int duracion = itoa(duracion, argv[2], 10);
+    int duracion = atoi(argv[3]);
+    const char *url = argv[4];
+
+    Album *album = searchValueInLista(usuario->artista->albumes, nombreAlbum, cmpAlbumConNombre);
+    if (!album)
+    {
+        send_message("El álbum no existe.");
+        return false;
+    }
 
     // Verificar si la canción ya existe en el álbum
     Cancion *cancion = searchValueInLista(album->canciones, nombre, cmpCancionConNombre);
@@ -40,10 +48,18 @@ interfaz(CrearCancion)
         return false;
     }
 
-    Cancion **cancion = arg;
-    *cancion = newCancion();
+    // Instancio la estructura Cancion
+    cancion = newCancion();
+
+    // Cancion **cancion = arg;
+    // *cancion = newCancion();
+    // La variable ya está definida arriba
 
     // Configurar propiedades de la canción
+
+    datetime_buf_t fechaActual;
+    getDateTime(fechaActual, now());
+
     cancion->album = album;
     cancion->nombre = asprintf(nombre);
     cancion->genero = asprintf(genero);
@@ -57,7 +73,7 @@ interfaz(CrearCancion)
 
     // Registrar en base de datos
     char *datos = asprintf(
-        stringify("%s", "%s", "%s", "%s", "%s"),
+        stringify("%d", "%s", "%s", "%s", "%s"),
         album->id, cancion->nombre, cancion->genero,
         cancion->fechaPublicacion, cancion->duracion, cancion->url);
 
@@ -80,14 +96,15 @@ interfaz(CrearCancion)
 
 interfaz(EliminarCancion)
 {
-    int id = itoa(id, argv[0], 10); // Convertir el argumento a entero
+    // int id = itoa(id, argv[0], 10); // Convertir el argumento a entero
+    int id = atoi(argv[0]); // Creo que es esta función
     // Buscar la canción en la lista global
     Cancion *cancion = searchValueInLista(canciones, &id, cmpCancionConId);
 
     if (cancion == NULL)
     {
         send_message("La canción con el id %d no existe\n", id);
-        return;
+        return false;
     }
 
     // Verifica si hay al menos una playlist que contiene la canción
@@ -101,7 +118,7 @@ interfaz(EliminarCancion)
     if (!album)
     {
         send_message("No se encontró el álbum asociado a la canción\n");
-        return;
+        return false;
     }
 
     // Eliminar de las estructuras de datos
@@ -123,6 +140,8 @@ interfaz(EliminarCancion)
     free(cancion);
 
     send_message("Canción eliminada exitosamente\n");
+
+    return true;
 }
 
 interfaz(ActualizarCancion)

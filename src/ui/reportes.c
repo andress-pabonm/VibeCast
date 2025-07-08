@@ -129,8 +129,7 @@ interfaz(GenerarTop5Canciones)
     if (longitud == 0)
     {
         send_message("No hay canciones disponibles para generar el top 5\n");
-
-        return;
+        return false;
     }
 
     int *reproducciones = malloc_cpy(longitud * sizeof(int), 0); // vector en el heap
@@ -149,6 +148,8 @@ interfaz(GenerarTop5Canciones)
     }
 
     fclose(archivo);
+
+    return true;
 }
 
 interfaz(GenerarTop3Artistas)
@@ -160,8 +161,7 @@ interfaz(GenerarTop3Artistas)
     if (longitud == 0)
     {
         send_message("No hay astistas disponibles\n");
-
-        return;
+        return false;
     }
 
     PopularidadArtista **pArtistas = malloc_cpy(longitud * sizeof(PopularidadArtista *), 0); // vector en el heap
@@ -184,6 +184,8 @@ interfaz(GenerarTop3Artistas)
 
     fclose(archivo);
     freem(pArtistas);
+
+    return true;
 }
 
 // Funcion que genera un archivo .txt con tiempo total de reproduccion del usuario
@@ -193,15 +195,21 @@ interfaz(GenerarTiempoTotalReproduccion)
     FILE *archivo = newFile("Tiempo_total_reproduccion.txt", NULL);
 
     if (!archivo)
-        return;
+        return false;
 
     fprintf(archivo, "Tiempo total de reproduccion por usuario:\n\n");
 
     // Recorre todo el ABB de usuarios y llama a `listar_tiempo` con cada uno
     //  Pasa `archivo` como argumento para que cada usuario lo use
-    forEachInABB(usuarios, listar_tiempo, NULL);
+    // forEachInABB(usuarios, listar_tiempo, NULL);
+
+    // Aplica lo mismo que está en la función para la cantidad de anuncios.
+
+    fprintf(archivo, "%d", usuario->historial.tiempoEscuchado);
 
     fclose(archivo);
+
+    return true;
 }
 
 interfaz(GenerarCantidadAnunciosEscuchados)
@@ -211,9 +219,32 @@ interfaz(GenerarCantidadAnunciosEscuchados)
     fprintf(archivo, "Cantidad de anuncios escuchados por usuario (FREE):\n\n");
 
     // Recorre todo el ABB de usuarios y ejecuta el callback `listar_anuncios` con cada uno
-    forEachInABB(usuarios, listar_anuncios, NULL);
+    // forEachInABB(usuarios, listar_anuncios, NULL);
+
+    // Primero, este reporte es únicamente sobre el usuario activo,
+    // es decir, no sobre todos los usuarios registrados. Entonces,
+    // únicamente hay que acceder a la variable del historial:
+    // usuario->historial.cantidadAnuncios;
+
+    // Segundo, no existe la función forEachInABB como tal, sino
+    // que tiene 3 variantes: preorden, inorden y postorden.
+    // forEachInABB_PreOrder
+    // forEachInABB_InOrder
+    // forEachInABB_PostOrder
 
     // PERO AQUI FALTA MOSTRAR XDDD
+    // Es cierto, aún no sé cómo mostrar los reportes,
+    // pero ya veré qué es lo que pide en la interfaz
+    // gráfica.
+
+    // Entonces, esto va así
+    fprintf(archivo, "%d", usuario->historial.cantidadAnuncios);
 
     fclose(archivo);
+
+    return true;
+}
+
+message_handler(get_estadisticas)
+{
 }

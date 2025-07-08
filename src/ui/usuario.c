@@ -1,5 +1,4 @@
 #include <ui/interfaces.h>
-#include <db/dbmgr.h>
 #include <time.h>
 
 #define PCRE2_CODE_UNIT_WIDTH 8
@@ -164,8 +163,8 @@ static interfaz(CrearCuenta)
     }
 
     bool emailRepetido = false;
-    search_email_arg_t arg = {&emailRepetido, email};
-    forEachInABB_InOrder(usuarios, check_email_repetido, &arg);
+    search_email_arg_t wrapper_arg = {&emailRepetido, email};
+    forEachInABB_InOrder(usuarios, check_email_repetido, &wrapper_arg);
     if (emailRepetido)
     {
         send_message("El email ya está registrado");
@@ -193,21 +192,13 @@ static interfaz(CrearCuenta)
     char *datos = asprintf(stringify("%s", "%s", "%s", "%s", "%s"), username, email, password, nickname, pais);
     nuevo_registro("Usuarios", "username, email, password, nickname, pais", datos, NULL);
 
-    usuario = newUsuario();
-    usuario->username = asprintf(username);
-    usuario->email = asprintf(email);
-    usuario->password = asprintf(password);
-    usuario->nickname = asprintf(nickname);
-    usuario->pais = asprintf(pais);
-
     char *cond = asprintf(stringify(username = "%s"), username);
-    obtener_registros("Usuarios", "id", cond, obtener_id_usuario, &usuario->id, NULL);
+    obtener_registros("Usuarios", "*", cond, cargarUsuarios, NULL, NULL);
     freem(cond);
 
-    insertValueInABB(usuarios, usuario);
-    usuario = NULL;
-
+    // Reportar éxito
     send_message("Cuenta creada exitosamente");
+
     return true;
 }
 
@@ -230,7 +221,35 @@ message_handler(crear_cuenta)
     *msg = NULL;
 }
 
-/*
-    FALTANTE: Se deben completar las funciones VibeCast_ActualizarUsername, _Nickname, etc.
-    También actualizar correctamente desde actualizar_usuario llamando a las 4 funciones.
-*/
+json_object *usuario_to_json(Usuario *u)
+{
+    if (!u)
+        return NULL;
+
+    json_object *jobj = json_object_new_object();
+
+    json_object_object_add(jobj, "name", json_object_new_string(u->nickname));
+    json_object_object_add(jobj, "username", json_object_new_string(u->username));
+    json_object_object_add(jobj, "email", json_object_new_string(u->email));
+    json_object_object_add(jobj, "country", json_object_new_string(u->pais));
+    json_object_object_add(jobj, "isArtist", json_object_new_boolean(u->artista != NULL));
+
+    // Subobjeto de suscripción
+    json_object *subscription = json_object_new_object();
+
+    const char *tipo_plan = (u->plan == PLAN_PREMIUM) ? "premium" : "freemium";
+    json_object_object_add(subscription, "type", json_object_new_string(tipo_plan));
+    json_object_object_add(subscription, "autoRenewal", json_object_new_boolean(true)); // Asumido
+
+    // Fecha de expiración: 180 días desde hoy
+    time_t now = time(NULL);
+    now += 180 * 24 * 60 * 60;
+    struct tm *exp_date = localtime(&now);
+    char fecha_exp[11];
+    strftime(fecha_exp, sizeof(fecha_exp), "%Y-%m-%d", exp_date);
+    json_object_object_add(subscription, "expiration", json_object_new_string(fecha_exp));
+
+    json_object_object_add(jobj, "subscription", subscription);
+
+    return jobj;
+}
