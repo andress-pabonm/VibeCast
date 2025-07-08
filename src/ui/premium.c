@@ -8,7 +8,7 @@ typedef struct usuarioAUX
     time_t caducidadPremium; // Fecha de caducidad del plan premium
 } usuarioAUX;
 
-void activarPremium(usuarioAUX *usuario)
+bool activarPremium(usuarioAUX *usuario)
 {
 
     time_t base = time(NULL);
@@ -34,15 +34,19 @@ void activarPremium(usuarioAUX *usuario)
     usuario->caducidadPremium = base + 30 * 24 * 60 * 60; // Tiempo en segundos
     // La fecha es imprime como dia de la semana, mes, dia del mes, hora, minuto, segundo y año
     printf("Caduca el: %s", ctime(&usuario->caducidadPremium));
+
+    return true;
 }
 
-void desactivarPremium(usuarioAUX *usuario)
+bool desactivarPremium(usuarioAUX *usuario)
 {
 
     Usuario *user = (Usuario *)usuario->Usuario;
     user->plan = PLAN_FREEMIUM;    // Cambiamos el plan del usuario a freemium
     usuario->caducidadPremium = 0; // Reseteamos la fecha de caducidad del plan premium
     printf("Has desactivado el plan Premium. Ahora estás en el plan Freemium.\n");
+
+    return true;
 }
 
 bool isPremium(usuarioAUX *usuario)
@@ -63,11 +67,14 @@ bool isPremium(usuarioAUX *usuario)
     }
 
     Usuario *user = (Usuario *)usuario->Usuario;
+
     return user->plan == PLAN_PREMIUM; // Retorna true si el usuario es premium
 }
 
-void renovarpremium(usuarioAUX *usuario)
+bool renovarpremium(usuarioAUX *usuario)
 {
     activarPremium(usuario); // Llama a la función para activar el plan premium
-    printf("Tu plan Premium ha sido renovado exitosamente.\n");
+    printf("Tu plan Premium ha sido renovado exitosamente\n");
+
+    return true;
 }

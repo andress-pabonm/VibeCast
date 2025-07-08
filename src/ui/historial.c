@@ -1,7 +1,7 @@
 #include <ui/interfaces.h>
 #include <utils/utils.h>
 
-void agregarAHistorial(Usuario *usuario, Cancion *cancion, Anuncio *anuncio)
+bool agregarAHistorial(Usuario *usuario, Cancion *cancion, Anuncio *anuncio)
 {
 
     datetime_buf_t fechaActual;
@@ -13,7 +13,7 @@ void agregarAHistorial(Usuario *usuario, Cancion *cancion, Anuncio *anuncio)
     {
         // Increment the number of ads viewed if the user is on a freemium plan
         usuario->historial.cantidadAnuncios++;
-        return;
+        return true;
     }
 
     Reproduccion *reproduccion = newReproduccion();
@@ -26,9 +26,11 @@ void agregarAHistorial(Usuario *usuario, Cancion *cancion, Anuncio *anuncio)
 
     // Actualiza el tiempo escuchado
     usuario->historial.tiempoEscuchado += cancion->duracion;
+
+    return true;
 }
 
-void mostrarHistorial(Usuario *usuario)
+bool mostrarHistorial(Usuario *usuario)
 {
     // Pila *actual = usuario->historial.reproducciones->top;
     Pila historial = usuario->historial.reproducciones;
@@ -45,13 +47,17 @@ void mostrarHistorial(Usuario *usuario)
 
         repr = deleteValueInPila(historial);
     }
+
+    return true;
 }
 
-void vaciarHistorial(Usuario *usuario)
+bool vaciarHistorial(Usuario *usuario)
 {
     destroyPila(usuario->historial.reproducciones, NULL, NULL);
 
     usuario->historial.reproducciones = newPila();
     usuario->historial.tiempoEscuchado = 0;
     usuario->historial.cantidadAnuncios = 0;
+
+    return true;
 }

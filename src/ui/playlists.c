@@ -56,6 +56,7 @@ bool agregarCancionPlaylist(const char *nombrePlaylist, int IdCancion)
 
     // Agrega la canción a la lista de canciones de la playlist
     insertValueInLista(playlist->canciones, cancion);
+
     return true;
 }
 
@@ -98,18 +99,19 @@ bool eliminarPlaylist(const char *nombrePlaylist)
     return true;
 }
 
-void mostrarCancionesPlaylist(const char *nombrePlaylist)
-{
-    Playlist *playlist = searchValueInLista(usuario->playlists, nombrePlaylist, cmpPlaylistConNombre); // Buscamos la playlist por nombre
+// LOGICA CON EL JSON
+// void mostrarCancionesPlaylist(const char *nombrePlaylist)
+// {
+//     Playlist *playlist = searchValueInLista(usuario->playlists, nombrePlaylist, cmpPlaylistConNombre); // Buscamos la playlist por nombre
 
-    if (!playlist)
-    {
-        printf("Error: La playlist '%s' no existe\n", nombrePlaylist);
+//     if (!playlist)
+//     {
+//         printf("Error: La playlist '%s' no existe\n", nombrePlaylist);
 
-        return; // Retornar para evitar errores con las siguientes instrucciones
-    }
+//         return; // Retornar para evitar errores con las siguientes instrucciones
+//     }
 
-    printf("Playlist: %s\n", playlist->nombre);
+//     printf("Playlist: %s\n", playlist->nombre);
 
-    forEachInLista(playlist->canciones, mostrar_canciones, NULL);
-}
+//     forEachInLista(playlist->canciones, mostrar_canciones, NULL);
+// }

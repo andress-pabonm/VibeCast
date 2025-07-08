@@ -64,7 +64,7 @@ static void encolar(void *dato, ElementoColaTipo tipo)
     insertValueInCola(cola_repr, nodo);
 }
 
-void agregarCancionACola(Cancion *cancion)
+bool agregarCancionACola(Cancion *cancion)
 {
     static int cant_canciones = 0;
 
@@ -86,6 +86,8 @@ void agregarCancionACola(Cancion *cancion)
 
         cant_canciones = 0;
     }
+
+    return true;
 }
 
 /* ================================================================ */
