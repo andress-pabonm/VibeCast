@@ -122,13 +122,13 @@ new_operfn(listar_tiempo)
     return FOREACH_CONTINUE; // Indica que el recorrido debe continuar con el siguiente usuario.
 }
 
-void generarTop5Canciones()
+interfaz(GenerarTop5Canciones)
 {
     int longitud = getListaLength(canciones);
 
     if (longitud == 0)
     {
-        printf("No hay canciones disponibles para generar el top 5\n");
+        send_message("No hay canciones disponibles para generar el top 5\n");
 
         return;
     }
@@ -151,7 +151,7 @@ void generarTop5Canciones()
     fclose(archivo);
 }
 
-void generarTop3Artistas()
+interfaz(GenerarTop3Artistas)
 {
     Lista listaArtistas = newLista(NULL); // Crear una nueva lista para los artistas
     ObtenerHistorial(listaArtistas, 0, usuario);
@@ -159,7 +159,7 @@ void generarTop3Artistas()
 
     if (longitud == 0)
     {
-        printf("No hay astistas disponibles\n");
+        send_message("No hay astistas disponibles\n");
 
         return;
     }
@@ -187,7 +187,7 @@ void generarTop3Artistas()
 }
 
 // Funcion que genera un archivo .txt con tiempo total de reproduccion del usuario
-void generarTiempoTotalReproduccion()
+interfaz(GenerarTiempoTotalReproduccion)
 {
     // Crea un nuevo archivo de salida, si falla se detiene
     FILE *archivo = newFile("Tiempo_total_reproduccion.txt", NULL);
@@ -204,16 +204,16 @@ void generarTiempoTotalReproduccion()
     fclose(archivo);
 }
 
-void generarCantidadAnunciosEscuchados()
+interfaz(GenerarCantidadAnunciosEscuchados)
 {
     FILE *archivo = newFile("Anuncios_escuchados.txt", NULL);
-    if (!archivo)
-        return;
 
     fprintf(archivo, "Cantidad de anuncios escuchados por usuario (FREE):\n\n");
 
     // Recorre todo el ABB de usuarios y ejecuta el callback `listar_anuncios` con cada uno
     forEachInABB(usuarios, listar_anuncios, NULL);
+
+    // PERO AQUI FALTA MOSTRAR XDDD
 
     fclose(archivo);
 }

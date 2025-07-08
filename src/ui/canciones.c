@@ -78,14 +78,15 @@ interfaz(CrearCancion)
     return true;
 }
 
-void eliminarCancion(int id)
+interfaz(EliminarCancion)
 {
+    int id = itoa(id, argv[0], 10); // Convertir el argumento a entero
     // Buscar la canción en la lista global
     Cancion *cancion = searchValueInLista(canciones, &id, cmpCancionConId);
 
     if (cancion == NULL)
     {
-        printf("La canción con el id %d no existe\n", id);
+        send_message("La canción con el id %d no existe\n", id);
         return;
     }
 
@@ -99,7 +100,7 @@ void eliminarCancion(int id)
     Album *album = searchValueInLista(usuario->artista->albumes, &(cancion->album->nombre), cmpAlbumConNombre);
     if (!album)
     {
-        printf("No se encontró el álbum asociado a la canción\n");
+        send_message("No se encontró el álbum asociado a la canción\n");
         return;
     }
 
@@ -121,11 +122,13 @@ void eliminarCancion(int id)
     // Liberar la estructura de la canción
     free(cancion);
 
-    printf("Canción eliminada exitosamente\n");
+    send_message("Canción eliminada exitosamente\n");
 }
 
-void actualizarCancion(Cancion *cancion, const char *nombre)
+interfaz(ActualizarCancion)
 {
+    Cancion *cancion;
+    const char *nombre = argv[0];
     // Liberar nombre anterior
     free(cancion->nombre);
 
