@@ -117,34 +117,7 @@ interfaz(CrearAlbum)
 
 interfaz(AgregarCancionAlbum)
 {
-    const char *nombreAlbum = argv[0];
-    const char *nombreCancion = argv[1];
-    const char *genero = argv[2];
-    int duracion = 0;                // Variable para la duración
-    sscanf(argv[3], "%d", duracion); // Asignación del valor según argv
-    const char *url = argv[4];
-
-    // Buscar el álbum
-    Album *album = searchValueInLista(usuario->artista->albumes, nombreAlbum, cmpAlbumConNombre);
-    if (!album)
-    {
-        send_message("Error: El álbum '%s' no existe en el artista '%s'\n", nombreAlbum, usuario->artista->nombre);
-        return false;
-    }
-
-    if (getListaLength(album->canciones) == 0)
-    {
-        // registro de album en la base de datos , hay que que agregar la funcion de guardar album en la base de datos
-        // return false;
-    }
-
-    // Crea una nueva canción en canciones.c
-    Cancion **cancion = crearCancion(&cancion);
-
-    // Insertar en la lista de canciones del álbum
-    insertValueInLista(album->canciones, cancion);
-
-    return true;
+    return VibeCast_CrearCancion(arg, argc, argv, msg);
 }
 
 json_object *album_to_json(Album *album)

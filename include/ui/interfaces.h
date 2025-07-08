@@ -34,4 +34,6 @@ Lista recomendarCanciones();
 json_object *cancion_to_json(Cancion *cancion);
 new_operfn(getCanciones);
 
+interfaz(CrearCancion);
+
 #endif // VIBECAST_INTERFACES_H

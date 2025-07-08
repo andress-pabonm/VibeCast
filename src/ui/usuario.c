@@ -253,3 +253,19 @@ json_object *usuario_to_json(Usuario *u)
 
     return jobj;
 }
+
+message_handler(get_user_data)
+{
+    if (!usuario)
+    {
+        VibeCast_SendBool(id, HTTP_UNAUTHORIZED, false, "No hay sesión activa", STATE_FAILURE);
+        return;
+    }
+
+    json_object *jobj = usuario_to_json(usuario);
+
+    VibeCast_SendJSON(id, HTTP_OK, jobj, "Datos del usuario cargados", STATE_SUCCESS);
+    json_object_put(jobj); // Libera el objeto JSON
+
+    puts("Información de perfil enviada");
+}

@@ -146,17 +146,29 @@ interfaz(EliminarCancion)
 
 interfaz(ActualizarCancion)
 {
-    Cancion *cancion;
-    const char *nombre = argv[0];
-    // Liberar nombre anterior
-    free(cancion->nombre);
+    // Asumiré que me envía el nombre del álbum y el id de la canción
+    const char *nombreAlbum = argv[0];
+    int id_cancion = atoi(argv[1]);
 
-    // Asignar nuevo nombre
-    cancion->nombre = asprintf(nombre);
+    // Busco el álbum
+    Album *album = searchValueInLista(usuario->artista->albumes, nombreAlbum, cmpAlbumConNombre);
+    if (!album)
+    {
+        send_message("Álbum no encontrado.");
+        return false;
+    }
 
-    // Actualizar en base de datos APLICAR LOGICA NECESARIA
-    // char *datos = asprintf(stringify("%s"), nombre);
-    // nuevo_registro("Canciones", "nombre", datos, NULL);
+    // Luego busco la canción por id
+    Cancion *cancion = searchValueInLista(album->canciones, &id_cancion, cmpCancionConId);
+    if (!cancion)
+    {
+        send_message("No se encuentra la canción en el álbum.");
+        return false;
+    }
+
+    /* Aquí se actualizarían los datos de la canción */
+
+    return true;
 }
 
 // APLCAR LOGICA NECESARIA
