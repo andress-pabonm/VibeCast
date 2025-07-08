@@ -55,7 +55,7 @@ static pcre2_code *get_password_re()
     PCRE2_SIZE erroroffset;
 
     // Expresión regular para email
-    PCRE2_SPTR pattern = (PCRE2_SPTR) "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$";
+    PCRE2_SPTR pattern = (PCRE2_SPTR) "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$";
 
     // Compilar la expresión regular
     re = pcre2_compile(
