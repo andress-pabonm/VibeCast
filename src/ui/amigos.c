@@ -112,3 +112,10 @@ void recomendarCanciones()
     Lista listaCancionesRecomendadas = newLista(NULL);                             // Crear una nueva lista para las canciones recomendadas
     forEachInLista(usuario->amigos, obtenerHistorial, listaCancionesRecomendadas); // Obtenemos la lista de recomendaciones de amigos
 }
+
+
+
+
+int prueba;
+
+// COMENTARIO DE PRUEBA
