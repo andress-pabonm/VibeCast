@@ -121,15 +121,35 @@ struct Usuario
 };
 
 // ==========================================
-// Constructores de estructuras
+// Constructores y destructores de estructuras
 // ==========================================
 
 Usuario *newUsuario(void);
+void destroyUsuario(Usuario *usuario);
+new_operfn(destroyUsuarios);
+
 Artista *newArtista(void);
+void destroyArtista(Artista *artista);
+new_operfn(destroyArtistas);
+
 Album *newAlbum(void);
+void destroyAlbum(Album *album);
+new_operfn(destroyAlbumes);
+
 Cancion *newCancion(void);
+void destroyCancion(Cancion *cancion);
+new_operfn(destroyCanciones);
+
 Playlist *newPlaylist(void);
+void destroyPlaylist(Playlist *playlist);
+new_operfn(destroyPlaylists);
+
 Reproduccion *newReproduccion(void);
+void destroyReproduccion(Reproduccion *reproduccion);
+new_operfn(destroyReproducciones);
+
 Anuncio *newAnuncio(void);
+void destroyAnuncio(Anuncio *anuncio);
+new_operfn(destroyAnuncios);
 
 #endif // VIBECAST_DB_ESTRUCTURAS_H
