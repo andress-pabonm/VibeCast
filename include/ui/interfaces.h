@@ -29,28 +29,6 @@ extern Cola cola_repr;
     if (msg)              \
     *msg = asprintf(__VA_ARGS__)
 
-<<<<<<< HEAD
-interfaz(IsLoggedIn);    // Para verificar si se ha iniciado sesión
-interfaz(IniciarSesion); // Para iniciar sesión
-interfaz(CerrarSesion);  // Para cerrar sesión
-interfaz(CrearCuenta);   // Para crear una nueva cuenta
-
-interfaz(ActualizarUsername);
-interfaz(ActualizarNickname);
-interfaz(ActualizarEmail);
-interfaz(ActualizarPassword);
-interfaz(ActualizarPais);
-
-// Función para avanzar en la cola de reproducción
-interfaz(SiguienteCancion);
-
-Artista *crearArtista(const char *nombre);
-void insertarArtistaEnABB(Artista *artista);
-void agregarAlbum(Album *album);
-Cancion *crearCancion(Album *album, const char *nombre, const char *genero, int duracion, const char *url);
-
-=======
->>>>>>> 367b43e26ebb5c5bcfc527d96c399cb136590d92
 Lista recomendarCanciones();
 
 json_object *cancion_to_json(Cancion *cancion);

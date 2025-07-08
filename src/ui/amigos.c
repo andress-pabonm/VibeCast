@@ -1,4 +1,5 @@
 #include <ui/interfaces.h>
+#include <db/dbmgr.h>
 
 // new_operfn(mostrarAmigo)
 // {
@@ -60,7 +61,7 @@ interfaz(AgregarAmigo)
     if (amigo)
     {
         send_message("El usuario %s ya es tu amigo.\n", amigo->username);
-        return;
+        return false;
     }
 
     // Buscar usuario en el sistema global
@@ -69,12 +70,17 @@ interfaz(AgregarAmigo)
     if (!amigo)
     {
         send_message("El usuario %s no existe en el sistema\n", username);
-        return;
+        return false;
     }
 
     // Agregar a lista de amigos
     insertValueInLista(amigos, amigo);
     send_message("El usuario %s ha sido agregado a tu lista de amigos\n", amigo->username);
+
+    char *values = asprintf("%d, %d", usuario->id);
+
+    nuevo_registro(
+        "Amigos", "id_usuario_1, id_usuario_2", values, NULL);
 }
 
 interfaz(EliminarAmigo)
@@ -96,6 +102,7 @@ interfaz(EliminarAmigo)
 
 json_object *amigo_to_json(Usuario *amigo)
 {
+    // Creo un nuevo objeto JSON
     json_object *jobj = json_object_new_object();
 
     // Rellenar los campos necesarios para mostrar el amigo en la interfaz gráfica

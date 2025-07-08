@@ -21,8 +21,14 @@ select_handler(obteneridCancion)
     return 0;
 }
 
-Cancion *crearCancion(Album *album, const char *nombre, const char *genero, int duracion, const char *url)
+interfaz(CrearCancion)
 {
+    Album *album; // NO SE COMO MANDAR ESTO COMO MACRO
+    const char *nombre = argv[0];
+    const char *genero = argv[1];
+    int duracion = itoa(duracion, argv[2], 10);
+    const char *url = argv[3];
+
     datetime_buf_t fechaActual;
     getDateTime(fechaActual, now());
 
@@ -30,12 +36,12 @@ Cancion *crearCancion(Album *album, const char *nombre, const char *genero, int 
     Cancion *cancion = searchValueInLista(album->canciones, nombre, cmpCancionConNombre);
     if (cancion)
     {
-        printf("Una cancion con ese nombre ya existe en el album\n");
-        return NULL;
+        send_message("Una cancion con ese nombre ya existe en el album\n");
+        return false;
     }
 
-    // Crear nueva estructura de canción
-    cancion = newCancion();
+    Cancion **cancion = arg;
+    *cancion = newCancion();
 
     // Configurar propiedades de la canción
     cancion->album = album;
@@ -69,17 +75,18 @@ Cancion *crearCancion(Album *album, const char *nombre, const char *genero, int 
         &cancion->id,
         NULL);
 
-    return cancion;
+    return true;
 }
 
-void eliminarCancion(int id)
+interfaz(EliminarCancion)
 {
+    int id = itoa(id, argv[0], 10); // Convertir el argumento a entero
     // Buscar la canción en la lista global
     Cancion *cancion = searchValueInLista(canciones, &id, cmpCancionConId);
 
     if (cancion == NULL)
     {
-        printf("La canción con el id %d no existe\n", id);
+        send_message("La canción con el id %d no existe\n", id);
         return;
     }
 
@@ -93,7 +100,7 @@ void eliminarCancion(int id)
     Album *album = searchValueInLista(usuario->artista->albumes, &(cancion->album->nombre), cmpAlbumConNombre);
     if (!album)
     {
-        printf("No se encontró el álbum asociado a la canción\n");
+        send_message("No se encontró el álbum asociado a la canción\n");
         return;
     }
 
@@ -115,11 +122,13 @@ void eliminarCancion(int id)
     // Liberar la estructura de la canción
     free(cancion);
 
-    printf("Canción eliminada exitosamente\n");
+    send_message("Canción eliminada exitosamente\n");
 }
 
-void actualizarCancion(Cancion *cancion, const char *nombre)
+interfaz(ActualizarCancion)
 {
+    Cancion *cancion;
+    const char *nombre = argv[0];
     // Liberar nombre anterior
     free(cancion->nombre);
 
