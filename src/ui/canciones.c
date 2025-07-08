@@ -21,7 +21,6 @@ select_handler(obteneridCancion)
     return 0;
 }
 
-// NO SE XQ DA ERROR SI ESTA DEVOLVIENDO LOS PUNTEROS DE TIPO CANCION PARA UTILIZAR TAMBIEN EN ARTISTAS.C
 Cancion *crearCancion(Album *album, const char *nombre, const char *genero, int duracion, const char *url)
 {
     datetime_buf_t fechaActual;

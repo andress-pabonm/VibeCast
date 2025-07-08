@@ -168,7 +168,7 @@ void generarTop3Artistas()
 
     for (int i = 0; i < longitud; i++)
     {
-        // pArtistas[i]->artista = getValueInLista(listaArtistas, i); // Obtenemos los artistas de la lista, da error y pues no se como solucionar xd
+        pArtistas[i]->artista = getValueInLista(listaArtistas, i); // Obtenemos los artistas de la lista, da error y pues no se como solucionar xd
     }
 
     qsort(pArtistas, longitud, sizeof(PopularidadArtista *), cmpArtistasPorPopularidad); // Buffer, tamaño del buffer, tamaño de cada elemento, funcion de comparacion
