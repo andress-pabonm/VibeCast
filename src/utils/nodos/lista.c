@@ -331,3 +331,29 @@ int getListaLength(Lista lista)
 
     return lista->length;
 }
+
+typedef struct
+{
+    void *val;
+    int idx;
+} getidx_arg_t;
+
+static new_operfn(getIdx)
+{
+    getidx_arg_t *wrapper_arg = arg;
+
+    if (idx < wrapper_arg->idx)
+        return FOREACH_CONTINUE;
+
+    wrapper_arg->val = val;
+    return FOREACH_BREAK;
+}
+
+void *getValueInLista(Lista lista, int idx)
+{
+    getidx_arg_t wrapper_arg = {
+        .val = NULL,
+        .idx = idx};
+    forEachInLista(lista, getIdx, &wrapper_arg);
+    return wrapper_arg.val;
+}
