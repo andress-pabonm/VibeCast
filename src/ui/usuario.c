@@ -427,18 +427,43 @@ interfaz(ActualizarNickname)
 
 interfaz(ActualizarEmail)
 {
-    const char *nickname = argv[0];
+    const char *email = argv[0];
 
-    // Validación que no sea null
-
-    /*if (searchValueInABB(usuarios, email, cmpUsuarioConEmail))
+    // Validar que el email no sea nulo
+    if (!email)
     {
-        send_message("El email ya existe");
+        send_message("El email no puede estar vacío");
         return false;
-    }*/
+    }
 
-    freem(usuario->nickname);
-    usuario->nickname = asprintf(nickname);
+    // Validar formato de email
+    if (!validar_email(email))
+    {
+        send_message("Correo no válido");
+        return false;
+    }
+
+    // Verificar que el email no esté registrado en otro usuario
+    bool emailRepetido = false;
+
+    search_email_arg_t wrapper_arg =
+        {
+            .check = &emailRepetido,
+            .email = email,
+        };
+
+    forEachInABB_InOrder(usuarios, check_email_repetido, &wrapper_arg);
+
+    // Si el email ya está registrado, se envia un mensaje
+    if (emailRepetido)
+    {
+        send_message("El email ya está registrado.");
+        return false;
+    }
+
+    // Actualizar el email del usuario actual
+    freem(usuario->email);
+    usuario->email = asprintf(email);
 
     return true;
 }
@@ -576,7 +601,7 @@ message_handler(get_user_data)
 
 /* ================================================================ */
 
-interfaz(actualizarContra)
+interfaz(ActualizarPassword)
 {
     const char *actualPassword = argv[0];
     const char *newPassword = argv[1];
