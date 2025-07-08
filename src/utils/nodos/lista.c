@@ -82,7 +82,6 @@ static void forEachInLista_Ref(Lista lista, operfn_t cb, void *arg)
         return;
 
     Nodo *ref = &cast(__Lista, lista)->start;
-    int idx = 0;
 
     for (int idx = 0; ref; idx++)
     {
@@ -168,7 +167,8 @@ Lista newLista(cmpfn_t cmp)
         &cast(
             struct __Lista,
             .start = NULL,
-            .cmp = cmp));
+            .cmp = cmp,
+            .length = 0));
 }
 
 // ========================================
@@ -209,12 +209,13 @@ int insertValueInLista(Lista lista, void *val)
 
     forEachInLista_Ref(lista, insert_wrapper_Lista, &wrapper_arg);
 
-    cast(__Lista, lista)->length++;
-
     if (idx == INSERT_FAILED)
+    {
         destroyNodo(nodo);
+        return INSERT_FAILED;
+    }
 
-    lista->length++;
+    cast(__Lista, lista)->length++;
 
     return idx;
 }
@@ -286,7 +287,7 @@ void *deleteValueInLista(Lista lista, const void *val, cmpfn_t cmp)
     Nodo nodo = *ref;
     *ref = nodo->der;
 
-    lista->length--;
+    cast(__Lista, lista)->length--;
 
     return destroyNodo(nodo);
 }
