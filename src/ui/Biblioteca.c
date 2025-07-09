@@ -60,8 +60,6 @@ new_operfn(getPlaylistJSON)
 
     json_object_array_add(arg, playlist_json);
 
-    printf("[%d]: %s", playlist->id, playlist->nombre);
-
     return FOREACH_CONTINUE;
 }
 
@@ -76,9 +74,6 @@ message_handler(get_playlists)
 
     json_object_object_add(response, "playlists", playlists_array);
     json_object_object_add(response, "playlistSongs", songs_array);
-
-    const char *json_string = json_object_to_json_string(response);
-    puts(json_string);
 
     VibeCast_SendJSON(id, HTTP_OK, response, "Playlists cargadas", STATE_SUCCESS);
     json_object_put(response);

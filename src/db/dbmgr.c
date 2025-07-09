@@ -88,7 +88,10 @@ bool obtener_registros(const char *table_name, const char *table_fields, const c
 {
     char *sql = NULL;
     if (condition)
+    {
         sql = sqlite3_mprintf("SELECT %s FROM %s WHERE %s", table_fields, table_name, condition);
+        // puts(sql);
+    }
     else
         sql = sqlite3_mprintf("SELECT %s FROM %s", table_fields, table_name);
 

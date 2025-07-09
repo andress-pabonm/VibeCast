@@ -96,9 +96,6 @@ select_handler(cargarUsuarios)
 
 static select_handler(cargarArtistaPorUsuario)
 {
-    for (int i = 0; i < argc; i++)
-        printf("[%s]: %s\n", fields[i], argv[i]);
-
     Artista *artista = newArtista();
     if (!artista)
         return 1;
@@ -123,9 +120,6 @@ static select_handler(cargarArtistaPorUsuario)
 
 static select_handler(cargarAlbumesPorArtista)
 {
-    for (int i = 0; i < argc; i++)
-        printf("[%s]: %s\n", fields[i], argv[i]);
-
     Album *album = newAlbum();
     if (!album)
         return 1;
@@ -155,9 +149,6 @@ static select_handler(cargarAlbumesPorArtista)
 
 static select_handler(cargarCancionesPorAlbum)
 {
-    for (int i = 0; i < argc; i++)
-        printf("[%s]: %s\n", fields[i], argv[i]);
-
     Cancion *cancion = newCancion();
     if (!cancion)
         return 1;
@@ -182,9 +173,6 @@ static select_handler(cargarCancionesPorAlbum)
 
 static select_handler(cargarAmigosPorUsuario)
 {
-    for (int i = 0; i < argc; i++)
-        printf("[%s]: %s\n", fields[i], argv[i]);
-
     // Buscar el amigo
 
     Usuario *amigo =
@@ -204,9 +192,6 @@ static select_handler(cargarAmigosPorUsuario)
 
 static select_handler(cargarPlaylistsPorUsuario)
 {
-    for (int i = 0; i < argc; i++)
-        printf("[%s]: %s\n", fields[i], argv[i]);
-
     Playlist *playlist = newPlaylist();
     if (!playlist)
         return 1;
@@ -217,7 +202,7 @@ static select_handler(cargarPlaylistsPorUsuario)
     insertValueInLista(arg, playlist);
 
     char *condition = asprintf("id_playlist = %d", playlist->id);
-    obtener_registros("Playlist_Canciones", "id_cancion", condition, cargarCancionesPorPlaylist, &playlist->canciones, NULL);
+    obtener_registros("Playlist_Canciones", "id_cancion", condition, cargarCancionesPorPlaylist, playlist->canciones, NULL);
     free(condition);
 
     return 0;
@@ -225,9 +210,6 @@ static select_handler(cargarPlaylistsPorUsuario)
 
 static select_handler(cargarCancionesPorPlaylist)
 {
-    for (int i = 0; i < argc; i++)
-        printf("[%s]: %s\n", fields[i], argv[i]);
-
     int id_cancion;
     sscanf(argv[CANCION_ID], "%d", &id_cancion);
 
@@ -249,9 +231,6 @@ static select_handler(cargarCancionesPorPlaylist)
 
 static select_handler(cargarHistorialPorUsuario)
 {
-    for (int i = 0; i < argc; i++)
-        printf("[%s]: %s\n", fields[i], argv[i]);
-
     // Cargar los datos del historial
 
     Historial *historial = arg;
@@ -292,6 +271,7 @@ static select_handler(cargarReproduccionesPorHistorial)
                            cmpCancionConId);
 
     insertValueInPila(arg, reproduccion);
+
     return 0;
 }
 
@@ -327,6 +307,8 @@ static select_handler(cargarOtrosDatosPorUsuario)
             argv[USUARIO_USERNAME],
             cmpUsuarioConUsername);
 
+    printf("Enlazando datos de %d: %s\n", id_usuario, usuario->username);
+
     // Cargar amigos
 
     char *condition = asprintf("Amigos.id_usuario_1 = %d", id_usuario);
@@ -345,9 +327,16 @@ static select_handler(cargarOtrosDatosPorUsuario)
     condition = asprintf("id_usuario = %d", id_usuario);
 
     obtener_registros(
-        "Playlist", "id, nombre", condition,
+        "Playlists", "id, nombre", condition,
         cargarPlaylistsPorUsuario,
         usuario->playlists, NULL);
+
+    // Cargar historial
+
+    obtener_registros(
+        "Reproducciones", "id_cancion, fecha_escuchado", condition,
+        cargarReproduccionesPorHistorial,
+        usuario->historial.reproducciones, NULL);
 
     freem(condition);
 

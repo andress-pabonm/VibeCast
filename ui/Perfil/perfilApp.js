@@ -1,20 +1,24 @@
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     const res = await window.get_user_data();
-    if (res.status !== "ok" || res.type !== "json") {
-      throw new Error(res.message || "No se pudo cargar el perfil");
+
+    if (!res || res.status !== "ok" || res.type !== "json" || !res.data) {
+      throw new Error(res?.message || "No se pudo cargar el perfil");
     }
 
     const userData = res.data;
+
+    // Inicializa la vista base del perfil
     initializeProfile(userData);
 
-    // Verificar si el usuario es artista
+    // Si el usuario es artista, cargar datos de álbumes
     if (userData.isArtist) {
       await loadArtistData(userData);
     }
   } catch (err) {
     console.error("Error al cargar perfil:", err);
-    window.location.replace("../Login/index.html");
+    alert("No se pudo cargar el perfil, redirigiendo...");
+    // window.location.replace("../Login/index.html");
   }
 });
 
@@ -76,10 +80,15 @@ function setupBecomeArtistButton(userData) {
       try {
         const res = await window.become_artist();
         if (res.status === "ok") {
-          alert("¡Ahora eres un artista! Se ha creado tu primer álbum y canción.");
+          alert(
+            "¡Ahora eres un artista! Se ha creado tu primer álbum y canción."
+          );
           location.reload();
         } else {
-          alert("Error al convertirte en artista: " + (res.message || "Error desconocido"));
+          alert(
+            "Error al convertirte en artista: " +
+              (res.message || "Error desconocido")
+          );
         }
       } catch (err) {
         console.error("Error:", err);
@@ -92,8 +101,12 @@ function setupBecomeArtistButton(userData) {
 function setProfileFields(user) {
   document.getElementById("profile-name").textContent = user.name;
   document.getElementById("profile-username").textContent = user.username;
-  document.getElementById("profile-country").innerHTML = `<i class="fas fa-globe"></i> ${user.country}`;
-  document.getElementById("profile-email").innerHTML = `<i class="fas fa-envelope"></i> ${user.email}`;
+  document.getElementById(
+    "profile-country"
+  ).innerHTML = `<i class="fas fa-globe"></i> ${user.country}`;
+  document.getElementById(
+    "profile-email"
+  ).innerHTML = `<i class="fas fa-envelope"></i> ${user.email}`;
 
   document.getElementById("edit-name").value = user.name;
   document.getElementById("edit-username").value = user.username;
@@ -145,7 +158,9 @@ function setupPasswordForm() {
       /[^A-Za-z0-9]/.test(pass1);
 
     if (!valid) {
-      alert("La contraseña debe tener al menos 8 caracteres, incluyendo mayúscula, minúscula, número y símbolo.");
+      alert(
+        "La contraseña debe tener al menos 8 caracteres, incluyendo mayúscula, minúscula, número y símbolo."
+      );
       return;
     }
 
@@ -182,7 +197,8 @@ function setSubscriptionInfo(user) {
   const info = document.getElementById("subscriptionInfo");
   const isPremium = ["premium", "annual"].includes(user.subscription.type);
   const plan = user.subscription.type;
-  const planInfo = subscriptionPlans.find((p) => p.id === plan) || subscriptionPlans[0];
+  const planInfo =
+    subscriptionPlans.find((p) => p.id === plan) || subscriptionPlans[0];
 
   let renewal = "";
   if (isPremium) {
@@ -200,7 +216,9 @@ function setSubscriptionInfo(user) {
     <div class="subscription-features">
       <h4>${isPremium ? "Beneficios:" : "Actualiza para obtener:"}</h4>
       <ul>
-        ${planInfo.features.map((f) => `<li><i class="fas fa-check"></i> ${f}</li>`).join("")}
+        ${planInfo.features
+          .map((f) => `<li><i class="fas fa-check"></i> ${f}</li>`)
+          .join("")}
       </ul>
     </div>
   `;
@@ -251,9 +269,13 @@ function loadPlans(userData) {
       <div class="plan-price">$${plan.price.toFixed(2)}</div>
       <div class="plan-period">${plan.period}</div>
       <ul class="plan-features">
-        ${plan.features.map((f) => `<li><i class="fas fa-check"></i> ${f}</li>`).join("")}
+        ${plan.features
+          .map((f) => `<li><i class="fas fa-check"></i> ${f}</li>`)
+          .join("")}
       </ul>
-      <button class="select-plan-btn ${disabled}" data-plan="${plan.id}">${btnText}</button>
+      <button class="select-plan-btn ${disabled}" data-plan="${
+      plan.id
+    }">${btnText}</button>
     `;
     container.appendChild(card);
   });
@@ -292,12 +314,14 @@ function setupArtistView(user) {
       name: "Mi primer álbum",
       year: new Date().getFullYear().toString(),
       genre: "General",
-      songs: [{
-        id: Date.now() + 1,
-        title: "Mi primera canción",
-        artist: user.name,
-        duration: "3:45"
-      }]
+      songs: [
+        {
+          id: Date.now() + 1,
+          title: "Mi primera canción",
+          artist: user.name,
+          duration: "3:45",
+        },
+      ],
     });
     user.albums = artistAlbums;
   }
@@ -314,12 +338,18 @@ function renderAlbums(albums) {
     const el = document.createElement("div");
     el.className = "album-card";
     el.innerHTML = `
-      <div class="album-options" data-id="${album.id}"><i class="fas fa-ellipsis-h"></i></div>
+      <div class="album-options" data-id="${
+        album.id
+      }"><i class="fas fa-ellipsis-h"></i></div>
       <div class="album-image"><i class="fas fa-compact-disc"></i></div>
       <div class="album-info">
         <h3 class="album-name">${album.name}</h3>
-        <div class="album-details"><span>${album.year}</span><span>${album.genre}</span></div>
-        <div class="album-details"><span>${album.songs.length} canción${album.songs.length !== 1 ? "es" : ""}</span></div>
+        <div class="album-details"><span>${album.year}</span><span>${
+      album.genre
+    }</span></div>
+        <div class="album-details"><span>${album.songs.length} canción${
+      album.songs.length !== 1 ? "es" : ""
+    }</span></div>
       </div>
     `;
 
@@ -388,7 +418,7 @@ function setupAlbumEvents() {
       name,
       year,
       genre: "General",
-      songs: []
+      songs: [],
     };
 
     // Aquí deberías llamar a una función del backend para crear el álbum

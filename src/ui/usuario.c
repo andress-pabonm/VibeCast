@@ -265,9 +265,11 @@ message_handler(get_user_data)
     json_object *jobj = usuario_to_json(usuario);
 
     VibeCast_SendJSON(id, HTTP_OK, jobj, "Datos del usuario cargados", STATE_SUCCESS);
-    json_object_put(jobj); // Libera el objeto JSON
 
-    puts("Información de perfil enviada");
+    // const char *json_str = json_object_to_json_string(jobj);
+    // puts(json_str);
+
+    json_object_put(jobj); // Libera el objeto JSON
 }
 
 /* ================ Funciones para actualizar datos del usuario ================ */
