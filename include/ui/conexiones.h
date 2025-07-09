@@ -117,6 +117,8 @@ message_handler(crear_artista);
 message_handler(get_canciones);       // Para el menú principal
 message_handler(get_recomendaciones); // Para el menú principal
 
+message_handler(get_playlists); // Obtenemos las playlist del usuario
+
 message_handler(next_song); // Para avanzar en la cola de reproducción
 
 /* ================================================================ */
