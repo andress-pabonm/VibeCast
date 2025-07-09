@@ -160,6 +160,43 @@ body {
     box-shadow: 0 5px 15px rgba(255, 10, 84, 0.4);
 }
 
+/* Estilos para el botón de convertirse en artista */
+.action-btn {
+    background: linear-gradient(45deg, var(--morado), var(--azul-oscuro));
+    color: var(--blanco);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition-normal);
+    margin-top: 0.5rem;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(141, 45, 226, 0.4);
+}
+
+/* Estilos para la sección de artista */
+#artistSection {
+    grid-column: span 2;
+    background-color: var(--gris-oscuro);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.albums-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
 /* ========== PROFILE CONTENT ========== */
 .profile-content {
     display: grid;
@@ -186,7 +223,7 @@ body {
 }
 
 /* ========== FORMS ========== */
-#profileForm, 
+#profileForm,
 #passwordForm {
     display: flex;
     flex-direction: column;
@@ -405,7 +442,7 @@ body {
     align-items: center;
     z-index: 1000;
     overflow: auto;
-    padding: 2rem 0; 
+    padding: 2rem 0;
 }
 
 .hidden {
@@ -736,7 +773,8 @@ body {
     cursor: pointer;
     transition: var(--transition-normal);
     margin-top: 1rem;
-    margin-top: auto; /* Empuja el botón hacia abajo */
+    margin-top: auto;
+    /* Empuja el botón hacia abajo */
 }
 
 .select-plan-btn.free {
@@ -914,7 +952,7 @@ body {
     width: 100%;
 }
 
-.queue-btn, 
+.queue-btn,
 #closePlayerBtn {
     background: none;
     border: none;
@@ -929,6 +967,13 @@ body {
 
 /* ========== ANIMATIONS ========== */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <div class="menu-container">
         <!-- Sidebar -->
@@ -17,7 +19,7 @@
                 <i class="fas fa-music logo-icon"></i>
                 <h1 class="logo-title">VibeCast</h1>
             </div>
-            
+
             <nav class="main-menu">
                 <ul>
                     <li><a href="../Menu/menu.html"><i class="fas fa-home"></i>Inicio</a></li>
@@ -32,15 +34,14 @@
         <!-- Main Content -->
         <main class="main-content">
             <header class="profile-header">
-                <div class="profile-info">
-                    <div class="profile-details">
-                        <h1 id="profile-name">John Doe</h1>
-                        <p id="profile-username">@johndoe</p>
-                        <p id="profile-country"><i class="fas fa-globe"></i>México</p>
-                        <p id="profile-email"><i class="fas fa-envelope"></i>john.doe@example.com</p>
-                    </div>
-                    <button class="logout-btn" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i>Cerrar sesión
+                <!-- En la sección de información del perfil -->
+                <div class="profile-details">
+                    <h1 id="profile-name">John Doe</h1>
+                    <p id="profile-username">@johndoe</p>
+                    <p id="profile-country"><i class="fas fa-globe"></i>México</p>
+                    <p id="profile-email"><i class="fas fa-envelope"></i>john.doe@example.com</p>
+                    <button id="becomeArtistBtn" class="action-btn">
+                        <i class="fas fa-microphone"></i> Convertirse en artista
                     </button>
                 </div>
             </header>
@@ -91,7 +92,8 @@
                         <div class="form-group">
                             <label for="confirm-new-password">Confirmar nueva contraseña</label>
                             <div class="input-with-icon">
-                                <input type="password" id="confirm-new-password" placeholder="Confirmar contraseña" required>
+                                <input type="password" id="confirm-new-password" placeholder="Confirmar contraseña"
+                                    required>
                                 <i class="fas fa-eye toggle-password"></i>
                             </div>
                         </div>
@@ -229,4 +231,5 @@
     <script src="perfilApp.js"></script>
     <script src="../Reproductor/reproductorApp.js"></script>
 </body>
+
 </html>
