@@ -1,145 +1,156 @@
-//TODA LA LOGICA DE REPRODUCCION DE MUSICA
-
-// Reproductor de música como módulo
 const MusicPlayer = (function () {
-  // Variables privadas
-  let currentAudio = new Audio();
+  let currentAudio = null;
   let isPlaying = false;
   let currentQueue = [];
   let currentIndex = 0;
   let volume = 0.8;
 
   // Elementos del DOM
-  const playPauseBtn = document.getElementById("playPauseBtn");
-  const prevBtn = document.getElementById("prevBtn");
-  const nextBtn = document.getElementById("nextBtn");
-  const progressBar = document.getElementById("progressBar");
-  const progress = document.getElementById("progress");
-  const currentTimeEl = document.getElementById("currentTime");
-  const totalTimeEl = document.getElementById("totalTime");
-  const volumeSlider = document.getElementById("volumeSlider");
-  const volumeLevel = document.getElementById("volumeLevel");
-  const currentSongTitle = document.getElementById("currentSongTitle");
-  const currentSongArtist = document.getElementById("currentSongArtist");
-  const showQueueBtn = document.getElementById("showQueueBtn");
-  const closePlayerBtn = document.getElementById("closePlayerBtn");
-  const musicPlayer = document.getElementById("musicPlayer");
+  const $ = (id) => document.getElementById(id);
+  const playPauseBtn = $("playPauseBtn");
+  const prevBtn = $("prevBtn");
+  const nextBtn = $("nextBtn");
+  const progressBar = $("progressBar");
+  const progress = $("progress");
+  const currentTimeEl = $("currentTime");
+  const totalTimeEl = $("totalTime");
+  const volumeSlider = $("volumeSlider");
+  const volumeLevel = $("volumeLevel");
+  const currentSongTitle = $("currentSongTitle");
+  const currentSongArtist = $("currentSongArtist");
+  const showQueueBtn = $("showQueueBtn");
+  const closePlayerBtn = $("closePlayerBtn");
+  const musicPlayer = $("musicPlayer");
 
-  // Formatear tiempo (segundos a mm:ss)
   function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
   }
 
-  // Función para reproducir una canción
-  function playSong(song) {
-    if (isPlaying) {
+  function cleanupAudio() {
+    if (currentAudio) {
       currentAudio.pause();
+      currentAudio.src = ""; // Liberar
+      currentAudio = null;
+    }
+  }
+
+  function playSong(song) {
+    if (!song || !song.title || !song.id) {
+      console.warn("Canción inválida", song);
+      return;
     }
 
-    currentAudio = new Audio(`../../assets/music/${idol.mp3}`); //LOGICA PARA LAS CANCIONES
-    currentAudio.volume = volume;
+    cleanupAudio();
 
-    currentAudio.addEventListener("loadedmetadata", () => {
-      totalTimeEl.textContent = formatTime(currentAudio.duration);
+    const audio = new Audio(song.path || "../../assets/music/Idol.mp3");
+    audio.volume = volume;
+
+    audio.addEventListener("loadedmetadata", () => {
+      totalTimeEl.textContent = formatTime(audio.duration);
     });
 
-    currentAudio.addEventListener("timeupdate", () => {
-      const percent = (currentAudio.currentTime / currentAudio.duration) * 100;
+    audio.addEventListener("timeupdate", () => {
+      const percent = (audio.currentTime / audio.duration) * 100;
       progress.style.width = `${percent}%`;
-      currentTimeEl.textContent = formatTime(currentAudio.currentTime);
+      currentTimeEl.textContent = formatTime(audio.currentTime);
     });
 
-    //PUES AQUI ESTA SI SE TERMINA LA CANCION
-    // Ok, me lo apunto
-
-    currentAudio.addEventListener("ended", () => {
-      // Mostrar notificación
-      showNotification(
-        `Canción terminada: ${currentQueue[currentIndex].title}`
-      );
+    audio.addEventListener("ended", () => {
+      showNotification(`Canción terminada: ${song.title}`);
       playNext();
     });
 
-    //MUESTRA EL MENSAJE Q SE TERMINO XD
-    function showNotification(message) {
-      alert(message);
-    }
-
-    currentAudio.play();
-    isPlaying = true;
-    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-
-    currentSongTitle.textContent = song.title;
-    currentSongArtist.textContent = song.artist;
-
-    // Actualizar el índice actual si está en la cola
-    currentIndex = currentQueue.findIndex((s) => s.id === song.id);
+    audio
+      .play()
+      .then(() => {
+        isPlaying = true;
+        currentAudio = audio;
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        currentSongTitle.textContent = song.title;
+        currentSongArtist.textContent = song.artist || "Desconocido";
+        currentIndex = currentQueue.findIndex((s) => s.id === song.id);
+      })
+      .catch((err) => {
+        console.error("No se pudo reproducir:", err);
+        showNotification("Error al reproducir la canción.");
+      });
   }
 
-  // Función para canción siguiente
+  function showNotification(msg) {
+    alert(msg);
+  }
+
   function playNext() {
-    if (currentQueue.length > 0 && currentIndex < currentQueue.length - 1) {
-      currentIndex++;
-      playSong(currentQueue[currentIndex]);
+    if (currentQueue.length === 0) return;
+    const next = currentQueue[currentIndex + 1];
+    if (next) {
+      playSong(next);
+    } else {
+      console.log("Fin de la cola");
+      isPlaying = false;
+      playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
     }
   }
 
-  // Inicializar eventos
+  function togglePlayer() {
+    musicPlayer.classList.toggle("hidden");
+    document.body.classList.toggle("player-closed");
+  }
+
   function init() {
-    // Control de reproducción/pausa
     playPauseBtn.addEventListener("click", () => {
+      if (!currentAudio) {
+        if (currentQueue.length > 0) {
+          playSong(currentQueue[0]);
+        }
+        return;
+      }
+
       if (isPlaying) {
         currentAudio.pause();
         playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        isPlaying = false;
       } else {
-        if (currentAudio.src) {
-          currentAudio.play();
-          playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        } else if (currentQueue.length > 0) {
-          playSong(currentQueue[0]);
-        }
+        currentAudio
+          .play()
+          .then(() => {
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            isPlaying = true;
+          })
+          .catch(console.error);
       }
-      isPlaying = !isPlaying;
     });
 
-    // Canción anterior
     prevBtn.addEventListener("click", () => {
       if (currentQueue.length > 0 && currentIndex > 0) {
-        currentIndex--;
-        playSong(currentQueue[currentIndex]);
+        playSong(currentQueue[currentIndex - 1]);
       }
     });
 
-    // Canción siguiente
-    nextBtn.addEventListener("click", () => {
-      playNext();
-    });
+    nextBtn.addEventListener("click", playNext);
 
-    // Control de volumen
-    volumeSlider.addEventListener("click", (e) => {
-      const rect = volumeSlider.getBoundingClientRect();
-      const percent = (e.clientX - rect.left) / rect.width;
-      volume = Math.max(0, Math.min(1, percent));
-      volumeLevel.style.width = `${volume * 100}%`;
-      if (currentAudio) currentAudio.volume = volume;
-    });
-
-    // Control de progresoz
     progressBar.addEventListener("click", (e) => {
-      if (!currentAudio.src) return;
+      if (!currentAudio || !currentAudio.duration) return;
       const rect = progressBar.getBoundingClientRect();
       const percent = (e.clientX - rect.left) / rect.width;
       currentAudio.currentTime = percent * currentAudio.duration;
     });
 
-    // Ver cola de reproducción
+    volumeSlider.addEventListener("click", (e) => {
+      const rect = volumeSlider.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      volume = Math.min(1, Math.max(0, percent));
+      volumeLevel.style.width = `${volume * 100}%`;
+      if (currentAudio) currentAudio.volume = volume;
+    });
+
     showQueueBtn.addEventListener("click", () => {
       if (currentQueue.length > 0) {
         alert(
-          `Canciones en cola:\n${currentQueue
-            .map((song, i) => `${i + 1}. ${song.title} - ${song.artist}`)
+          `Cola:\n${currentQueue
+            .map((s, i) => `${i + 1}. ${s.title} - ${s.artist}`)
             .join("\n")}`
         );
       } else {
@@ -147,44 +158,23 @@ const MusicPlayer = (function () {
       }
     });
 
-    // Inicializar volumen
-    volumeLevel.style.width = `${volume * 100}%`;
-
     closePlayerBtn.addEventListener("click", togglePlayer);
+
+    volumeLevel.style.width = `${volume * 100}%`;
   }
 
-  // API pública
   return {
     init,
     playSong,
-    addSongsToQueue: function (songs) {
+    addSongsToQueue(songs) {
+      if (!Array.isArray(songs)) return;
       currentQueue = currentQueue.concat(songs);
       if (!isPlaying) {
         playSong(currentQueue[0]);
       }
     },
-    getCurrentQueue: function () {
+    getCurrentQueue() {
       return currentQueue;
     },
   };
-
-  //NO SE CIERRA XDDD ya no se que hago no se mucho de js jaja
-  // Ntp, ya estoy revisando eso mismo.
-
-  // Función para cerrar el reproductor
-  function togglePlayer() {
-    musicPlayer.classList.toggle("hidden");
-    document.body.classList.toggle("player-closed");
-  }
 })();
-
-// El problema era que se estaba inicializando MusicPlayer como una función,
-// cuando debería haber sido el valore que retornaba dicha función.
-// Entonces, encerré la función entre paréntesis y luego la ejecuté
-// Antes:   const MusicPlayer = function() {...}; <== Función
-// Después: const MusicPlayer = (function() {...})(); <== Valor que retorna la función
-
-// Inicializar el reproductor cuando el DOM esté listo
-document.addEventListener("DOMContentLoaded", () => {
-  MusicPlayer.init();
-});

@@ -112,9 +112,6 @@ json_object *amigo_to_json(Usuario *amigo)
     // Creo un nuevo objeto JSON
     json_object *jobj = json_object_new_object();
 
-    // Rellenar los campos necesarios para mostrar el amigo en la interfaz gráfica
-    // Revisar "../../ui/Amigos/amigosApp.js"
-
     json_object_object_add(
         jobj,
         "nombre",
@@ -123,32 +120,24 @@ json_object *amigo_to_json(Usuario *amigo)
     json_object_object_add(
         jobj,
         "id",
-        json_object_new_string(amigo->id));
-    // Añadir el resto de campos
-
-    /*
-    {
-        "nombre": "nickname"
-        "id": "12345",
-    }
-     */
+        json_object_new_int(amigo->id));
 
     return jobj;
 }
 
-new_operfn(obtenerAmigo)
+new_operfn(getAmigos)
 {
     json_object_array_add(arg, amigo_to_json(val));
     return FOREACH_CONTINUE;
 }
 
-message_handler(mostrar_amigos)
+message_handler(get_amigos)
 {
     // Crear un array para los amigos
     json_object *array = json_object_new_array();
 
     // Recorrer la lista de amigos para agregarlos a (array)
-    forEachInLista(usuario->amigos, obtenerAmigo, array);
+    forEachInLista(usuario->amigos, getAmigos, array);
 
     size_t len = json_object_array_length(array);
 

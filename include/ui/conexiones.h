@@ -110,6 +110,8 @@ message_handler(get_user_data);       // Para mostrar la información en la secc
 message_handler(actualizar_usuario);  // Para actualizar los datos del usuario
 message_handler(actualizar_password); // Para actualizar la contraseña
 
+message_handler(get_amigos);
+
 message_handler(crear_artista);
 
 message_handler(get_canciones);       // Para el menú principal

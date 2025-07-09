@@ -269,3 +269,221 @@ message_handler(get_user_data)
 
     puts("Información de perfil enviada");
 }
+
+/* ================ Funciones para actualizar datos del usuario ================ */
+
+interfaz(ActualizarNickname)
+{
+    const char *nickname = argv[0];
+
+    // Validar que el campo no sea nulo
+    if (!nickname || !*nickname)
+    {
+        send_message("El nickname no puede estar vacío");
+        return false;
+    }
+
+    // Liberar la memoria del antiguo valor
+    freem(usuario->nickname);
+
+    // Actualizar al nuevo valor
+    usuario->nickname = asprintf(nickname);
+
+    // Reportar éxito
+    send_message("Nickname actualizado exitosamente");
+
+    return true;
+}
+
+interfaz(ActualizarEmail)
+{
+    const char *email = argv[0];
+
+    // Validar que el email no sea nulo
+    if (!email || !*email)
+    {
+        send_message("El email no puede estar vacío");
+        return false;
+    }
+
+    // Validar que el valor haya cambiado
+    if (!strcmp(usuario->email, email))
+    {
+        send_message("El email no ha cambiado.");
+        return false;
+    }
+
+    // Validar formato de email
+    if (!validar_email(email))
+    {
+        send_message("Correo no válido");
+        return false;
+    }
+
+    // Verificar que el email no esté registrado en otro usuario
+
+    bool emailRepetido = false;
+
+    search_email_arg_t wrapper_arg =
+        {
+            .check = &emailRepetido,
+            .email = email,
+        };
+
+    forEachInABB_InOrder(usuarios, check_email_repetido, &wrapper_arg);
+
+    // Si el email ya está registrado, se envia un mensaje
+    if (emailRepetido)
+    {
+        send_message("El email ya está registrado.");
+        return false;
+    }
+
+    // Liberar la memoria del antiguo valor
+    freem(usuario->email);
+
+    // Actualizar al nuevo valor
+    usuario->email = asprintf(email);
+
+    // Reportar éxito
+    send_message("Email actualizado exitosamente");
+
+    return true;
+}
+
+interfaz(ActualizarPais)
+{
+    const char *pais = argv[0];
+
+    // Validar que el campo no sea nulo
+    if (!pais || !*pais)
+    {
+        send_message("El país no puede estar vacío");
+        return false;
+    }
+
+    // Liberar la memoria del antiguo valor
+    freem(usuario->pais);
+
+    // Actualizar al nuevo valor
+    usuario->pais = asprintf(pais);
+
+    // Reportar éxito
+    send_message("Pais actualizado exitosamente");
+
+    return true;
+}
+
+interfaz(ActualizarPassword)
+{
+    const char *currentPassword = argv[0];
+    const char *newPassword = argv[1];
+    const char *confirmPassword = argv[2];
+
+    // Validar que no sean campos nulos o vacios
+    if (!currentPassword || !*currentPassword ||
+        !newPassword || !*newPassword ||
+        !confirmPassword || !*confirmPassword)
+    {
+        send_message("Los campos no pueden estar vacios.");
+        return false;
+    }
+
+    // Validar que el campo de la contraseña actual coincida
+    if (strcmp(usuario->password, currentPassword))
+    {
+        send_message("La contraseña actual es incorrecta.");
+        return false;
+    }
+
+    // Validar que el valor haya cambiado
+    if (!strcmp(currentPassword, newPassword))
+    {
+        send_message("La nueva contraseña debe ser diferente.");
+        return false;
+    }
+
+    // Validar el patrón de la nueva contraseña
+    if (!validar_password(newPassword))
+    {
+        send_message("La contraseña no es valida");
+        return false;
+    }
+
+    // Validar que la nueva contraseña y su confirmación coincidan
+    if (strcmp(newPassword, confirmPassword))
+    {
+        send_message("Las contraseñas no coinciden.");
+        return false;
+    }
+
+    // Liberar la memoria del antiguo valor
+    freem(usuario->password);
+
+    // Actualizar al nuevo valor
+    usuario->password = asprintf(newPassword);
+
+    // Reportar éxito
+    send_message("Contraseña actualizada exitosamente.");
+
+    return true;
+}
+
+message_handler(actualizar_usuario)
+{
+    init_data_json();
+
+    const char *nickname = get_string(get_array_idx(data, 0));
+    const char *pais = get_string(get_array_idx(data, 1));
+    const char *email = get_string(get_array_idx(data, 2));
+
+    // Actualizar nickname
+    VibeCast_ActualizarNickname(
+        NULL,
+        1,
+        cast(const char *[], nickname),
+        NULL);
+
+    // Actualizar pais
+    VibeCast_ActualizarPais(
+        NULL,
+        1,
+        cast(const char *[], pais),
+        NULL);
+
+    // Actualizar email
+    VibeCast_ActualizarEmail(
+        NULL,
+        1,
+        cast(const char *[], email),
+        NULL);
+
+    VibeCast_SendText(id, HTTP_OK, "", "Datos actualizados", STATE_SUCCESS);
+}
+
+message_handler(actualizar_password)
+{
+    init_data_json();
+
+    const char *currentPassword = get_string(get_array_idx(data, 0));
+    const char *newPassword = get_string(get_array_idx(data, 1));
+    const char *confirmPassword = get_string(get_array_idx(data, 2));
+
+    char **msg = arg;
+
+    bool success = VibeCast_ActualizarPassword(
+        NULL,
+        3,
+        cast(const char *[],
+             currentPassword,
+             newPassword,
+             confirmPassword),
+        msg);
+
+    VibeCast_SendText(
+        id,
+        HTTP_OK,
+        *msg,
+        "Actualización de contraseña",
+        STATE_BOOL(success));
+}

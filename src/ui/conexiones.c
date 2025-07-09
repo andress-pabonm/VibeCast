@@ -11,6 +11,10 @@ bool VibeCast_InitBindings()
     bind_fn(cerrar_sesion, &msg);
     bind_fn(crear_cuenta, &msg);
     bind_fn(get_user_data, &msg);
+    bind_fn(actualizar_usuario, &msg);
+    bind_fn(actualizar_password, &msg);
+
+    bind_fn(get_amigos, &msg);
 
     bind_fn(next_song, &msg);
     bind_fn(get_canciones, &msg);

@@ -5,6 +5,17 @@ document.addEventListener("DOMContentLoaded", () => {
   loadRecommendations();
 
   setupSongClickEvents();
+
+  MusicPlayer.init();
+
+  MusicPlayer.addSongsToQueue([
+    {
+      id: 1,
+      title: "Idol",
+      artist: "YOASOBI",
+      path: "../../assets/music/Idol.mp3",
+    },
+  ]);
 });
 
 /**
