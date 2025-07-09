@@ -7,15 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSongClickEvents();
 
   MusicPlayer.init();
-
-  MusicPlayer.addSongsToQueue([
-    {
-      id: 1,
-      title: "Idol",
-      artist: "YOASOBI",
-      path: "../../assets/music/Idol.mp3",
-    },
-  ]);
 });
 
 /**
@@ -104,6 +95,10 @@ async function loadRecommendations() {
 function createSongElement(song) {
   const div = document.createElement("div");
   div.className = "song-item";
+  div.dataset.id = song.id;
+  div.dataset.title = song.title;
+  div.dataset.artist = song.artist;
+
   div.innerHTML = `
     <div class="song-info">
         <strong>${song.title}</strong>
@@ -139,24 +134,44 @@ function createRecommendationElement(song) {
  * Configura eventos para manejar clics en canciones.
  */
 function setupSongClickEvents() {
-  document.addEventListener("click", (e) => {
+  document.addEventListener("click", async (e) => {
     const item = e.target.closest(".song-item");
     if (!item) return;
 
-    // Ignorar si se hizo clic en los íconos
-    if (
-      e.target.classList.contains("fa-play") ||
-      e.target.classList.contains("fa-plus")
-    ) {
-      return;
+    const song = {
+      id: parseInt(item.dataset.id),
+      title: item.dataset.title,
+      artist: item.dataset.artist,
+    };
+
+    if (e.target.classList.contains("fa-play")) {
+      console.log("▶ Encolando y reproduciendo:", song.title);
+
+      try {
+        const res = await window.enqueue(song.id);
+        if (res?.status === "ok") {
+          MusicPlayer.addSongsToQueue([song]); // Reproducir después de encolar
+        } else {
+          console.warn("No se pudo encolar la canción:", res?.message || res);
+        }
+      } catch (err) {
+        console.error("Error en enqueue:", err);
+      }
     }
 
-    const title = item.querySelector("strong")?.textContent;
-    if (title) {
-      console.log(`Reproduciendo: ${title}`);
-      // Aquí iría la lógica para:
-      // - añadir a la cola: window.add_to_queue(id);
-      // - o reproducir directamente
+    if (e.target.classList.contains("fa-plus")) {
+      console.log("➕ Encolando (sin reproducir):", song.title);
+
+      try {
+        const res = await window.enqueue(song.id);
+        if (res?.status === "ok") {
+          MusicPlayer.addSongsToQueue([song], false); // Añadir sin reproducir
+        } else {
+          console.warn("No se pudo encolar la canción:", res?.message || res);
+        }
+      } catch (err) {
+        console.error("Error en enqueue:", err);
+      }
     }
   });
 }

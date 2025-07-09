@@ -14,9 +14,7 @@ json_bool *playlist_to_json(Playlist *playlist)
     json_object_object_add(
         p,
         "songCount",
-        json_object_new_int(songCount)
-
-    );
+        json_object_new_int(songCount));
 
     return p;
 }
@@ -32,4 +30,5 @@ message_handler(get_playlists)
     json_object *array = json_object_new_array();
     forEachInLista(usuario->playlists, playlistsJSON, array);
     VibeCast_SendArray(id, HTTP_OK, array, "Playlist cargadas", STATE_SUCCESS);
+    json_object_put(array);
 }

@@ -36,45 +36,41 @@ const MusicPlayer = (function () {
     }
   }
 
-  function playSong(song) {
-    if (!song || !song.title || !song.id) {
-      console.warn("Canción inválida", song);
-      return;
-    }
+  function playSong() {
+    // Pide la siguiente canción de la cola al backend
+    window
+      .dequeue()
+      .then((res) => {
+        if (res?.status !== "ok" || !res.data || !res.data.youtubeId) {
+          console.warn(
+            "No se pudo reproducir la siguiente canción:",
+            res?.message || res
+          );
+          return;
+        }
 
-    cleanupAudio();
+        const song = res.data; // debe contener: title, artist, youtubeId
 
-    const audio = new Audio(song.path || "../../assets/music/Idol.mp3");
-    audio.volume = volume;
+        // Limpiar cualquier audio o iframe anterior
+        cleanupAudio();
 
-    audio.addEventListener("loadedmetadata", () => {
-      totalTimeEl.textContent = formatTime(audio.duration);
-    });
+        // Crear el reproductor de YouTube
+        createYouTubePlayer(song.youtubeId, () => {
+          showNotification(`🎵 Canción terminada: ${song.title}`);
+          playNext(); // seguir con la siguiente canción
+        });
 
-    audio.addEventListener("timeupdate", () => {
-      const percent = (audio.currentTime / audio.duration) * 100;
-      progress.style.width = `${percent}%`;
-      currentTimeEl.textContent = formatTime(audio.currentTime);
-    });
-
-    audio.addEventListener("ended", () => {
-      showNotification(`Canción terminada: ${song.title}`);
-      playNext();
-    });
-
-    audio
-      .play()
-      .then(() => {
-        isPlaying = true;
-        currentAudio = audio;
-        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        currentSongTitle.textContent = song.title;
+        // Actualizar UI
+        currentSongTitle.textContent = song.title || "Sin título";
         currentSongArtist.textContent = song.artist || "Desconocido";
+        isPlaying = true;
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+
+        // Actualizar índice si está en la cola local
         currentIndex = currentQueue.findIndex((s) => s.id === song.id);
       })
       .catch((err) => {
-        console.error("No se pudo reproducir:", err);
-        showNotification("Error al reproducir la canción.");
+        console.error("Error al hacer dequeue:", err);
       });
   }
 
@@ -83,15 +79,7 @@ const MusicPlayer = (function () {
   }
 
   function playNext() {
-    if (currentQueue.length === 0) return;
-    const next = currentQueue[currentIndex + 1];
-    if (next) {
-      playSong(next);
-    } else {
-      console.log("Fin de la cola");
-      isPlaying = false;
-      playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-    }
+    playSong(); // usa dequeue() para la próxima canción
   }
 
   function togglePlayer() {
@@ -166,15 +154,71 @@ const MusicPlayer = (function () {
   return {
     init,
     playSong,
-    addSongsToQueue(songs) {
-      if (!Array.isArray(songs)) return;
-      currentQueue = currentQueue.concat(songs);
-      if (!isPlaying) {
-        playSong(currentQueue[0]);
-      }
+    addSongsToQueue(songs, autoPlay = true) {
+      if (!Array.isArray(songs)) songs = [songs];
+
+      songs.forEach((song, i) => {
+        if (!song || !song.id) {
+          console.warn("Canción inválida:", song);
+          return;
+        }
+
+        window
+          .enqueue(song.id)
+          .then((res) => {
+            if (res?.status === "ok") {
+              console.log(`✅ Encolada: ${song.title}`);
+              currentQueue.push(song); // mantener cola local para mostrar
+
+              // Reproducir si es la primera y no hay nada sonando
+              if (autoPlay && !isPlaying && i === 0) {
+                playSong(); // llama dequeue() y reproduce la próxima canción
+              }
+            } else {
+              console.warn(
+                `❌ No se pudo encolar: ${song.title}`,
+                res?.message || res
+              );
+            }
+          })
+          .catch((err) => {
+            console.error(`Error al encolar ${song.title}:`, err);
+          });
+      });
     },
     getCurrentQueue() {
       return currentQueue;
     },
   };
 })();
+
+function loadYouTubeAPI() {
+  if (window.YT) return;
+  const tag = document.createElement("script");
+  tag.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(tag);
+}
+
+let youtubePlayer;
+
+function createYouTubePlayer(videoId, onEndCallback) {
+  // Elimina el iframe anterior si existe
+  const existing = document.getElementById("youtube-player");
+  if (existing) existing.remove();
+
+  const iframe = document.createElement("div");
+  iframe.id = "youtube-player";
+  document.body.appendChild(iframe); // puedes ocultarlo luego
+
+  youtubePlayer = new YT.Player("youtube-player", {
+    videoId: videoId,
+    events: {
+      onReady: (e) => e.target.playVideo(),
+      onStateChange: (e) => {
+        if (e.data === YT.PlayerState.ENDED && onEndCallback) {
+          onEndCallback();
+        }
+      },
+    },
+  });
+}
