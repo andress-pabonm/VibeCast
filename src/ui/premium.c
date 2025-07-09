@@ -10,13 +10,12 @@ typedef struct usuarioAUX
 
 bool activarPremium(usuarioAUX *usuario)
 {
-
     time_t base = time(NULL);
 
     if (base == -1)
     {
         printf("Error al obtener la fecha actual\n");
-        return;
+        return false;
     }
 
     Usuario *user = (Usuario *)usuario->Usuario;

@@ -101,7 +101,6 @@ message_handler(mostrar_historial)
     VibeCast_SendText(id, HTTP_OK, "Historial mostrado en consola", "Historial", STATE_SUCCESS);
 }
 
-
 //======================================================================
 
 interfaz(AgregarAHistorial)
@@ -123,9 +122,10 @@ interfaz(AgregarAHistorial)
 message_handler(agregar_a_historial)
 {
     init_data_json();
-    int id = json_object_get_int(get_array_idx(data, 0));
 
-    const char *argv[] = { asprintf("%d", id) };
+    const char *id_cancion = get_string(get_array_idx(data, 0));
+
+    const char *argv[] = {id_cancion};
     char **msg = arg;
     bool ok = VibeCast_AgregarAHistorial(NULL, 1, argv, msg);
 
@@ -133,8 +133,6 @@ message_handler(agregar_a_historial)
     freem(*msg);
     *msg = NULL;
 }
-
-
 
 //======================================================================
 interfaz(VaciarHistorial)
@@ -153,4 +151,3 @@ message_handler(vaciar_historial)
     VibeCast_VaciarHistorial(NULL, 0, NULL, NULL);
     VibeCast_SendText(id, HTTP_OK, "", "Historial vaciado", STATE_SUCCESS);
 }
-

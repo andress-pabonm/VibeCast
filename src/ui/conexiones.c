@@ -16,5 +16,14 @@ bool VibeCast_InitBindings()
     bind_fn(get_canciones, &msg);
     bind_fn(get_recomendaciones, &msg);
 
+    // === HISTORIAL ===
+    bind_fn(mostrar_historial, NULL);
+    bind_fn(vaciar_historial, NULL);
+
+    // === COLA DE REPRODUCCIÓN ===
+    bind_fn(mostrar_cola, NULL);
+    bind_fn(vaciar_cola, NULL);
+    bind_fn(agregar_cancion_a_cola, NULL);
+
     return true;
 }

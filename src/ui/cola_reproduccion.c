@@ -103,8 +103,6 @@ interfaz(SiguienteCancion)
     return true;
 }
 
-
-
 interfaz(AgregarCancionACola)
 {
     int id = atoi(argv[0]);
@@ -129,9 +127,9 @@ interfaz(AgregarCancionACola)
 message_handler(agregar_cancion_a_cola)
 {
     init_data_json();
-    int id = json_object_get_int(get_array_idx(data, 0));
+    const char *id_cancion = get_string(get_array_idx(data, 0));
 
-    const char *argv[] = { asprintf("%d", id) };
+    const char *argv[] = {id_cancion};
     char **msg = arg;
     bool ok = VibeCast_AgregarCancionACola(NULL, 1, argv, msg);
 
@@ -139,8 +137,6 @@ message_handler(agregar_cancion_a_cola)
     freem(*msg);
     *msg = NULL;
 }
-
-
 
 interfaz(VaciarColaReproduccion)
 {
@@ -150,9 +146,8 @@ interfaz(VaciarColaReproduccion)
     return true;
 }
 
-
-
-message_handler(vaciar_cola){
+message_handler(vaciar_cola)
+{
     VibeCast_VaciarColaReproduccion(NULL, 0, NULL, NULL);
     VibeCast_SendText(id, HTTP_OK, "", "Cola vaciada", STATE_SUCCESS);
 }
