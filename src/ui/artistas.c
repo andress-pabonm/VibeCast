@@ -118,7 +118,6 @@ json_object *album_to_json(Album *album)
     json_object_object_add(jobj, "id", json_object_new_int(album->id));
     json_object_object_add(jobj, "name", json_object_new_string(album->nombre));
     json_object_object_add(jobj, "year", json_object_new_string(album->fechaCreacion));
-    json_object_object_add(jobj, "genre", json_object_new_string(album->));
 
     json_object *songsArray = json_object_new_array();
 
