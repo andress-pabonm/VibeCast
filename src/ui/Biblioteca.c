@@ -1,6 +1,4 @@
 #include <ui/interfaces.h>
-#include <stdio.h>
-#include <string.h>
 
 json_object *playlist_to_json(Playlist *playlist)
 {
