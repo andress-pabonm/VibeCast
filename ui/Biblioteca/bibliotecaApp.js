@@ -15,6 +15,8 @@ const deletePlaylistBtn = document.getElementById('deletePlaylistBtn');
 const editPlaylistNameInput = document.getElementById('editPlaylistNameInput');
 const addToQueueBtn = document.getElementById('addToQueueBtn');
 let currentPlaylistId = null;
+let currentPlaylistSongs = {};
+let currentPlaylists = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     loadPlaylists();
@@ -27,7 +29,9 @@ async function loadPlaylists() {
         console.log("get_playlists():", res);
 
         if (res.status === "ok" && res.type === "json") {
-            renderPlaylists(res.data.playlists);
+            currentPlaylists = res.data.playlists;
+            currentPlaylistSongs = res.data.playlistSongs;
+            renderPlaylists(currentPlaylists);
         }
     } catch (error) {
         console.error("Error al cargar playlists:", error);
@@ -57,41 +61,39 @@ function renderPlaylists(playlists) {
     });
 }
 
-async function showPlaylistSongs(playlistId, playlistName) {
-    try {
-        const res = await window.get_playlist_songs(playlistId);
-        if (res.status === "ok" && res.type === "json") {
-            currentPlaylistId = playlistId;
-            currentPlaylistTitle.textContent = playlistName;
-            playlistSongsContainer.innerHTML = '';
-
-            res.data.forEach(song => {
-                const songElement = document.createElement('div');
-                songElement.className = 'song-item';
-                songElement.innerHTML = `
-                    <div class="song-info">
-                        <strong>${song.title}</strong>
-                        <p>${song.artist}</p>
-                    </div>
-                    <div class="song-actions">
-                        <span>${song.duration}</span>
-                        <i class="fas fa-play play-btn" title="Reproducir"></i>
-                    </div>
-                `;
-                songElement.querySelector('.play-btn').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    MusicPlayer.playSong(song);
-                });
-                playlistSongsContainer.appendChild(songElement);
-            });
-
-            document.querySelector('.playlists-section').classList.add('hidden');
-            songsSection.classList.remove('hidden');
-        }
-    } catch (error) {
-        console.error("Error al cargar canciones:", error);
-        alert("Error al cargar canciones");
+function showPlaylistSongs(playlistId, playlistName) {
+    const songs = currentPlaylistSongs[playlistId];
+    if (!songs) {
+        alert("No se encontraron canciones para esta playlist.");
+        return;
     }
+
+    currentPlaylistId = playlistId;
+    currentPlaylistTitle.textContent = playlistName;
+    playlistSongsContainer.innerHTML = '';
+
+    songs.forEach(song => {
+        const songElement = document.createElement('div');
+        songElement.className = 'song-item';
+        songElement.innerHTML = `
+            <div class="song-info">
+                <strong>${song.title}</strong>
+                <p>${song.artist}</p>
+            </div>
+            <div class="song-actions">
+                <span>${song.duration}</span>
+                <i class="fas fa-play play-btn" title="Reproducir"></i>
+            </div>
+        `;
+        songElement.querySelector('.play-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            MusicPlayer.playSong(song);
+        });
+        playlistSongsContainer.appendChild(songElement);
+    });
+
+    document.querySelector('.playlists-section').classList.add('hidden');
+    songsSection.classList.remove('hidden');
 }
 
 function setupEventListeners() {
@@ -111,44 +113,32 @@ function setupEventListeners() {
         });
     });
 
-    // Crear nueva playlist
+    // Crear nueva playlist (esto aún es local y deberías implementar lógica real en el backend)
     createPlaylistBtn.addEventListener('click', () => {
         const playlistName = playlistNameInput.value.trim();
         if (playlistName) {
-            // Crear nueva playlist
-            const newId = Math.max(...mockData.playlists.map(p => p.id), 0) + 1;
-            mockData.playlists.push({
-                id: newId,
-                name: playlistName,
-                songCount: 0
-            });
-
-            mockData.playlistSongs[newId] = [];
-
+            alert("Funcionalidad de creación de playlist no implementada aún.");
             playlistNameInput.value = '';
             newPlaylistModal.classList.add('hidden');
         }
     });
 
-    // Guardar cambios en playlist
+    // Guardar cambios en playlist (solo nombre, se requiere lógica en backend)
     savePlaylistBtn.addEventListener('click', () => {
         const playlistName = editPlaylistNameInput.value.trim();
         if (playlistName && currentPlaylistId) {
-            const playlist = mockData.playlists.find(p => p.id === currentPlaylistId);
+            const playlist = currentPlaylists.find(p => p.id === currentPlaylistId);
             if (playlist) {
-                playlist.name = playlistName;
-                currentPlaylistTitle.textContent = playlistName;
-                loadPlaylists();
+                alert("Funcionalidad de edición no implementada aún.");
                 editPlaylistModal.classList.add('hidden');
             }
         }
     });
 
-    // Eliminar playlist
+    // Eliminar playlist (falta lógica real)
     deletePlaylistBtn.addEventListener('click', () => {
         if (currentPlaylistId && confirm('¿Estás seguro de eliminar esta playlist?')) {
-            mockData.playlists = mockData.playlists.filter(p => p.id !== currentPlaylistId);
-            delete mockData.playlistSongs[currentPlaylistId];
+            alert("Funcionalidad de eliminación no implementada aún.");
             editPlaylistModal.classList.add('hidden');
             songsSection.classList.add('hidden');
             document.querySelector('.playlists-section').classList.remove('hidden');
@@ -159,7 +149,7 @@ function setupEventListeners() {
     // Añadir toda la playlist a la cola
     addToQueueBtn.addEventListener('click', () => {
         if (currentPlaylistId) {
-            const songs = mockData.playlistSongs[currentPlaylistId] || [];
+            const songs = currentPlaylistSongs[currentPlaylistId] || [];
             if (songs.length > 0) {
                 MusicPlayer.addSongsToQueue(songs);
                 alert(`Se añadieron ${songs.length} canciones a la cola`);

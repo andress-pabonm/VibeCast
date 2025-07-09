@@ -96,6 +96,9 @@ select_handler(cargarUsuarios)
 
 static select_handler(cargarArtistaPorUsuario)
 {
+    for (int i = 0; i < argc; i++)
+        printf("[%s]: %s\n", fields[i], argv[i]);
+
     Artista *artista = newArtista();
     if (!artista)
         return 1;
@@ -120,6 +123,9 @@ static select_handler(cargarArtistaPorUsuario)
 
 static select_handler(cargarAlbumesPorArtista)
 {
+    for (int i = 0; i < argc; i++)
+        printf("[%s]: %s\n", fields[i], argv[i]);
+
     Album *album = newAlbum();
     if (!album)
         return 1;
@@ -149,6 +155,9 @@ static select_handler(cargarAlbumesPorArtista)
 
 static select_handler(cargarCancionesPorAlbum)
 {
+    for (int i = 0; i < argc; i++)
+        printf("[%s]: %s\n", fields[i], argv[i]);
+
     Cancion *cancion = newCancion();
     if (!cancion)
         return 1;
@@ -173,6 +182,9 @@ static select_handler(cargarCancionesPorAlbum)
 
 static select_handler(cargarAmigosPorUsuario)
 {
+    for (int i = 0; i < argc; i++)
+        printf("[%s]: %s\n", fields[i], argv[i]);
+
     // Buscar el amigo
 
     Usuario *amigo =
@@ -192,6 +204,9 @@ static select_handler(cargarAmigosPorUsuario)
 
 static select_handler(cargarPlaylistsPorUsuario)
 {
+    for (int i = 0; i < argc; i++)
+        printf("[%s]: %s\n", fields[i], argv[i]);
+
     Playlist *playlist = newPlaylist();
     if (!playlist)
         return 1;
@@ -210,6 +225,9 @@ static select_handler(cargarPlaylistsPorUsuario)
 
 static select_handler(cargarCancionesPorPlaylist)
 {
+    for (int i = 0; i < argc; i++)
+        printf("[%s]: %s\n", fields[i], argv[i]);
+
     int id_cancion;
     sscanf(argv[CANCION_ID], "%d", &id_cancion);
 
@@ -231,6 +249,9 @@ static select_handler(cargarCancionesPorPlaylist)
 
 static select_handler(cargarHistorialPorUsuario)
 {
+    for (int i = 0; i < argc; i++)
+        printf("[%s]: %s\n", fields[i], argv[i]);
+
     // Cargar los datos del historial
 
     Historial *historial = arg;

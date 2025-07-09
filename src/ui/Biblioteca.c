@@ -1,30 +1,4 @@
 #include <ui/interfaces.h>
-#include <stdio.h>
-#include <string.h>
-
-json_object *playlist_to_json(Playlist *playlist)
-{
-    json_object *p = json_object_new_object();
-
-<<<<<<< HEAD
-    json_object_object_add(
-        p,
-        "name",
-        json_object_new_string(
-            playlist->nombre));
-
-    int songCount = getListaLength(playlist->canciones);
-    json_object_object_add(
-        p,
-        "songCount",
-        json_object_new_int(songCount));
-=======
-    json_object_object_add(p, "name", json_object_new_string(playlist->nombre));
-    json_object_object_add(p, "songCount", json_object_new_int(playlist->canciones));
->>>>>>> 7610da2d1dad3eea34c76a237468dd340a510027
-
-    return p;
-}
 
 new_operfn(getSongJSON)
 {
@@ -34,7 +8,7 @@ new_operfn(getSongJSON)
     json_object_object_add(song_json, "id", json_object_new_int(cancion->id));
     json_object_object_add(song_json, "title", json_object_new_string(cancion->nombre));
     json_object_object_add(song_json, "artist", json_object_new_string(cancion->album->artista->nombre));
-    json_object_object_add(song_json, "duration", json_object_new_string(cancion->duracion));
+    json_object_object_add(song_json, "duration", json_object_new_int(cancion->duracion));
     json_object_object_add(song_json, "url", json_object_new_string(cancion->url));
 
     json_object_array_add(arg, song_json);
@@ -42,32 +16,39 @@ new_operfn(getSongJSON)
     return FOREACH_CONTINUE;
 }
 
-new_operfn(findPlaylistById)
+// new_operfn(findPlaylistById)
+// {
+//     Playlist *p = val;
+//     int *targetId = arg;
+//     if (p->id == *targetId)
+//     {
+//         *(Playlist **)arg = p;
+//         return FOREACH_BREAK;
+//     }
+
+//     return FOREACH_CONTINUE;
+// }
+
+// Convierte las canciones de una playlist en JSON
+new_operfn(getPlaylistSongsJSON)
 {
-    Playlist *p = val;
-    int *targetId = arg;
-    if (p->id == *targetId)
-    {
-        *(Playlist **)arg = p;
-        return FOREACH_BREAK;
-    }
+    Playlist *playlist = val;
+
+    // Crea un arreglo para las canciones de la playlist
+    json_object *songs_array = json_object_new_array();
+
+    // Recorre la playlist
+    forEachInLista(playlist->canciones, getSongJSON, songs_array);
+
+    // Añadirlo al arreglo principal
+    char *id_playlist = asprintf("%d", playlist->id);
+    json_object_object_add(arg, id_playlist, songs_array);
+    freem(id_playlist);
 
     return FOREACH_CONTINUE;
 }
 
-message_handler(getPlaylistSongsJSON)
-{
-    int playlistId;
-
-    Playlist *playlist = NULL;
-    forEachInLista(usuario->playlists, findPlaylistById, &playlistId);
-
-    json_object *songs_array = json_object_new_array();
-    forEachInLista(playlist->canciones, getSongJSON, songs_array);
-    VibeCast_SendJSON(id, HTTP_OK, songs_array, "Canciones cargadas", STATE_SUCCESS);
-    json_object_put(songs_array);
-}
-
+// Convierte una playlist en JSON
 new_operfn(getPlaylistJSON)
 {
     Playlist *playlist = val;
@@ -75,9 +56,11 @@ new_operfn(getPlaylistJSON)
 
     json_object_object_add(playlist_json, "id", json_object_new_int(playlist->id));
     json_object_object_add(playlist_json, "name", json_object_new_string(playlist->nombre));
-    json_object_object_add(playlist_json, "songCount", json_object_new_int(playlist->canciones));
+    json_object_object_add(playlist_json, "songCount", json_object_new_int(getListaLength(playlist->canciones)));
 
     json_object_array_add(arg, playlist_json);
+
+    printf("[%d]: %s", playlist->id, playlist->nombre);
 
     return FOREACH_CONTINUE;
 }
@@ -86,13 +69,16 @@ message_handler(get_playlists)
 {
     json_object *response = json_object_new_object();
     json_object *playlists_array = json_object_new_array();
-    json_object *songs_array = json_object_new_array();
+    json_object *songs_array = json_object_new_object();
 
     forEachInLista(usuario->playlists, getPlaylistJSON, playlists_array);
     forEachInLista(usuario->playlists, getPlaylistSongsJSON, songs_array);
 
     json_object_object_add(response, "playlists", playlists_array);
     json_object_object_add(response, "playlistSongs", songs_array);
+
+    const char *json_string = json_object_to_json_string(response);
+    puts(json_string);
 
     VibeCast_SendJSON(id, HTTP_OK, response, "Playlists cargadas", STATE_SUCCESS);
     json_object_put(response);
