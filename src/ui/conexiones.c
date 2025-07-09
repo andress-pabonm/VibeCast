@@ -29,5 +29,7 @@ bool VibeCast_InitBindings()
     bind_fn(vaciar_cola, NULL);
     bind_fn(agregar_cancion_a_cola, NULL);
 
+    bind_fn(get_playlists, &msg);
+
     return true;
 }
