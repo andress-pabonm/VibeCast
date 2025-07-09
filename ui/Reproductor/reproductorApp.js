@@ -177,4 +177,4 @@ const MusicPlayer = (function () {
       return currentQueue;
     },
   };
-})();
+});

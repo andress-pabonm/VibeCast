@@ -4,6 +4,9 @@ json_object *cancion_to_json(Cancion *cancion)
 {
     json_object *c = json_object_new_object();
 
+    // id
+    json_object_object_add(c, "id", json_object_new_int(cancion->id));
+
     // title
     json_object_object_add(c, "title", json_object_new_string(cancion->nombre));
 

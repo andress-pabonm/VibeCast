@@ -121,6 +121,7 @@ interfaz(AgregarCancionACola)
     insertValueInCola(cola_repr, nodo);
 
     send_message("Canción '%s' agregada a la cola.", c->nombre);
+
     return true;
 }
 
@@ -143,6 +144,7 @@ interfaz(VaciarColaReproduccion)
     destroyCola(cola_repr, NULL, NULL);
     cola_repr = newCola();
     send_message("Cola de reproducción vaciada.");
+
     return true;
 }
 

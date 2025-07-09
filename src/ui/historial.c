@@ -116,6 +116,7 @@ interfaz(AgregarAHistorial)
 
     agregarAHistorial(usuario, c, NULL);
     send_message("Canción '%s' agregada al historial.", c->nombre);
+
     return true;
 }
 
@@ -142,7 +143,8 @@ interfaz(VaciarHistorial)
     usuario->historial.tiempoEscuchado = 0;
     usuario->historial.cantidadAnuncios = 0;
 
-    send_message("Historial vaciado correctamente.");
+    send_message("Historial vaciado correctamente");
+
     return true;
 }
 
