@@ -13,33 +13,28 @@ document.addEventListener("DOMContentLoaded", () => {
     sections.map((name) => [name, getElement(`#view-${name}`)])
   );
 
+  // Botones
+  const buttons = Object.fromEntries(
+    sections.map((name) => [name, getElement(`#btn-${name}`)])
+  );
+
   function showView(viewName) {
-    getElements(".sidebar nav button").forEach((btn) => {
-      btn.classList.remove("active");
+    sections.forEach((section) => {
+      buttons[section].classList.remove("active");
     });
+    // getElements(".sidebar nav button").forEach((btn) => {
+    //   btn.classList.remove("active");
+    // });
     buttons[viewName].classList.add("active");
 
     for (const key in views) {
       views[key].classList.toggle("hidden", key !== viewName);
     }
   }
+
+  sections.forEach((section) => {
+    buttons[section].addEventListener("click", (e) => showView(section));
+  });
+
+  showView(sections[0]);
 });
-
-document
-  .getElementById("btn-inicio")
-  .addEventListener("click", () => showView("inicio"));
-document
-  .getElementById("btn-biblioteca")
-  .addEventListener("click", () => showView("biblioteca"));
-document
-  .getElementById("btn-historial")
-  .addEventListener("click", () => showView("historial"));
-document
-  .getElementById("btn-amigos")
-  .addEventListener("click", () => showView("amigos"));
-document
-  .getElementById("btn-perfil")
-  .addEventListener("click", () => showView("perfil"));
-
-// Cargar vista por defecto
-showView("inicio");
