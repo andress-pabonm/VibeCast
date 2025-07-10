@@ -1,0 +1,201 @@
+:root {
+    --morado: #8d2de2;
+    --corrupto: #5e1dc7;
+    --azul: #4cc9f0;
+    --azul-oscuro: #4361ee;
+    --negro: #1a1a1a;
+    --blanco: #f1faee;
+    --detalle: #a8dadc;
+    
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* ========== RESET Y ESTILOS BASE ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, var(--negro), var(--corrupto));
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--blanco);
+    padding: 1rem;
+}
+
+/* ========== CONTENEDOR LOGIN ========== */
+.login-container {
+    background: rgba(26, 26, 26, 0.9);
+    width: 100%;
+    max-width: 400px;
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--morado);
+    box-shadow: 0 0 25px var(--morado);
+    backdrop-filter: blur(5px);
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* ========== TITULO ========== */
+.logo {
+    margin-bottom: 1rem;
+}
+
+.logo-title {
+    font-size: 3rem;
+    font-weight: 600;
+    background: linear-gradient(to right, var(--morado), var(--azul-oscuro));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.slogan {
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    color: var(--detalle);
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ========== FORMULARIO ========== */
+.login-form {
+    margin-top: 1.5rem;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.input-icon, .toggle-password {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--morado);
+    transition: color var(--transition-fast);
+    z-index: 2;
+}
+
+.input-icon {
+    left: 1rem;
+}
+
+.toggle-password {
+    right: 1rem;
+    cursor: pointer;
+}
+
+.toggle-password:hover {
+    color: var(--azul);
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+    background: rgba(26, 26, 26, 0.7);
+    border: 2px solid var(--morado);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: var(--blanco);
+    transition: all var(--transition-normal);
+}
+
+.form-input:focus {
+    outline: none;
+    background: rgba(26, 26, 26, 0.9);
+    border-color: var(--azul);
+}
+
+/* ========== BOTÓN ========== */
+.login-btn {
+    width: 100%;
+    padding: 0.875rem;
+    background: linear-gradient(45deg, var(--morado), var(--azul-oscuro));
+    color: var(--blanco);
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+    transition: var(--transition-normal);
+}
+
+.login-btn:hover {
+    background: linear-gradient(45deg, var(--azul-oscuro), var(--morado));
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px var(--azul);
+}
+
+.login-btn:active {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 10px rgba(67, 97, 238, 0.4);
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(76, 201, 240, 0.4), transparent);
+    transition: var(--transition-slow);
+}
+
+.login-btn:hover::before {
+    left: 100%;
+}
+
+.btn-icon {
+    margin-bottom: 0.1rem;
+    color: var(--azul);
+    transition: var(--transition-normal);
+}
+
+.login-btn:hover .btn-icon {
+    transform: translateX(5px) scale(1.1);
+}
+
+/* Enlaces */
+.register-link {
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--detalle);
+}
+
+.link {
+    color: var(--morado);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.link:hover {
+    color: var(--azul);
+}
+
+/* ========== ANIMACIONES ========== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

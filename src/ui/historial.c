@@ -94,10 +94,20 @@ interfaz(MostrarHistorial)
     return true;
 }
 
+Lista getHistorial()
+{
+    Pila historial = usuario->historial.reproducciones;
+    Pila tmpHistorial = newPila();
+    Lista reprs = newLista(NULL);
+
+    return reprs;
+}
+
 message_handler(mostrar_historial)
 {
-    VibeCast_MostrarHistorial(NULL, 0, NULL, NULL);
-    VibeCast_SendText(id, HTTP_OK, "Historial mostrado en consola", "Historial", STATE_SUCCESS);
+    // VibeCast_MostrarHistorial(NULL, 0, NULL, NULL);
+
+    // VibeCast_SendText(id, HTTP_OK, "Historial mostrado en consola", "Historial", STATE_SUCCESS);
 }
 
 //======================================================================
@@ -150,5 +160,5 @@ interfaz(VaciarHistorial)
 message_handler(vaciar_historial)
 {
     VibeCast_VaciarHistorial(NULL, 0, NULL, NULL);
-    VibeCast_SendText(id, HTTP_OK, "", "Historial vaciado", STATE_SUCCESS);
+    VibeCast_SendNull(id, HTTP_OK, "Historial vaciado", STATE_SUCCESS);
 }

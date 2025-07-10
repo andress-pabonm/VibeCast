@@ -118,6 +118,8 @@ interfaz(AgregarCancionACola)
     nodo->dato = c;
     nodo->tipo = TIPO_CANCION;
 
+    if (!cola_repr)
+        cola_repr = newCola();
     insertValueInCola(cola_repr, nodo);
 
     send_message("Canción '%s' agregada a la cola.", c->nombre);
@@ -142,7 +144,7 @@ message_handler(enqueue)
 interfaz(VaciarColaReproduccion)
 {
     destroyCola(cola_repr, NULL, NULL);
-    cola_repr = newCola();
+    cola_repr = NULL;
     send_message("Cola de reproducción vaciada.");
 
     return true;
@@ -196,5 +198,30 @@ message_handler(mostrar_cola)
 
 message_handler(dequeue)
 {
-    VibeCast_SendNull(id, HTTP_OK, "XD", STATE_SUCCESS);
+    json_object *jobj = new_json_object();
+
+    NodoColaRepr nodo = deleteValueInCola(cola_repr);
+    Cancion *c;
+    Anuncio *a;
+
+    switch (nodo->tipo)
+    {
+    case TIPO_CANCION:
+        c = nodo->dato;
+        json_object_object_add(jobj, "youtubeId", json_object_new_string(c->url));
+        break;
+
+    case TIPO_ANUNCIO:
+        a = nodo->dato;
+        json_object_object_add(jobj, "youtubeId", json_object_new_string(a->url));
+        break;
+
+    default:
+        break;
+    }
+
+    freem(nodo);
+
+    VibeCast_SendJSON(id, HTTP_OK, jobj, "Siguiente canción", STATE_SUCCESS);
+    json_object_put(jobj);
 }

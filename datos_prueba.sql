@@ -19,11 +19,11 @@ INSERT INTO Albumes (id_artista, nombre, fecha_creacion) VALUES
 (4, "Ritmos Urbanos", "2024-02-20");
 
 INSERT INTO Canciones (id_album, nombre, genero, fecha_publicacion, duracion, url, popularidad, reproducciones) VALUES
-(1, "Amanecer", "Pop", "2024-01-12", 210, "canciones/carla/amanecer.mp3", 70, 1200),
+(1, "Blamegame", "Reggaeton", "2024-14-08", 325, "p9WN5BT5rNg", 70, 1200),
 (1, "Luz del Día", "Pop", "2024-01-15", 195, "canciones/carla/luz.mp3", 60, 900),
 (2, "Bit Urbano", "Electrónica", "2024-02-22", 180, "canciones/dave/bit.mp3", 85, 1500),
 (2, "Calle y Sonido", "Hip-hop", "2024-02-25", 200, "canciones/dave/calle.mp3", 90, 1800),
-(2, "Idol", "Pop", "2023-04-12", 345, "assets/music/idol.mp3", 350, 2000);
+(2, "Idol", "Pop", "2023-04-12", 345, "ZRtdQ81jPUQ", 350, 2000);
 
 INSERT INTO Playlists (id_usuario, nombre) VALUES
 (1, "Favoritas de Alice"),
