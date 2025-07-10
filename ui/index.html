@@ -1,60 +1,85 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <title>VibeCast</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="index.css" />
-  </head>
-  <body>
-    <div id="app">
-      <!-- Panel lateral -->
-      <aside class="sidebar">
-        <h1 class="logo">🎵 VibeCast</h1>
-        <nav>
-          <button id="btn-inicio">Inicio</button>
-          <button id="btn-biblioteca">Biblioteca</button>
-          <button id="btn-historial">Historial</button>
-          <button id="btn-amigos">Amigos</button>
-          <button id="btn-perfil">Perfil</button>
-        </nav>
-      </aside>
 
-      <!-- Contenido principal -->
-      <main class="main-content">
-        <section id="view-inicio" class="view">
-          <h2>Inicio</h2>
-          <p>Explora canciones, recomendaciones, estadísticas...</p>
-        </section>
+<head>
+  <meta charset="UTF-8" />
+  <title>VibeCast</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="index.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
 
-        <section id="view-biblioteca" class="view hidden">
-          <h2>Biblioteca</h2>
-          <p>Tus playlists, álbumes, favoritos...</p>
-        </section>
+<body>
+  <div id="app">
+    <!-- Panel lateral -->
+    <aside class="sidebar">
+      <div class="logo">
+        <i class="fas fa-music logo-icon"></i>
+        <h1 class="logo-title">VibeCast</h1>
+      </div>
 
-        <section id="view-historial" class="view hidden">
-          <h2>Historial</h2>
-          <p>Lo que has escuchado recientemente...</p>
-        </section>
+      <nav>
+        <button id="btn-inicio" data-page="menu"><i class="fas fa-home"></i>Inicio</button>
+        <button id="btn-biblioteca" data-page="biblioteca"><i class="fas fa-music"></i>Biblioteca</button>
+        <button id="btn-historial" data-page="historial"><i class="fas fa-history"></i>Historial</button>
+        <button id="btn-amigos" data-page="amigos"><i class="fas fa-user-friends"></i>Amigos</button>
+        <button id="btn-perfil" data-page="perfil"><i class="fas fa-user"></i>Perfil</button>
+      </nav>
+    </aside>
 
-        <section id="view-amigos" class="view hidden">
-          <h2>Amigos</h2>
-          <p>Conecta con otros usuarios de VibeCast.</p>
-        </section>
+    <!-- Contenido principal -->
+    <main class="main-content" id="main-content">
+      <!-- Aquí se cargarán las páginas dinámicamente -->
+    </main>
+  </div>
 
-        <section id="view-perfil" class="view hidden">
-          <h2>Perfil</h2>
-          <p>Información de tu cuenta, plan y configuración.</p>
-        </section>
-      </main>
+  <!-- Reproductor inferior -->
+  <footer class="music-player" id="musicPlayer">
+    <div class="song-info-player">
+      <div class="song-title" id="currentSongTitle">
+        No hay canción seleccionada
+      </div>
+      <div class="song-artist" id="currentSongArtist">VibeCast</div>
+    </div>
+    <div class="player-controls">
+      <div class="player-buttons">
+        <button id="prevBtn"><i class="fas fa-step-backward"></i></button>
+        <button id="playPauseBtn" class="play-pause-btn">
+          <i class="fas fa-play"></i>
+        </button>
+        <button id="nextBtn"><i class="fas fa-step-forward"></i></button>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar" id="progressBar">
+          <div class="progress" id="progress"></div>
+        </div>
+        <div class="time-info">
+          <span id="currentTime">0:00</span>
+          <span id="totalTime">0:00</span>
+        </div>
+      </div>
+    </div>
+    <div class="player-actions">
+      <div class="volume-control">
+        <i class="fas fa-volume-up"></i>
+        <div class="volume-slider" id="volumeSlider">
+          <div class="volume-level" id="volumeLevel"></div>
+        </div>
+      </div>
+      <button class="queue-btn" id="showQueueBtn">
+        <i class="fas fa-list"></i>
+      </button>
+      <button id="closePlayerBtn">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
 
-    <!-- Reproductor inferior (permanece visible) -->
-    <footer id="musicPlayer">
-      <p>No hay canción seleccionada</p>
-      <!-- Puedes incluir controles aquí -->
-    </footer>
+    <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
+    <div id="player"></div>
+  </footer>
 
-    <script src="index.js"></script>
-  </body>
+  <script src="index.js"></script>
+</body>
+
 </html>
