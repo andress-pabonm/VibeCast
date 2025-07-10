@@ -14,7 +14,7 @@ async function checkUserLoggedIn() {
         console.log("is_logged_in():", res);
 
         if (res.status === "ok" && res.type === "boolean" && res.data === true) {
-            window.location.replace("../pages/menu.html");
+            window.location.replace("../index.html");
         }
     } catch (err) {
         console.error("Error al verificar sesión:", err);
