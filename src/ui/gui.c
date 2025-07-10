@@ -100,7 +100,7 @@ bool VibeCast_InitGUI()
     VibeCast_InitBindings();
 
     // Ir a la primera interfaz
-    webview_navigate(w, INTERFAZ("Login/index.html"));
+    webview_navigate(w, INTERFAZ("index.html"));
 
     return true;
 }

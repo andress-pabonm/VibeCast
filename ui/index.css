@@ -1,0 +1,113 @@
+:root {
+  --morado: #8d2de2;
+  --morado-oscuro: #5e1dc7;
+  --azul: #4cc9f0;
+  --azul-oscuro: #4361ee;
+  --negro: #1a1a1a;
+  --blanco: #f1faee;
+  --detalle: #a8dadc;
+  --gris-oscuro: #2a2a2a;
+  --gris-medio: #3a3a3a;
+  --gris-claro: #4a4a4a;
+
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+/* ========== RESET ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: var(--negro);
+  color: var(--blanco);
+  line-height: 1.6;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#app {
+  display: flex;
+  flex: 1;
+  min-height: 100vh;
+}
+
+/* ========== SIDEBAR ========== */
+.sidebar {
+  width: 250px;
+  background-color: var(--gris-oscuro);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  background: linear-gradient(to right, var(--morado), var(--azul-oscuro));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.sidebar nav button {
+  background: none;
+  border: none;
+  color: var(--detalle);
+  text-align: left;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  width: 100%;
+  display: block; /* fuerza a ocupar ancho completo */
+  box-sizing: border-box; /* asegura que el padding no sume al ancho */
+  align-items: center;
+}
+
+.sidebar nav button:hover,
+.sidebar nav button.active {
+  background-color: var(--morado-oscuro);
+  color: var(--blanco);
+}
+
+/* ========== MAIN CONTENT ========== */
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  /* background-color: var(--gris-medio); */
+}
+
+.view {
+  display: none;
+}
+
+.view:not(.hidden) {
+  display: block;
+}
+
+/* ========== PLAYER (Footer) ========== */
+#musicPlayer {
+  position: fixed;
+  bottom: 0;
+  left: 250px; /* ancho del sidebar */
+  right: 0;
+  background: var(--gris-claro);
+  padding: 1rem;
+  border-top: 2px solid var(--morado);
+  color: var(--detalle);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

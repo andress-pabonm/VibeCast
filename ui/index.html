@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>VibeCast</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Panel lateral -->
+      <aside class="sidebar">
+        <h1 class="logo">🎵 VibeCast</h1>
+        <nav>
+          <button id="btn-inicio">Inicio</button>
+          <button id="btn-biblioteca">Biblioteca</button>
+          <button id="btn-historial">Historial</button>
+          <button id="btn-amigos">Amigos</button>
+          <button id="btn-perfil">Perfil</button>
+        </nav>
+      </aside>
+
+      <!-- Contenido principal -->
+      <main class="main-content">
+        <section id="view-inicio" class="view">
+          <h2>Inicio</h2>
+          <p>Explora canciones, recomendaciones, estadísticas...</p>
+        </section>
+
+        <section id="view-biblioteca" class="view hidden">
+          <h2>Biblioteca</h2>
+          <p>Tus playlists, álbumes, favoritos...</p>
+        </section>
+
+        <section id="view-historial" class="view hidden">
+          <h2>Historial</h2>
+          <p>Lo que has escuchado recientemente...</p>
+        </section>
+
+        <section id="view-amigos" class="view hidden">
+          <h2>Amigos</h2>
+          <p>Conecta con otros usuarios de VibeCast.</p>
+        </section>
+
+        <section id="view-perfil" class="view hidden">
+          <h2>Perfil</h2>
+          <p>Información de tu cuenta, plan y configuración.</p>
+        </section>
+      </main>
+    </div>
+
+    <!-- Reproductor inferior (permanece visible) -->
+    <footer id="musicPlayer">
+      <p>No hay canción seleccionada</p>
+      <!-- Puedes incluir controles aquí -->
+    </footer>
+
+    <script src="index.js"></script>
+  </body>
+</html>
