@@ -9,7 +9,7 @@
  * Utilizas la ruta relativa al directorio ui donde están las .html
  * Uso: INTERFAZ("carpeta/archivo.html")
  */
-#define INTERFAZ(nombre) "file://" path_to("ui/" nombre)
+#define INTERFAZ(nombre) "file://" path_to("ui/pages/" nombre)
 
 /* Para el tamañño de la ventana */
 
@@ -100,7 +100,7 @@ bool VibeCast_InitGUI()
     VibeCast_InitBindings();
 
     // Ir a la primera interfaz
-    webview_navigate(w, INTERFAZ("index.html"));
+    webview_navigate(w, INTERFAZ("login.html"));
 
     return true;
 }

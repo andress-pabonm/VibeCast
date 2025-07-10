@@ -1,0 +1,70 @@
+<!-- Estilos -->
+<link rel="stylesheet" href="../styles/bibliotecaStyles.css">
+
+<!-- Main Content -->
+<main class="main-content">
+  <header class="main-header">
+    <div class="search-bar">
+      <i class="fas fa-search search-icon"></i>
+      <input type="text" placeholder="Buscar en tus playlists..." class="search-input" />
+    </div>
+    <button class="new-playlist-btn" id="newPlaylistBtn">
+      <i class="fas fa-plus"></i> Nueva playlist
+    </button>
+  </header>
+
+  <div class="library-container">
+    <!-- Sección de Playlists -->
+    <section class="playlists-section">
+      <h2 class="section-title">
+        <i class="fas fa-list"></i> Tus Playlists
+      </h2>
+      <div class="playlists-grid" id="playlistsContainer">
+        <!-- Playlists se cargarán dinámicamente -->
+      </div>
+    </section>
+
+    <!-- Sección de Canciones -->
+    <section class="songs-section hidden" id="songsSection">
+      <div class="songs-header">
+        <button class="back-btn" id="backToPlaylists">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h2 id="currentPlaylistTitle"></h2>
+        <button class="action-btn" id="addToQueueBtn">
+          <i class="fas fa-plus-circle"></i> Añadir a cola
+        </button>
+      </div>
+      <div class="song-list" id="playlistSongsContainer">
+        <!-- Canciones de la playlist seleccionada -->
+      </div>
+    </section>
+  </div>
+</main>
+</div>
+
+<!-- Modal para nueva playlist -->
+<div class="modal hidden" id="newPlaylistModal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h3>Crear nueva playlist</h3>
+    <input type="text" id="playlistNameInput" placeholder="Nombre de la playlist" />
+    <button id="createPlaylistBtn">Crear</button>
+  </div>
+</div>
+
+<!-- Modal para editar playlist -->
+<div class="modal hidden" id="editPlaylistModal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h3>Editar playlist</h3>
+    <input type="text" id="editPlaylistNameInput" placeholder="Nombre de la playlist" />
+    <div class="modal-buttons">
+      <button id="savePlaylistBtn">Guardar cambios</button>
+      <button id="deletePlaylistBtn">Eliminar playlist</button>
+    </div>
+  </div>
+</div>
+
+<!-- Script -->
+<script src="../js/bibliotecaApp.js"></script>

@@ -1,83 +1,27 @@
 document.addEventListener("DOMContentLoaded", () => {
     checkUserLoggedIn();
-    setupRegisterForm();
+
     setupPasswordToggle();
+    setupLoginForm();
     setupRegisterButtonHover();
 });
 
-// Verifica si ya hay sesión activa.
+
+// Verifica si el usuario ya está logueado y redirige si es así
 async function checkUserLoggedIn() {
     try {
         const res = await window.is_logged_in();
         console.log("is_logged_in():", res);
 
         if (res.status === "ok" && res.type === "boolean" && res.data === true) {
-            window.location.replace("../Menu/menu.html");
+            window.location.replace("../index.html");
         }
     } catch (err) {
         console.error("Error al verificar sesión:", err);
     }
 }
 
-// Configura el envío del formulario de registro.
-function setupRegisterForm() {
-    const registerForm = document.querySelector(".register-form");
-    if (!registerForm) return;
-
-    registerForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const nickname = registerForm.querySelector("#name").value.trim();
-        const pais = registerForm.querySelector("#country").value.trim();
-        const username = registerForm.querySelector("#username").value.trim();
-        const email = registerForm.querySelector("#email").value.trim();
-        const password = registerForm.querySelector("#password").value;
-        const confirmPassword = registerForm.querySelector("#confirmPassword").value;
-
-        await handleRegister(
-            nickname,
-            pais,
-            username,
-            email,
-            password,
-            confirmPassword
-        );
-    });
-}
-
-// Maneja el proceso de registro de usuario.
-async function handleRegister(nickname, pais, username, email, password, confirmPassword) {
-    const registerBtn = document.querySelector(".register-btn");
-    const originalText = registerBtn.innerHTML;
-
-    registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Validando...';
-    registerBtn.disabled = true;
-
-    try {  
-        const res = await window.crear_cuenta(nickname, pais, username, email, password, confirmPassword);
-        console.log("crear_cuenta():", res);
-
-        const success =
-            res.status === "ok" && res.type === "boolean" && res.data === true;
-
-        if (success) {
-            showSuccess(res.message || "¡Cuenta creada exitosamente!");
-            setTimeout(() => {
-                window.location.replace("../Login/index.html");
-            }, 500);
-        } else {
-            showError(res.message || "No se pudo crear la cuenta.");
-        }
-    } catch (err) {
-        showError("Error de conexión. Intenta más tarde.");
-        console.error(err);
-    } finally {
-        registerBtn.innerHTML = originalText;
-        registerBtn.disabled = false;
-    }
-}
-
-// Activa el efecto de mostrar/ocultar contraseña.
+// Configura el botón para mostrar/ocultar la contraseña
 function setupPasswordToggle() {
     document.querySelectorAll(".toggle-password").forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -90,7 +34,58 @@ function setupPasswordToggle() {
     });
 }
 
-// Activa efecto de hover en el botón de registro.
+// Configura el formulario de login para manejar el envío
+function setupLoginForm() {
+    const loginForm = document.querySelector(".login-form");
+    if (!loginForm) return;
+
+    loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const username = loginForm.querySelector("#username").value.trim();
+        const password = loginForm.querySelector("#password").value;
+
+        await handleLogin(username, password);
+    });
+}
+
+/**
+ * Gestiona la respuesta del intento de login
+ * @param {string} username
+ * @param {string} password
+ */
+async function handleLogin(username, password) {
+    const loginBtn = document.querySelector(".login-btn");
+    const originalText = loginBtn.innerHTML;
+
+    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Validando...';
+    loginBtn.disabled = true;
+
+    try {
+        const res = await window.iniciar_sesion(username, password);
+        console.log("iniciar_sesion():", res);
+
+        const success =
+            res.status === "ok" && res.type === "boolean" && res.data === true;
+
+        if (success) {
+            showSuccess(res.message || "¡Bienvenido de vuelta!");
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        } else {
+            showError(res.message || "Usuario o contraseña incorrectos.");
+        }
+    } catch (err) {
+        showError("Error de conexión. Intenta más tarde.");
+        console.error(err);
+    } finally {
+        loginBtn.innerHTML = originalText;
+        loginBtn.disabled = false;
+    }
+}
+
+// Añade efectos de hover al botón de registro
 function setupRegisterButtonHover() {
     const registerBtn = document.querySelector(".register-btn");
     if (!registerBtn) return;
@@ -129,7 +124,7 @@ function showSuccess(message) {
  * @param {string} color
  */
 function createMessage(text, className, color) {
-    const form = document.querySelector(".register-form");
+    const form = document.querySelector(".login-form");
     if (!form) return;
 
     const messageEl = document.createElement("div");
