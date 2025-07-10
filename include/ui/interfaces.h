@@ -42,4 +42,17 @@ interfaz(AgregarAHistorial);
 interfaz(MostrarHistorial);
 interfaz(VaciarHistorial);
 
+// === Premium ====
+interfaz(activarPremium);
+interfaz(desactivarPremium);
+interfaz(esUsuarioPremium);
+interfaz(renovarPremium);
+
+// === Playlists ===
+interfaz(crearPlaylist);
+interfaz(agregarCancionPlaylist);
+interfaz(eliminarCancionPlaylist);
+interfaz(eliminarPlaylist);
+interfaz(mostrarCancionesPlaylist);
+
 #endif // VIBECAST_INTERFACES_H

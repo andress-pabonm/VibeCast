@@ -136,6 +136,17 @@ message_handler(agregar_a_historial);
 message_handler(mostrar_historial);
 message_handler(vaciar_historial);
 
+message_handler(activarPremium); 
+message_handler(desactivarPremium); 
+message_handler(esUsuarioPremium); 
+message_handler(renovarPremium);  
+
+message_handler(crearPlaylist); 
+message_handler(agregarCancionPlaylist);
+message_handler(eliminarCancionPlaylist);
+message_handler(eliminarPlaylist);
+message_handler(mostrarCancionesPlaylist);
+
 /* ================================================================ */
 
 bool VibeCast_InitBindings();
