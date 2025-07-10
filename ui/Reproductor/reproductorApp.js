@@ -88,6 +88,8 @@ const MusicPlayer = (function () {
   }
 
   function init() {
+    loadYouTubeAPI();
+
     playPauseBtn.addEventListener("click", () => {
       if (!currentAudio) {
         if (currentQueue.length > 0) {
@@ -154,8 +156,13 @@ const MusicPlayer = (function () {
   return {
     init,
     playSong,
-    addSongsToQueue(songs, autoPlay = true) {
+    addSongsToQueue(songs, autoPlay) {
       if (!Array.isArray(songs)) songs = [songs];
+
+      // Si autoPlay = true
+      // Vaciar cola de reproducción window.vaciar_cola
+      // Sino, si autoPlay = false
+      // No hacer nada
 
       songs.forEach((song, i) => {
         if (!song || !song.id) {
@@ -171,7 +178,7 @@ const MusicPlayer = (function () {
               currentQueue.push(song); // mantener cola local para mostrar
 
               // Reproducir si es la primera y no hay nada sonando
-              if (autoPlay && !isPlaying && i === 0) {
+              if (!isPlaying) {
                 playSong(); // llama dequeue() y reproduce la próxima canción
               }
             } else {
@@ -186,9 +193,9 @@ const MusicPlayer = (function () {
           });
       });
     },
-    getCurrentQueue() {
-      return currentQueue;
-    },
+    // getCurrentQueue() {
+    //   return currentQueue;
+    // },
   };
 })();
 

@@ -111,58 +111,6 @@ interfaz(AgregarCancionAlbum)
     return true;
 }
 
-json_object *album_to_json(Album *album)
-{
-    json_object *jobj = json_object_new_object();
-
-    json_object_object_add(jobj, "id", json_object_new_int(album->id));
-    json_object_object_add(jobj, "name", json_object_new_string(album->nombre));
-    json_object_object_add(jobj, "year", json_object_new_string(album->fechaCreacion));
-
-    json_object *songsArray = json_object_new_array();
-
-    forEachInLista(
-        album->canciones,
-        getCanciones,
-        songsArray);
-
-    json_object_object_add(jobj, "songs", songsArray);
-    return jobj;
-}
-
-new_operfn(getAlbumes)
-{
-    json_object_array_add(arg, album_to_json(val));
-    return FOREACH_CONTINUE;
-}
-
-message_handler(obtener_albumes_artista)
-{
-    // Validar que el artista está creado
-    if (!usuario->artista)
-    {
-        VibeCast_SendText(id, HTTP_OK, "", "El usuario no es artista", STATE_FAILURE);
-        return;
-    }
-
-    json_object *albumsArray = json_object_new_array();
-
-    forEachInLista(
-        usuario->artista->albumes,
-        getAlbumes,
-        albumsArray);
-
-    VibeCast_SendArray(
-        id,
-        HTTP_OK,
-        albumsArray,
-        "Álbumes cargados",
-        STATE_SUCCESS);
-
-    // Liberar memoria
-    json_object_put(albumsArray);
-}
-
 message_handler(crear_artista)
 {
     init_data_json();
@@ -185,3 +133,78 @@ message_handler(crear_artista)
     freem(*msg);
     *msg = NULL;
 }
+
+new_operfn(getAlbumJSON)
+{
+    Album *album = val;
+    json_object *jobj = json_object_new_object();
+
+    json_object_object_add(jobj, "id", json_object_new_int(album->id));
+    json_object_object_add(jobj, "name", json_object_new_string(album->nombre));
+    json_object_object_add(jobj, "year", json_object_new_string(album->fechaCreacion));
+
+    json_object *songsArray = json_object_new_array();
+
+    forEachInLista(
+        album->canciones,
+        getSongJSON,
+        songsArray);
+
+    json_object_object_add(jobj, "songs", songsArray);
+
+    json_object_array_add(arg, jobj);
+    return FOREACH_CONTINUE;
+}
+
+message_handler(get_artist_data)
+{
+    // Validar que el artista está creado
+    if (!usuario->artista)
+    {
+        VibeCast_SendText(id, HTTP_OK, "", "El usuario no es artista", STATE_FAILURE);
+        return;
+    }
+
+    json_object *response = json_object_new_object();
+    json_object *albumsArray = json_object_new_array();
+
+    forEachInLista(
+        usuario->artista->albumes,
+        getAlbumJSON,
+        albumsArray);
+
+    json_object_object_add(response, "albums", albumsArray);
+
+    VibeCast_SendJSON(
+        id,
+        HTTP_OK,
+        response,
+        "Álbumes cargados",
+        STATE_SUCCESS);
+
+    puts(json_object_to_json_string(response));
+
+    // Liberar memoria
+    json_object_put(response);
+}
+
+/*
+{
+  "albums": [
+    {
+      "id": 1,
+      "name": "Mi álbum",
+      "year": "2025",
+      "songs": [
+        {
+          "id": 101,
+          "title": "Canción 1",
+          "artist": "Nombre del artista",
+          "duration": "3:12"
+        }
+      ]
+    },
+    // más álbumes...
+  ]
+}
+ */

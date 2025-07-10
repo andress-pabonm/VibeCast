@@ -125,7 +125,7 @@ interfaz(AgregarCancionACola)
     return true;
 }
 
-message_handler(agregar_cancion_a_cola)
+message_handler(enqueue)
 {
     init_data_json();
     const char *id_cancion = get_string(get_array_idx(data, 0));
@@ -192,4 +192,9 @@ message_handler(mostrar_cola)
                        array, "Cola de reproducción", STATE_SUCCESS);
 
     json_object_put(array);
+}
+
+message_handler(dequeue)
+{
+    VibeCast_SendNull(id, HTTP_OK, "XD", STATE_SUCCESS);
 }

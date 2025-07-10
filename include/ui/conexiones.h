@@ -84,6 +84,8 @@ bool VibeCast_SendObj(const char *id, int status_code, const char *type, json_ob
 /* ================ Utilidades ================ */
 
 // JSON-C helpers
+#define new_json_object json_object_new_object
+#define new_json_array json_object_new_array
 #define get_json json_tokener_parse
 #define get_array_idx json_object_array_get_idx
 
@@ -95,7 +97,9 @@ static inline json_object *get_field(json_object *src, const char *field)
 }
 
 #define init_json(dest, src) json_object *dest = src
+#define end_json(src) json_object_put(src)
 #define init_data_json() init_json(data, get_json(req))
+#define end_data_json() end_json(data);
 #define get_string(src) json_object_get_string(src)
 
 /* ================================================================ */
@@ -120,6 +124,17 @@ message_handler(get_recomendaciones); // Para el menú principal
 message_handler(get_playlists); // Obtenemos las playlist del usuario
 
 message_handler(next_song); // Para avanzar en la cola de reproducción
+
+message_handler(get_artist_data);
+
+message_handler(mostrar_cola);
+message_handler(vaciar_cola);
+message_handler(enqueue);
+message_handler(dequeue);
+
+message_handler(agregar_a_historial);
+message_handler(mostrar_historial);
+message_handler(vaciar_historial);
 
 /* ================================================================ */
 

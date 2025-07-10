@@ -108,7 +108,7 @@ static select_handler(cargarArtistaPorUsuario)
     insertValueInABB(artistas, artista);
 
     char *condition = asprintf("id_artista = %s", argv[ARTISTA_ID]);
-    obtener_registros("Albumes", "*", condition, cargarAlbumesPorArtista, artista, NULL);
+    obtener_registros("Albumes", "id, nombre, fecha_creacion", condition, cargarAlbumesPorArtista, artista, NULL);
     freem(condition);
 
     return 0;
@@ -291,6 +291,7 @@ static select_handler(cargarAnuncios)
                          cmpUsuarioConUsername);
 
     insertValueInCola(anuncios, anuncio);
+
     return 0;
 }
 
@@ -306,8 +307,6 @@ static select_handler(cargarOtrosDatosPorUsuario)
             usuarios,
             argv[USUARIO_USERNAME],
             cmpUsuarioConUsername);
-
-    printf("Enlazando datos de %d: %s\n", id_usuario, usuario->username);
 
     // Cargar amigos
 
@@ -402,13 +401,13 @@ bool VibeCast_LoadData(char **errmsg)
         return false;
     }
 
-    puts("Variables globales inicializadas");
+    // puts("Variables globales inicializadas");
 
     // Iniciar la base de datos
     if (!VibeCast_InitDB("data.db", errmsg))
         return false;
 
-    puts("Base de datos inicializada");
+    // puts("Base de datos inicializada");
 
     // showData(); // Descomenta esta linea si quieres ver todos los datos guardados en la base de datos
 
@@ -418,7 +417,7 @@ bool VibeCast_LoadData(char **errmsg)
             cargarUsuarios, NULL, errmsg))
         return false;
 
-    puts("Usuarios cargados");
+    // puts("Usuarios cargados");
 
     // Cargar amigos, playlists, historiales
     if (!obtener_registros(
@@ -426,7 +425,7 @@ bool VibeCast_LoadData(char **errmsg)
             cargarOtrosDatosPorUsuario, NULL, errmsg))
         return false;
 
-    puts("Amigos, playlists e historiales cargados");
+    // puts("Amigos, playlists e historiales cargados");
 
     // Cargar anuncios
     if (!obtener_registros(
@@ -434,7 +433,7 @@ bool VibeCast_LoadData(char **errmsg)
             "Usuarios.username, Anuncios.url", NULL, cargarAnuncios, NULL, errmsg))
         return false;
 
-    puts("Anuncios cargados");
+    // puts("Anuncios cargados");
 
     return true; // Datos cargados correctamente
 }
@@ -442,6 +441,18 @@ bool VibeCast_LoadData(char **errmsg)
 bool VibeCast_FreeData()
 {
     /* Aquí se libera la memoria de las estructuras de datos */
+
+    // Destruir usuarios, artistas, álbumes y canciones
+    destroyABB(usuarios, destroyUsuarios, NULL);
+
+    // Únicamente destruir los nodos, ya que los artistas ya fueron destruidos
+    destroyABB(artistas, NULL, NULL);
+
+    // Del mismo modo, únicamente destruir los nodos
+    destroyLista(canciones, NULL, NULL);
+
+    // Finalmente, destruir la cola de anuncios
+    destroyCola(anuncios, destroyAnuncios, NULL);
 
     return true;
 }

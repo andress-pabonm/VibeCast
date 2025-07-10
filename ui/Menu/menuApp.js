@@ -147,31 +147,13 @@ function setupSongClickEvents() {
     if (e.target.classList.contains("fa-play")) {
       console.log("▶ Encolando y reproduciendo:", song.title);
 
-      try {
-        const res = await window.enqueue(song.id);
-        if (res?.status === "ok") {
-          MusicPlayer.addSongsToQueue([song]); // Reproducir después de encolar
-        } else {
-          console.warn("No se pudo encolar la canción:", res?.message || res);
-        }
-      } catch (err) {
-        console.error("Error en enqueue:", err);
-      }
+      MusicPlayer.addSongsToQueue(song, true);
     }
 
     if (e.target.classList.contains("fa-plus")) {
       console.log("➕ Encolando (sin reproducir):", song.title);
 
-      try {
-        const res = await window.enqueue(song.id);
-        if (res?.status === "ok") {
-          MusicPlayer.addSongsToQueue([song], false); // Añadir sin reproducir
-        } else {
-          console.warn("No se pudo encolar la canción:", res?.message || res);
-        }
-      } catch (err) {
-        console.error("Error en enqueue:", err);
-      }
+      MusicPlayer.addSongsToQueue(song, false);
     }
   });
 }

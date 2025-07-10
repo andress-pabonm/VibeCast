@@ -29,26 +29,17 @@ extern Cola cola_repr;
     if (msg)              \
     *msg = asprintf(__VA_ARGS__)
 
+new_operfn(getSongJSON);
+
 Lista recomendarCanciones();
-
-json_object *cancion_to_json(Cancion *cancion);
-new_operfn(getCanciones);
-
-interfaz(CrearCancion);
 
 // === COLA DE REPRODUCCIÓN ===
 interfaz(AgregarCancionACola);
 interfaz(VaciarColaReproduccion);
-message_handler(mostrar_cola);
-message_handler(vaciar_cola);
-message_handler(agregar_cancion_a_cola);
 
 // === HISTORIAL ===
 interfaz(AgregarAHistorial);
 interfaz(MostrarHistorial);
 interfaz(VaciarHistorial);
-message_handler(agregar_a_historial);
-message_handler(mostrar_historial);
-message_handler(vaciar_historial);
 
 #endif // VIBECAST_INTERFACES_H

@@ -27,9 +27,12 @@ bool VibeCast_InitBindings()
     // === COLA DE REPRODUCCIÓN ===
     bind_fn(mostrar_cola, NULL);
     bind_fn(vaciar_cola, NULL);
-    bind_fn(agregar_cancion_a_cola, NULL);
+    bind_fn(enqueue, &msg);
+    bind_fn(dequeue, &msg);
 
     bind_fn(get_playlists, &msg);
+
+    bind_fn(get_artist_data, &msg);
 
     return true;
 }
