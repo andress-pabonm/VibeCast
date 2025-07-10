@@ -22,27 +22,22 @@ document.addEventListener("DOMContentLoaded", () => {
   // Cargar página dinámica
   async function loadPage(page) {
     try {
-      console.log("ME GUSTA EL SEXO LESBICO: ", page)
       const response = await fetch(`pages/${page}.html`);
-      if (!response.ok) throw new Error("Página no encontrada");
-
       const html = await response.text();
-      dynamicContent.innerHTML = html;
 
-      // Actualiza botón activo
-      sections.forEach((section) => {
-        buttons[section].classList.remove("active");
-      });
-      buttons[page].classList.add("active");
+      // Crea un contenedor temporal para procesar el HTML
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
 
-      // Carga el JS específico de la página
-      loadPageScript(page);
+      // Extrae y aplica los estilos primero
+      const styles = tempDiv.querySelector('style');
+      if (styles) document.head.appendChild(styles.cloneNode(true));
+
+      // Inserta el contenido en el DOM
+      document.getElementById('main-content').innerHTML = tempDiv.querySelector('main').innerHTML;
+
     } catch (error) {
       console.error("Error cargando la página:", error);
-      dynamicContent.innerHTML = `
-        <h2>Error 404</h2>
-        <p>La página "${page}" no existe.</p>
-      `;
     }
   }
 
@@ -91,21 +86,21 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 // 3. This function creates an <iframe> (and YouTube player)
 //    after the API code downloads.
-var player;
-function onYouTubeIframeAPIReady() {
-  player = new YT.Player("player", {
-    height: "390",
-    width: "640",
-    videoId: "PgBvV9ofjmA",
-    playerVars: {
-      playsinline: 1,
-    },
-    events: {
-      onReady: onPlayerReady,
-      onStateChange: onPlayerStateChange,
-    },
-  });
-}
+// var player;
+// function onYouTubeIframeAPIReady() {
+//   player = new YT.Player("player", {
+//     height: "390",
+//     width: "640",
+//     videoId: "PgBvV9ofjmA",
+//     playerVars: {
+//       playsinline: 1,
+//     },
+//     events: {
+//       onReady: onPlayerReady,
+//       onStateChange: onPlayerStateChange,
+//     },
+//   });
+// }
 
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
