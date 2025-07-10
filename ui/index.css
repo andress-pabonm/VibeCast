@@ -43,14 +43,23 @@ body {
   width: 250px;
   background-color: var(--gris-oscuro);
   padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  position: fixed;
+  height: 100%;
 }
 
 .logo {
   display: flex;
   align-items: center;
+  margin-bottom: 2rem;
+}
+
+.logo-icon {
+  font-size: 2rem;
+  color: var(--azul);
+  margin-right: 10px;
+}
+
+.logo-title {
   font-size: 1.8rem;
   font-weight: 600;
   background: linear-gradient(to right, var(--morado), var(--azul-oscuro));
@@ -59,24 +68,32 @@ body {
   color: transparent;
 }
 
-.sidebar nav button {
-  background: none;
+.menu-btn {
+  margin-bottom: 1rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: transparent;
+  color: var(--blanco);
   border: none;
-  color: var(--detalle);
+  outline: none;
+  border-radius: 8px;
+  cursor: pointer;
   text-align: left;
   font-size: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: var(--transition-normal);
-  width: 100%;
-  display: block; /* fuerza a ocupar ancho completo */
-  box-sizing: border-box; /* asegura que el padding no sume al ancho */
+  transition: var(--transition-fast);
+  display: flex;
   align-items: center;
+  gap: 10px;
 }
 
-.sidebar nav button:hover,
-.sidebar nav button.active {
+.main-menu .menu-btn i {
+  margin-right: 10px;
+  width: 20px;
+  text-align: center;
+}
+
+.main-menu .menu-btn:hover,
+.menu-btn.active {
   background-color: var(--morado-oscuro);
   color: var(--blanco);
 }
