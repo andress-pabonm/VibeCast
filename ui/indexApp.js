@@ -21,11 +21,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Cargar contenido HTML
       if (view?.html) {
+        //Cargar html de la vista
         mainContent.innerHTML = view.html;
 
         if (typeof view.init === "function") {
           view.init();
         }
+
         activeView = viewName;
       } else {
         mainContent.innerHTML = `<p>Vista "${viewName}" no encontrada.</p>`;

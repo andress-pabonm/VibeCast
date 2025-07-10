@@ -44,7 +44,6 @@ window.views.amigos = {
         </div>
     </div>
   `,
-  style: "styles/amigosStyles.css",
   init: function () {
     function init() {
       // Elementos del DOM

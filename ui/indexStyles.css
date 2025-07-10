@@ -9,6 +9,9 @@
   --gris-oscuro: #2a2a2a;
   --gris-medio: #3a3a3a;
   --gris-claro: #4a4a4a;
+  --error: #ff0a54;
+  --success: #2a9d8f;
+  --premium: #f9c74f;
 
   --transition-fast: 0.2s ease;
   --transition-normal: 0.3s ease;
@@ -30,7 +33,7 @@ body {
 }
 
 /* ========== CONTENEDOR PRINCIPAL ========== */
-.menu-container {
+#app {
   display: flex;
   min-height: 100vh;
   animation: fadeIn 0.5s ease-in-out;

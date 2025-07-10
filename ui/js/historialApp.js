@@ -20,7 +20,6 @@ window.views.historial = {
         </section>
     </div>
   `,
-  style: "styles/historialStyles.css",
   init: function () {
     function init() {
       //LOGICA DE HISTORIAL REAL
