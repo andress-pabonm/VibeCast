@@ -224,11 +224,7 @@ body:not(.player-closed) {
   width: 0%;
 }
 
-#youtube-player iframe {
+#player {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  top: -1000px;
-  left: -1000px;
-  pointer-events: none;
+  display: none;
 }

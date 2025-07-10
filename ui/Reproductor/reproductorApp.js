@@ -1,3 +1,47 @@
+// 2. This code loads the IFrame Player API code asynchronously.
+var tag = document.createElement("script");
+
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName("script")[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+// 3. This function creates an <iframe> (and YouTube player)
+//    after the API code downloads.
+var player;
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player("player", {
+    height: "390",
+    width: "640",
+    videoId: "PgBvV9ofjmA",
+    playerVars: {
+      playsinline: 1,
+    },
+    events: {
+      onReady: onPlayerReady,
+      onStateChange: onPlayerStateChange,
+    },
+  });
+}
+
+// 4. The API will call this function when the video player is ready.
+function onPlayerReady(event) {
+  event.target.playVideo();
+}
+
+// 5. The API calls this function when the player's state changes.
+//    The function indicates that when playing a video (state=1),
+//    the player should play for six seconds and then stop.
+var done = false;
+function onPlayerStateChange(event) {
+  if (event.data == YT.PlayerState.PLAYING && !done) {
+    setTimeout(stopVideo, 6000);
+    done = true;
+  }
+}
+function stopVideo() {
+  player.stopVideo();
+}
+
 const MusicPlayer = (function () {
   let currentAudio = null;
   let isPlaying = false;
@@ -161,11 +205,12 @@ const MusicPlayer = (function () {
 
       if (autoPlay) {
         // Vaciar cola de reproducción antes de añadir nuevas canciones
-        window.vaciar_cola()
+        window
+          .vaciar_cola()
           .then(() => {
             console.log("Cola vaciada para reproducción automática");
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("Error al vaciar la cola:", err);
           });
       }
@@ -176,22 +221,24 @@ const MusicPlayer = (function () {
           return;
         }
 
-        window.enqueue(song.id).then((res) => {
-          if (res?.status === "ok") {
-            console.log(`✅ Encolada: ${song.title}`);
-            currentQueue.push(song); // mantener cola local para mostrar
+        window
+          .enqueue(song.id)
+          .then((res) => {
+            if (res?.status === "ok") {
+              console.log(`✅ Encolada: ${song.title}`);
+              currentQueue.push(song); // mantener cola local para mostrar
 
-            // Reproducir si es la primera y no hay nada sonando
-            if (!isPlaying) {
-              playSong(); // llama dequeue() y reproduce la próxima canción
+              // Reproducir si es la primera y no hay nada sonando
+              if (!isPlaying) {
+                playSong(); // llama dequeue() y reproduce la próxima canción
+              }
+            } else {
+              console.warn(
+                `❌ No se pudo encolar: ${song.title}`,
+                res?.message || res
+              );
             }
-          } else {
-            console.warn(
-              `❌ No se pudo encolar: ${song.title}`,
-              res?.message || res
-            );
-          }
-        })
+          })
           .catch((err) => {
             console.error(`Error al encolar ${song.title}:`, err);
           });
@@ -199,34 +246,3 @@ const MusicPlayer = (function () {
     },
   };
 })();
-
-function loadYouTubeAPI() {
-  if (window.YT) return;
-  const tag = document.createElement("script");
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.head.appendChild(tag);
-}
-
-let youtubePlayer;
-
-function createYouTubePlayer(videoId, onEndCallback) {
-  // Elimina el iframe anterior si existe
-  const existing = document.getElementById("youtube-player");
-  if (existing) existing.remove();
-
-  const iframe = document.createElement("div");
-  iframe.id = "youtube-player";
-  document.body.appendChild(iframe); // puedes ocultarlo luego
-
-  youtubePlayer = new YT.Player("youtube-player", {
-    videoId: videoId,
-    events: {
-      onReady: (e) => e.target.playVideo(),
-      onStateChange: (e) => {
-        if (e.data === YT.PlayerState.ENDED && onEndCallback) {
-          onEndCallback();
-        }
-      },
-    },
-  });
-}
