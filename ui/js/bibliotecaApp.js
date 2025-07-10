@@ -51,7 +51,6 @@ window.views.biblioteca = {
         </div>
     </div>
   `,
-  style: "styles/bibliotecaStyles.css",
   init: function () {
     function init() {
       loadPlaylists();

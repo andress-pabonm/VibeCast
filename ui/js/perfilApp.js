@@ -172,7 +172,6 @@ window.views.perfil = {
     </div>
 
   `,
-  style: "styles/perfilStyles.css",
   init: function () {
     async function init() {
       try {
@@ -361,7 +360,7 @@ window.views.perfil = {
         try {
           const res = await window.cerrar_sesion();
           if (res.status === "ok") {
-            window.location.replace("../Login/index.html");
+            window.location.replace("pages/login.html");
           }
         } catch (err) {
           console.error("Error al cerrar sesión:", err);
