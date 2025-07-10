@@ -41,9 +41,9 @@ window.views.inicio = {
     </section>
   </div>
   `,
-  style: "../styles/inicioStyles.css",
+  style: "styles/menuStyles.css",
   init: function () {
-    document.addEventListener("DOMContentLoaded", () => {
+    function init() {
       checkUserLoggedIn();
 
       loadSongs();
@@ -52,7 +52,7 @@ window.views.inicio = {
       setupSongClickEvents();
 
       MusicPlayer.init();
-    });
+    };
 
     /**
      * Verifica si hay sesión iniciada.
@@ -203,5 +203,6 @@ window.views.inicio = {
       });
     }
 
+    init();
   },
 };

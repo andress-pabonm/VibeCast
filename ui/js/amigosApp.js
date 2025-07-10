@@ -44,9 +44,9 @@ window.views.amigos = {
         </div>
     </div>
   `,
-  style: "../styles/amigosStyles.css",
+  style: "styles/amigosStyles.css",
   init: function () {
-    document.addEventListener("DOMContentLoaded", function () {
+    function init() {
       // Elementos del DOM
       const friendsList = document.getElementById("friendsList");
       const friendTemplate = friendsList.querySelector(".template");
@@ -147,6 +147,8 @@ window.views.amigos = {
 
       // Inicializar
       loadFriends();
-    });
+    }
+
+    init();
   },
 };

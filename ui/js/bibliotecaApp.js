@@ -51,8 +51,13 @@ window.views.biblioteca = {
         </div>
     </div>
   `,
-  style: "../styles/bibliotecaStyles.css",
+  style: "styles/bibliotecaStyles.css",
   init: function () {
+    function init() {
+      loadPlaylists();
+      setupEventListeners();
+    };
+
     // Variables globales
     const playlistsContainer = document.getElementById('playlistsContainer');
     const songsSection = document.getElementById('songsSection');
@@ -72,11 +77,6 @@ window.views.biblioteca = {
     let currentPlaylistId = null;
     let currentPlaylistSongs = {};
     let currentPlaylists = [];
-
-    document.addEventListener("DOMContentLoaded", () => {
-      loadPlaylists();
-      setupEventListeners();
-    });
 
     async function loadPlaylists() {
       try {
@@ -212,5 +212,7 @@ window.views.biblioteca = {
         }
       });
     }
+
+    init();
   },
 };

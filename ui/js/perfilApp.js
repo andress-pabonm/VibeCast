@@ -172,9 +172,9 @@ window.views.perfil = {
     </div>
 
   `,
-  style: "../styles/perfilStyles.css",
+  style: "styles/perfilStyles.css",
   init: function () {
-    document.addEventListener("DOMContentLoaded", async () => {
+    async function init() {
       try {
         const res = await window.get_user_data();
 
@@ -196,7 +196,7 @@ window.views.perfil = {
         alert("No se pudo cargar el perfil, redirigiendo...");
         // window.location.replace("../Login/index.html");
       }
-    });
+    };
 
     async function loadArtistData(userData) {
       try {
@@ -626,5 +626,6 @@ window.views.perfil = {
       });
     }
 
+    init();
   },
 };

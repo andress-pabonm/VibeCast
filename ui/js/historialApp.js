@@ -20,9 +20,9 @@ window.views.historial = {
         </section>
     </div>
   `,
-  style: "../styles/historialStyles.css",
+  style: "styles/historialStyles.css",
   init: function () {
-    document.addEventListener('DOMContentLoaded', () => {
+    function init() {
       //LOGICA DE HISTORIAL REAL
 
       // Datos de ejemplo del historial
@@ -122,6 +122,8 @@ window.views.historial = {
 
       // Inicializar
       loadHistory();
-    });
+    };
+
+    init();
   },
 };
