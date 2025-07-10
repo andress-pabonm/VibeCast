@@ -3,7 +3,7 @@ const MusicPlayer = (function () {
   let isPlaying = false;
   let currentQueue = [];
   let currentIndex = 0;
-  let volume = 0.8;
+  let volume = 1;
 
   // Elementos del DOM
   const $ = (id) => document.getElementById(id);
@@ -164,19 +164,10 @@ const MusicPlayer = (function () {
         window.vaciar_cola()
           .then(() => {
             console.log("Cola vaciada para reproducción automática");
-            currentQueue = []; // Limpiar cola local
-
-            // Añadir las nuevas canciones
-            this._addSongsToQueueInternal(songs);
           })
           .catch(err => {
             console.error("Error al vaciar la cola:", err);
-            // Aún así intentar añadir las canciones
-            this._addSongsToQueueInternal(songs);
           });
-      } else {
-        // Simplemente añadir al final de la cola
-        this._addSongsToQueueInternal(songs);
       }
 
       songs.forEach((song, i) => {
@@ -206,9 +197,6 @@ const MusicPlayer = (function () {
           });
       });
     },
-    // getCurrentQueue() {
-    //   return currentQueue;
-    // },
   };
 })();
 
