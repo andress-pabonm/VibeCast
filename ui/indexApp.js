@@ -24,9 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
         //Cargar html de la vista
         mainContent.innerHTML = view.html;
 
-        // Cargar CSS de la vista
-        setViewStylesheet(view.style);
-
         if (typeof view.init === "function") {
           view.init();
         }
