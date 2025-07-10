@@ -159,10 +159,25 @@ const MusicPlayer = (function () {
     addSongsToQueue(songs, autoPlay) {
       if (!Array.isArray(songs)) songs = [songs];
 
-      // Si autoPlay = true
-      // Vaciar cola de reproducción window.vaciar_cola
-      // Sino, si autoPlay = false
-      // No hacer nada
+      if (autoPlay) {
+        // Vaciar cola de reproducción antes de añadir nuevas canciones
+        window.vaciar_cola()
+          .then(() => {
+            console.log("Cola vaciada para reproducción automática");
+            currentQueue = []; // Limpiar cola local
+
+            // Añadir las nuevas canciones
+            this._addSongsToQueueInternal(songs);
+          })
+          .catch(err => {
+            console.error("Error al vaciar la cola:", err);
+            // Aún así intentar añadir las canciones
+            this._addSongsToQueueInternal(songs);
+          });
+      } else {
+        // Simplemente añadir al final de la cola
+        this._addSongsToQueueInternal(songs);
+      }
 
       songs.forEach((song, i) => {
         if (!song || !song.id) {
@@ -170,24 +185,22 @@ const MusicPlayer = (function () {
           return;
         }
 
-        window
-          .enqueue(song.id)
-          .then((res) => {
-            if (res?.status === "ok") {
-              console.log(`✅ Encolada: ${song.title}`);
-              currentQueue.push(song); // mantener cola local para mostrar
+        window.enqueue(song.id).then((res) => {
+          if (res?.status === "ok") {
+            console.log(`✅ Encolada: ${song.title}`);
+            currentQueue.push(song); // mantener cola local para mostrar
 
-              // Reproducir si es la primera y no hay nada sonando
-              if (!isPlaying) {
-                playSong(); // llama dequeue() y reproduce la próxima canción
-              }
-            } else {
-              console.warn(
-                `❌ No se pudo encolar: ${song.title}`,
-                res?.message || res
-              );
+            // Reproducir si es la primera y no hay nada sonando
+            if (!isPlaying) {
+              playSong(); // llama dequeue() y reproduce la próxima canción
             }
-          })
+          } else {
+            console.warn(
+              `❌ No se pudo encolar: ${song.title}`,
+              res?.message || res
+            );
+          }
+        })
           .catch((err) => {
             console.error(`Error al encolar ${song.title}:`, err);
           });
