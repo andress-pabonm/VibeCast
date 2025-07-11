@@ -51,12 +51,7 @@ window.views.biblioteca = {
         </div>
     </div>
   `,
-  init: function () {
-    function init() {
-      loadPlaylists();
-      setupEventListeners();
-    };
-
+  init: (function () {
     // Variables globales
     const playlistsContainer = document.getElementById('playlistsContainer');
     const songsSection = document.getElementById('songsSection');
@@ -212,6 +207,9 @@ window.views.biblioteca = {
       });
     }
 
-    init();
-  },
+    return function () {
+      loadPlaylists();
+      setupEventListeners();
+    }
+  })(),
 };

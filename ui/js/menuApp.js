@@ -42,9 +42,6 @@ window.views.inicio = {
   </div>
   `,
   init: (function () {
-    /**
-     * Verifica si hay sesión iniciada.
-     */
     async function checkUserLoggedIn() {
       try {
         const res = await window.is_logged_in();
