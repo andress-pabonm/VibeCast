@@ -1,6 +1,4 @@
 #include <ui/interfaces.h>
-#include <utils/utils.h>
-#include <time.h>
 
 interfaz(activarPremium)
 {
@@ -30,7 +28,8 @@ interfaz(activarPremium)
     return true;
 }
 
-message_handler(activarPremium){
+message_handler(activarPremium)
+{
 
     init_data_json(); // Inicializa el JSON de entrada (aunque no hay argumentos)
 
@@ -54,7 +53,7 @@ interfaz(desactivarPremium)
 {
     if (usuario->plan == PLAN_PREMIUM)
     {
-        usuario->plan = PLAN_FREEMIUM;    // Cambiamos el plan del usuario a freemium
+        usuario->plan = PLAN_FREEMIUM; // Cambiamos el plan del usuario a freemium
         usuario->caducidadPremium = 0; // Reseteamos la fecha de caducidad del plan premium
         send_message("¡Plan Premium desactivado!");
     }
@@ -101,7 +100,7 @@ interfaz(esUsuarioPremium)
     {
         send_message("Tu plan Premium ha caducado. Por favor, renueva tu suscripción\n");
         VibeCast_desactivarPremium(usuario, 0, NULL, NULL); // Desactiva el plan si ha caducado
-        return false;               // Retorna false si el usuario no es premium
+        return false;                                       // Retorna false si el usuario no es premium
     }
 
     return usuario->plan == PLAN_PREMIUM; // Retorna true si el usuario es premium
@@ -153,4 +152,3 @@ message_handler(renovarPremium)
     freem(*msg);
     *msg = NULL;
 }
-
