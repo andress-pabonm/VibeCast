@@ -42,18 +42,7 @@ window.views.inicio = {
   </div>
   `,
   style: "styles/menuStyles.css",
-  init: function () {
-    function init() {
-      checkUserLoggedIn();
-
-      loadSongs();
-      loadRecommendations();
-
-      setupSongClickEvents();
-
-      MusicPlayer.init();
-    };
-
+  init: (function () {
     /**
      * Verifica si hay sesión iniciada.
      */
@@ -62,7 +51,11 @@ window.views.inicio = {
         const res = await window.is_logged_in();
         console.log("is_logged_in():", res);
 
-        if (res.status !== "ok" || res.type !== "boolean" || res.data !== true) {
+        if (
+          res.status !== "ok" ||
+          res.type !== "boolean" ||
+          res.data !== true
+        ) {
           window.location.replace("../Login/index.html");
         }
       } catch (err) {
@@ -203,6 +196,13 @@ window.views.inicio = {
       });
     }
 
-    init();
-  },
+    return function () {
+      checkUserLoggedIn();
+
+      loadSongs();
+      loadRecommendations();
+
+      setupSongClickEvents();
+    };
+  })(),
 };
