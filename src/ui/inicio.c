@@ -96,6 +96,4 @@ message_handler(get_recomendaciones)
 
     VibeCast_SendArray(id, HTTP_OK, array, "Recomendaciones cargadas", STATE_SUCCESS);
     json_object_put(array);
-
-    destroyLista(recomendaciones, NULL, NULL);
 }
