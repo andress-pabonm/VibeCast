@@ -16,6 +16,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const sidebarNav = getElement(document, ".sidebar nav");
   const mainContent = getElement(document, ".main-content");
 
+  console.log("views: ", views);
+
   // Crear los botones del menú
   Object.entries(views).forEach(([viewName, view]) => {
     const btn = document.createElement("button");

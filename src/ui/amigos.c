@@ -190,8 +190,6 @@ message_handler(get_amigos)
 //     forEachInLista(amigos, mostrar_amigos, NULL); // Imprimir cada amigo en la lista
 // }
 
-
-
 message_handler(agregar_amigo)
 {
     init_data_json();
