@@ -44,7 +44,24 @@ window.views.amigos = {
         </div>
     </div>
   `,
-  init: (function () {
+  init: function () {
+    // Elementos del DOM
+    const friendsList = document.getElementById("friendsList");
+    const friendTemplate = friendsList.querySelector(".template");
+    const addFriendBtn = document.getElementById("addFriendBtn");
+    const addFriendModal = document.getElementById("addFriendModal");
+    const closeModal = document.querySelector(".close-modal");
+    const sendRequestBtn = document.getElementById("sendRequestBtn");
+    const friendSearch = document.getElementById("friendSearch");
+
+    // Datos de ejemplo
+    let friendsData = [
+      { id: 1, name: "María García" },
+      { id: 2, name: "Carlos López" },
+      { id: 3, name: "Ana Martínez" },
+      { id: 4, name: "David Fernández" },
+    ];
+
     // Cargar amigos
     function loadFriends() {
       // Limpiar lista (excepto la plantilla)
@@ -126,25 +143,6 @@ window.views.amigos = {
       }
     });
 
-    return function () {
-      // Elementos del DOM
-      const friendsList = document.getElementById("friendsList");
-      const friendTemplate = friendsList.querySelector(".template");
-      const addFriendBtn = document.getElementById("addFriendBtn");
-      const addFriendModal = document.getElementById("addFriendModal");
-      const closeModal = document.querySelector(".close-modal");
-      const sendRequestBtn = document.getElementById("sendRequestBtn");
-      const friendSearch = document.getElementById("friendSearch");
-
-      // Datos de ejemplo
-      let friendsData = [
-        { id: 1, name: "María García" },
-        { id: 2, name: "Carlos López" },
-        { id: 3, name: "Ana Martínez" },
-        { id: 4, name: "David Fernández" },
-      ];
-
-      loadFriends();
-    };
-  })(),
+    loadFriends();
+  },
 };
