@@ -122,7 +122,7 @@ window.views.inicio = {
         <p>${song.artist}</p>
     </div>
     <div class="song-actions">
-        <span>${song.duration}</span>
+        <span>${convertSecs(song.duration)}</span>
         <i class="fas fa-play"></i>
         <i class="fas fa-plus"></i>
     </div>`;
