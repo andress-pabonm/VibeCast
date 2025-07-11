@@ -178,7 +178,6 @@ window.views.inicio = {
     return function () {
       loadSongs();
       loadRecommendations();
-
       setupSongClickEvents();
     };
   })(),
