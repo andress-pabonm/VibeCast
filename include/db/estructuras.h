@@ -118,6 +118,8 @@ struct Usuario
 	Lista amigos;		 // Lista de amigos (Lista de Usuario)
 	Lista playlists;	 // Playlists creadas (Lista de Playlist)
 	Historial historial; // Historial de reproducción
+
+	time_t caducidadPremium; // Fecha de caducidad del plan premium (0 si no es premium)
 };
 
 // ==========================================

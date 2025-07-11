@@ -41,7 +41,6 @@ window.views.inicio = {
     </section>
   </div>
   `,
-  style: "styles/menuStyles.css",
   init: (function () {
     /**
      * Verifica si hay sesión iniciada.
