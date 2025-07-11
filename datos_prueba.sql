@@ -22,7 +22,7 @@ INSERT INTO Canciones (id_album, nombre, genero, fecha_publicacion, duracion, ur
 (1, "Blamegame", "Reggaeton", "2024-14-08", 205, "p9WN5BT5rNg", 70, 1200),
 (1, "Amorfoda", "Trap", "2018-02-14", 176, "kLpH1nSLJSs", 60, 900),
 (2, "Idol", "Pop", "2023-04-12", 225, "tHW0N0_sGk8", 350, 2000),
-(2, "En otra vida", "Balada", "2024-10-10", 164, "tHW0N0_sGk8", 350, 2000)
+(2, "En otra vida", "Balada", "2024-10-10", 164, "tHW0N0_sGk8", 350, 2000),
 (1, "Temperatura", "Reggaeton", "2013-07-3", 237, "Tgt6iaSYMEM", 234, 1056);
 
 INSERT INTO Playlists (id_usuario, nombre) VALUES
