@@ -15,12 +15,10 @@ const MusicPlayer = (function () {
     player = new YT.Player("player", {
       height: "0",
       width: "0",
-      videoId: "", // Inicialmente sin video
+      videoId: "tHW0N0_sGk8", // AQUI INTERACTUA CON CADA ID DE LA LISTA
       playerVars: {
-        playsinline: 1,
         controls: 0,
         disablekb: 1,
-        modestbranding: 1,
         fs: 0
       },
       events: {
@@ -35,7 +33,7 @@ const MusicPlayer = (function () {
 
   function onPlayerReady(event) {
     // Configuración inicial
-    player.setVolume(100); // Volumen inicial al 100%
+    event.target.setVolume(100); // Volumen inicial al 100%
     updateVolumeDisplay(100);
   }
 
@@ -44,12 +42,12 @@ const MusicPlayer = (function () {
       isPlaying = true;
       document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-pause"></i>';
       startProgressUpdate();
-      document.body.classList.remove('player-closed');
-      document.querySelector('.music-player').classList.remove('hidden');
     } else if (event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.ENDED) {
       isPlaying = false;
       document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
       stopProgressUpdate();
+      document.body.classList.remove('player-closed');
+      document.querySelector('.music-player').classList.remove('hidden');
     }
   }
 
