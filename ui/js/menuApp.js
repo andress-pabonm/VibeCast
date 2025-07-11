@@ -43,26 +43,6 @@ window.views.inicio = {
   `,
   init: (function () {
     /**
-     * Verifica si hay sesión iniciada.
-     */
-    async function checkUserLoggedIn() {
-      try {
-        const res = await window.is_logged_in();
-        console.log("is_logged_in():", res);
-
-        if (
-          res.status !== "ok" ||
-          res.type !== "boolean" ||
-          res.data !== true
-        ) {
-          window.location.replace("../Login/index.html");
-        }
-      } catch (err) {
-        console.error("Error al verificar sesión:", err);
-      }
-    }
-
-    /**
      * Carga las canciones disponibles desde el backend.
      */
     async function loadSongs() {
@@ -196,8 +176,6 @@ window.views.inicio = {
     }
 
     return function () {
-      checkUserLoggedIn();
-
       loadSongs();
       loadRecommendations();
 

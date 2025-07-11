@@ -108,21 +108,12 @@ interfaz(esUsuarioPremium)
 
 message_handler(esUsuarioPremium)
 {
-    init_data_json();
-
-    char **msg = arg;
-    bool success = VibeCast_isPremium(usuario, 0, NULL, msg);
-
-    VibeCast_SendText(
+    VibeCast_SendBool(
         id,
         HTTP_OK,
-        *msg,
-        success ? "Usuario Premium" : "Usuario Freemium o vencido",
-        STATE_BOOL(success));
-
-    puts(*msg);
-    freem(*msg);
-    *msg = NULL;
+        usuario->plan == PLAN_PREMIUM,
+        "",
+        STATE_SUCCESS);
 }
 
 //--------------------------------------------------------------------------------//

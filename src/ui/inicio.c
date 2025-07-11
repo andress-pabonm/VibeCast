@@ -82,6 +82,8 @@ Lista cancionesRecomendadas()
 
 new_operfn(getRecomendacionJSON)
 {
+    Cancion *cancion = val;
+
     return FOREACH_CONTINUE;
 }
 
@@ -96,6 +98,4 @@ message_handler(get_recomendaciones)
 
     VibeCast_SendArray(id, HTTP_OK, array, "Recomendaciones cargadas", STATE_SUCCESS);
     json_object_put(array);
-
-    destroyLista(recomendaciones, NULL, NULL);
 }

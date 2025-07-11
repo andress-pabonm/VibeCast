@@ -97,10 +97,11 @@ static inline json_object *get_field(json_object *src, const char *field)
 }
 
 #define init_json(dest, src) json_object *dest = src
-#define end_json(src) json_object_put(src)
+#define end_json json_object_put
 #define init_data_json() init_json(data, get_json(req))
 #define end_data_json() end_json(data);
-#define get_string(src) json_object_get_string(src)
+#define get_string json_object_get_string
+#define get_int json_object_get_int
 
 /* ================================================================ */
 
@@ -136,12 +137,12 @@ message_handler(agregar_a_historial);
 message_handler(mostrar_historial);
 message_handler(vaciar_historial);
 
-message_handler(activarPremium); 
-message_handler(desactivarPremium); 
-message_handler(esUsuarioPremium); 
-message_handler(renovarPremium);  
+message_handler(activarPremium);
+message_handler(desactivarPremium);
+message_handler(esUsuarioPremium);
+message_handler(renovarPremium);
 
-message_handler(crearPlaylist); 
+message_handler(crearPlaylist);
 message_handler(agregarCancionPlaylist);
 message_handler(eliminarCancionPlaylist);
 message_handler(eliminarPlaylist);
