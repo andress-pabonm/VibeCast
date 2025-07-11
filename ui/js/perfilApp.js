@@ -172,29 +172,27 @@ window.views.perfil = {
     </div>
 
   `,
-  init: function () {
-    async function init() {
-      try {
-        const res = await window.get_user_data();
+  init: (async function () {
+    try {
+      const res = await window.get_user_data();
 
-        if (!res || res.status !== "ok" || res.type !== "json" || !res.data) {
-          throw new Error(res?.message || "No se pudo cargar el perfil");
-        }
-
-        const userData = res.data;
-
-        // Inicializa la vista base del perfil
-        initializeProfile(userData);
-
-        // Si el usuario es artista, cargar datos de álbumes
-        if (userData.isArtist) {
-          await loadArtistData(userData);
-        }
-      } catch (err) {
-        console.error("Error al cargar perfil:", err);
-        alert("No se pudo cargar el perfil, redirigiendo...");
-        // window.location.replace("../Login/index.html");
+      if (!res || res.status !== "ok" || res.type !== "json" || !res.data) {
+        throw new Error(res?.message || "No se pudo cargar el perfil");
       }
+
+      const userData = res.data;
+
+      // Inicializa la vista base del perfil
+      initializeProfile(userData);
+
+      // Si el usuario es artista, cargar datos de álbumes
+      if (userData.isArtist) {
+        await loadArtistData(userData);
+      }
+    } catch (err) {
+      console.error("Error al cargar perfil:", err);
+      alert("No se pudo cargar el perfil, redirigiendo...");
+      // window.location.replace("../Login/index.html");
     }
 
     async function loadArtistData(userData) {
@@ -636,7 +634,5 @@ window.views.perfil = {
         alert("Funcionalidad de añadir álbum a cola no implementada aún");
       });
     }
-
-    init();
-  },
+  })(),
 };
