@@ -68,7 +68,6 @@ static select_handler(cargarOtrosDatosPorUsuario);
 select_handler(cargarUsuarios)
 {
     Usuario *usuario = newUsuario();
-
     if (!usuario)
         return 1;
 
@@ -411,7 +410,7 @@ bool VibeCast_LoadData(char **errmsg)
 
     // showData(); // Descomenta esta linea si quieres ver todos los datos guardados en la base de datos
 
-    // Cargar usuarios, artistas, álbumes y canciones
+    // Cargar usuarios, artistas, álbumes y cacionesn
     if (!obtener_registros(
             "Usuarios", "*", NULL,
             cargarUsuarios, NULL, errmsg))

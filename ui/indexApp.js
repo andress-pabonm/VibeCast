@@ -1,7 +1,22 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const res = await window.is_logged_in();
+    console.log("is_logged_in():", res);
+
+    if (res.status !== "ok" || res.type !== "boolean" || res.data !== true) {
+      window.location.replace("../Login/index.html");
+    }
+  } catch (err) {
+    console.error("Error al verificar sesión:", err);
+    // window.localStorage.replace("pages/login.html");
+    return;
+  }
+
   const views = window.views || {};
   const sidebarNav = getElement(document, ".sidebar nav");
   const mainContent = getElement(document, ".main-content");
+
+  console.log("views: ", views);
 
   // Crear los botones del menú
   Object.entries(views).forEach(([viewName, view]) => {

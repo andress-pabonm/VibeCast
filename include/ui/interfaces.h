@@ -31,18 +31,18 @@ extern Cola cola_repr;
 
 new_operfn(getSongJSON);
 
-Lista recomendarCanciones();
-
-// === COLA DE REPRODUCCIÓN ===
-interfaz(AgregarCancionACola);
-interfaz(VaciarColaReproduccion);
-
 // === HISTORIAL ===
 interfaz(AgregarAHistorial);
 interfaz(MostrarHistorial);
 interfaz(VaciarHistorial);
 
 // === Premium ====
+
+Lista recomendarCanciones();
+
+// === COLA DE REPRODUCCIÓN ===
+interfaz(AgregarCancionACola);
+interfaz(VaciarColaReproduccion);
 interfaz(activarPremium);
 interfaz(desactivarPremium);
 interfaz(esUsuarioPremium);

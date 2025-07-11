@@ -82,6 +82,8 @@ Lista cancionesRecomendadas()
 
 new_operfn(getRecomendacionJSON)
 {
+    Cancion *cancion = val;
+
     return FOREACH_CONTINUE;
 }
 
