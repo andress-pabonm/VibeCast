@@ -1,7 +1,9 @@
 #include <db/datos.h>
 #include <utils/utils.h>
 
-/* ==== Estructuras de datos ==== */
+/* ================================================================ */
+// ESTRUCTURAS DE DATOS
+/* ================================================================ */
 
 // ABB para usuarios (ordenado por Usuario.username)
 ABB usuarios = NULL;
@@ -15,7 +17,9 @@ Lista canciones = NULL;
 // Cola para los anuncios (ordenado por tiempo de creacion)
 Cola anuncios = NULL;
 
-/* ==== Funciones para ordenar las colecciones ==== */
+/* ================================================================ */
+// FUNCIONES PARA ORDENAR LAS COLECCIONES
+/* ================================================================ */
 
 static new_cmpfn(cmpUsuarios)
 {
@@ -33,9 +37,11 @@ static new_cmpfn(cmpArtistas)
     return strcmp(artista_1->nombre, artista_2->nombre);
 }
 
-/* ==== Funciones de ayuda para cargar los datos ==== */
+/* ================================================================ */
+// FUNCIONES DE AYUDA PARA CARGAR LOS DATOS
+/* ================================================================ */
 
-// ==== Declaraciones ====
+// ========================== Declaraciones =========================
 
 static select_handler(cargarArtistaPorUsuario);
 static select_handler(cargarAlbumesPorArtista);
@@ -53,7 +59,7 @@ static select_handler(cargarAnuncios);
 
 static select_handler(cargarOtrosDatosPorUsuario);
 
-// ==== Definiciones ====
+// ========================== Definiciones ==========================
 
 #define USUARIO_ID 0
 #define USUARIO_USERNAME 1
@@ -173,12 +179,7 @@ static select_handler(cargarCancionesPorAlbum)
 static select_handler(cargarAmigosPorUsuario)
 {
     // Buscar el amigo
-
-    Usuario *amigo =
-        searchValueInABB(
-            usuarios,
-            argv[AMIGO_USERNAME],
-            cmpUsuarioConUsername);
+    Usuario *amigo = searchValueInABB(usuarios, argv[AMIGO_USERNAME], cmpUsuarioConUsername);
 
     // Insertarlo en la lista de amigos
     insertValueInLista(arg, amigo);
@@ -212,14 +213,7 @@ static select_handler(cargarCancionesPorPlaylist)
     int id_cancion;
     sscanf(argv[CANCION_ID], "%d", &id_cancion);
 
-    // Buscar canción
-    Cancion *cancion =
-        searchValueInLista(
-            canciones,
-            &id_cancion,
-            cmpCancionConId);
-
-    // Insertarla en la playlist
+    Cancion *cancion = searchValueInLista(canciones, &id_cancion, cmpCancionConId);
     insertValueInLista(arg, cancion);
 
     return 0;
@@ -230,23 +224,13 @@ static select_handler(cargarCancionesPorPlaylist)
 
 static select_handler(cargarHistorialPorUsuario)
 {
-    // Cargar los datos del historial
-
     Historial *historial = arg;
 
     sscanf(argv[HISTORIAL_TIEMPO_ESCUCHADO], "%d", &historial->tiempoEscuchado);
     sscanf(argv[HISTORIAL_CANTIDAD_ANUNCIOS], "%d", &historial->cantidadAnuncios);
 
-    // Enlazar reproducciones
-
-    char *condition =
-        asprintf("usuario_id = %s", argv[USUARIO_ID]);
-
-    obtener_registros(
-        "Reproducciones", "id_cancion, fecha_escuchado", condition,
-        cargarReproduccionesPorHistorial,
-        &historial->reproducciones, NULL);
-
+    char *condition = asprintf("usuario_id = %s", argv[USUARIO_ID]);
+    obtener_registros("Reproducciones", "id_cancion, fecha_escuchado", condition, cargarReproduccionesPorHistorial, &historial->reproducciones, NULL);
     freem(condition);
 
     return 0;
@@ -264,10 +248,7 @@ static select_handler(cargarReproduccionesPorHistorial)
         return 1;
 
     reproduccion->fechaEscuchado = asprintf(argv[REPRODUCCION_FECHA_ESCUCHADO]);
-    reproduccion->cancion =
-        searchValueInLista(canciones,
-                           &id_cancion,
-                           cmpCancionConId);
+    reproduccion->cancion = searchValueInLista(canciones, &id_cancion, cmpCancionConId);
 
     insertValueInPila(arg, reproduccion);
 
@@ -284,10 +265,7 @@ static select_handler(cargarAnuncios)
         return 1;
 
     anuncio->url = asprintf(argv[ANUNCIO_URL]);
-    anuncio->anunciante =
-        searchValueInABB(usuarios,
-                         argv[ANUNCIO_ANUNCIANTE],
-                         cmpUsuarioConUsername);
+    anuncio->anunciante = searchValueInABB(usuarios, argv[ANUNCIO_ANUNCIANTE], cmpUsuarioConUsername);
 
     insertValueInCola(anuncios, anuncio);
 
@@ -296,52 +274,26 @@ static select_handler(cargarAnuncios)
 
 static select_handler(cargarOtrosDatosPorUsuario)
 {
-    // Buscar usuario
-
     int id_usuario;
     sscanf(argv[USUARIO_ID], "%d", &id_usuario);
 
-    Usuario *usuario =
-        searchValueInABB(
-            usuarios,
-            argv[USUARIO_USERNAME],
-            cmpUsuarioConUsername);
-
-    // Cargar amigos
+    Usuario *usuario = searchValueInABB(usuarios, argv[USUARIO_USERNAME], cmpUsuarioConUsername);
 
     char *condition = asprintf("Amigos.id_usuario_1 = %d", id_usuario);
-
-    obtener_registros(
-        "Amigos JOIN Usuarios ON Usuarios.id = Amigos.id_usuario_2",
-        "Usuarios.username",
-        condition,
-        cargarAmigosPorUsuario,
-        usuario->amigos, NULL);
-
+    obtener_registros("Amigos JOIN Usuarios ON Usuarios.id = Amigos.id_usuario_2", "Usuarios.username", condition, cargarAmigosPorUsuario, usuario->amigos, NULL);
     freem(condition);
 
-    // Cargar playlists
-
     condition = asprintf("id_usuario = %d", id_usuario);
-
-    obtener_registros(
-        "Playlists", "id, nombre", condition,
-        cargarPlaylistsPorUsuario,
-        usuario->playlists, NULL);
-
-    // Cargar historial
-
-    obtener_registros(
-        "Reproducciones", "id_cancion, fecha_escuchado", condition,
-        cargarReproduccionesPorHistorial,
-        usuario->historial.reproducciones, NULL);
-
+    obtener_registros("Playlists", "id, nombre", condition, cargarPlaylistsPorUsuario, usuario->playlists, NULL);
+    obtener_registros("Reproducciones", "id_cancion, fecha_escuchado", condition, cargarReproduccionesPorHistorial, usuario->historial.reproducciones, NULL);
     freem(condition);
 
     return 0;
 }
 
-/* ======== Funciones visibles en otros archivos ======== */
+/* ================================================================ */
+// FUNCIONES VISIBLES EN OTROS ARCHIVOS
+/* ================================================================ */
 
 static select_handler(checkData)
 {
@@ -400,63 +352,34 @@ bool VibeCast_LoadData(char **errmsg)
         return false;
     }
 
-    // puts("Variables globales inicializadas");
-
-    // Iniciar la base de datos
     if (!VibeCast_InitDB("data.db", errmsg))
         return false;
 
-    // puts("Base de datos inicializada");
-
-    // showData(); // Descomenta esta linea si quieres ver todos los datos guardados en la base de datos
-
-    // Cargar usuarios, artistas, álbumes y canciones
-    if (!obtener_registros(
-            "Usuarios", "*", NULL,
-            cargarUsuarios, NULL, errmsg))
+    if (!obtener_registros("Usuarios", "*", NULL, cargarUsuarios, NULL, errmsg))
         return false;
 
-    // puts("Usuarios cargados");
-
-    // Cargar amigos, playlists, historiales
-    if (!obtener_registros(
-            "Usuarios", "id, username", NULL,
-            cargarOtrosDatosPorUsuario, NULL, errmsg))
+    if (!obtener_registros("Usuarios", "id, username", NULL, cargarOtrosDatosPorUsuario, NULL, errmsg))
         return false;
 
-    // puts("Amigos, playlists e historiales cargados");
-
-    // Cargar anuncios
-    if (!obtener_registros(
-            "Anuncios JOIN Usuarios ON Usuarios.id = Anuncios.id_usuario",
-            "Usuarios.username, Anuncios.url", NULL, cargarAnuncios, NULL, errmsg))
+    if (!obtener_registros("Anuncios JOIN Usuarios ON Usuarios.id = Anuncios.id_usuario", "Usuarios.username, Anuncios.url", NULL, cargarAnuncios, NULL, errmsg))
         return false;
 
-    // puts("Anuncios cargados");
-
-    return true; // Datos cargados correctamente
+    return true;
 }
 
 bool VibeCast_FreeData()
 {
-    /* Aquí se libera la memoria de las estructuras de datos */
-
-    // Destruir usuarios, artistas, álbumes y canciones
     destroyABB(usuarios, destroyUsuarios, NULL);
-
-    // Únicamente destruir los nodos, ya que los artistas ya fueron destruidos
     destroyABB(artistas, NULL, NULL);
-
-    // Del mismo modo, únicamente destruir los nodos
     destroyLista(canciones, NULL, NULL);
-
-    // Finalmente, destruir la cola de anuncios
     destroyCola(anuncios, destroyAnuncios, NULL);
 
     return true;
 }
 
-/* ======== Comparadores ======== */
+/* ================================================================ */
+// COMPARADORES
+/* ================================================================ */
 
 new_cmpfn(cmpUsuarioConUsername)
 {
