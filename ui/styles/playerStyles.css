@@ -129,7 +129,7 @@
 }
 
 .progress::after {
-  content: '';
+  content: "";
   position: absolute;
   right: 0;
   top: 50%;
@@ -220,7 +220,7 @@
 /* Efecto de hover para los controles deslizantes */
 .volume-slider:hover .volume-level::after,
 .progress-bar:hover .progress::after {
-  content: '';
+  content: "";
   position: absolute;
   right: 0;
   top: 50%;
@@ -291,4 +291,7 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+#player {
+  display: none;
 }

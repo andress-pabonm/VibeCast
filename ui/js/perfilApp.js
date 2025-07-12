@@ -615,7 +615,7 @@ window.views.perfil = {
 
     return function () {
       window
-        .get_user_data()
+        .obtener_info_usuario()
         .then((res) => {
           if (!res || res.status !== "ok" || res.type !== "json" || !res.data) {
             throw new Error(res?.message || "No se pudo cargar el perfil");
