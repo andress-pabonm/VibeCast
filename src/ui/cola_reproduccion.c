@@ -48,7 +48,7 @@ bool agregarCancionACola(Cancion *cancion)
     if (cant_canciones == 3)
     {
         // Verificar si es FREEMIUM
-        if (usuario->plan = PLAN_FREEMIUM)
+        if (usuario->plan == PLAN_FREEMIUM)
         {
             // Agregar un anuncio
             Anuncio *anuncio = deleteValueInCola(anuncios);
