@@ -33,7 +33,7 @@ new_operfn(getSongJSON);
 
 Lista recomendarCanciones();
 
-// === COLA DE REPRODUCCIÓN ===
+// === COLA DE REPRODUCCIÓN ==
 interfaz(AgregarCancionACola);
 interfaz(VaciarColaReproduccion);
 
