@@ -29,6 +29,9 @@ bool VibeCast_BindFn(const char *name, message_handler_t msgh, void *arg);
 
 /* ================================================================ */
 
+// Envía cualquier objeto JSON (core)
+bool VibeCast_SendObj(const char *id, int status_code, const char *type, json_object *data, const char *msg, const char *status);
+
 // Envía un valor booleano (true/false)
 bool VibeCast_SendBool(const char *id, int status_code, bool value, const char *msg, const char *status);
 
@@ -50,8 +53,8 @@ bool VibeCast_SendJSON(const char *id, int status_code, json_object *object, con
 // Envía un valor nulo explícito
 bool VibeCast_SendNull(const char *id, int status_code, const char *msg, const char *status);
 
-// Envía cualquier objeto JSON (core)
-bool VibeCast_SendObj(const char *id, int status_code, const char *type, json_object *data, const char *msg, const char *status);
+// Envía un valor nulo explícito junto a un mensaje de error
+bool VibeCast_SendError(const char *id, int status_code, const char *msg, const char *status);
 
 // Estados generales
 #define STATUS_OK "ok"
@@ -109,6 +112,12 @@ static inline json_object *get_field(json_object *src, const char *field)
 // Funciones de conexión
 // ================================
 
+/* ==== Sesión ==== */
+
+message_handler(sesion_activa);  // Verificar si ha iniciado sesión
+message_handler(iniciar_sesion); // Iniciar sesión
+message_handler(cerrar_sesion);  // Cerrar sesión
+
 /* ==== Cola de reproducción ==== */
 
 message_handler(encolar);     //  Agregar canción a cola de reproducción
@@ -138,17 +147,13 @@ message_handler(vaciar_historial);
 
 /* ==== Amigos ==== */
 
-message_handler(get_amigos);    // Para obtener la lista de amigos del usuario activo
-message_handler(agregar_amigo); // Para agregar un amigo
-message_handler(quitar_amigo);  // Para eliminar un amigo
+message_handler(obtener_amigos); // Para obtener la lista de amigos del usuario activo
+message_handler(agregar_amigo);  // Para agregar un amigo
+message_handler(eliminar_amigo); // Para eliminar un amigo
 
 /* ==== Perfil ==== */
 
 // Usuario
-
-message_handler(sesion_activa);  // Verificar si ha iniciado sesión
-message_handler(iniciar_sesion); // Iniciar sesión
-message_handler(cerrar_sesion);  // Cerrar sesión
 
 message_handler(crear_cuenta);    // Crear cuenta
 message_handler(eliminar_cuenta); // Eliminar cuenta
