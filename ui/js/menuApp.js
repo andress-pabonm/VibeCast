@@ -141,7 +141,7 @@ window.views.inicio = {
         <p>${song.artist} · Recomendado por ${song.friend}</p>
     </div>
     <div class="song-actions">
-        <span>${song.duration}</span>
+        <span>${formatTime(song.duration)}</span>
         <i class="fas fa-play"></i>
     </div>`;
       return div;

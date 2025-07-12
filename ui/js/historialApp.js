@@ -105,9 +105,8 @@ window.views.historial = {
                     <div class="play-date">
                         <i class="far fa-clock"></i>
                         ${formatDate(item.playedAt)} · 
-                        ${item.plays} ${
-          item.plays === 1 ? "reproducción" : "reproducciones"
-        }
+                        ${item.plays} ${item.plays === 1 ? "reproducción" : "reproducciones"
+          }
                     </div>
                 </div>
                 <div class="history-actions">
@@ -115,8 +114,7 @@ window.views.historial = {
                     <i class="fas fa-play play-btn" title="Reproducir"></i>
                     <i class="fas fa-plus-circle add-to-playlist" title="Añadir a playlist"></i>
                 </div>
-            `; //AHI HAY UN ICONO PARA AGREGAR A UNA PLAYLIST, XQ CLARO PUEDE ESCUCHAR UNA CANCION PERO NO GUARDARLA
-        //PERO QUE PASA SI YA ESAT GUARDADA EN UNA PLAYLIST??? COMO SE QUITARIA ESA OPCION, NO SE SI ME ENTIENDES
+            `;
         historyContainer.appendChild(historyElement);
       });
     }

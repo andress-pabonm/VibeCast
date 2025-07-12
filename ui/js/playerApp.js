@@ -13,6 +13,7 @@ const MusicPlayer = (function () {
 
   function init(song) {
     player = new YT.Player("player", {
+      // videoId: "tvj5Fpok9bY",
       playerVars: {
         controls: 0,
         disablekb: 1,
@@ -130,8 +131,8 @@ const MusicPlayer = (function () {
       volume === 0
         ? "fas fa-volume-mute"
         : volume < 50
-        ? "fas fa-volume-down"
-        : "fas fa-volume-up";
+          ? "fas fa-volume-down"
+          : "fas fa-volume-up";
   }
 
   // Funciones de progreso

@@ -238,7 +238,7 @@ window.views.perfil = {
             } else {
               alert(
                 "Error al convertirte en artista: " +
-                  (res.message || "Error desconocido")
+                (res.message || "Error desconocido")
               );
             }
           } catch (err) {
@@ -425,12 +425,11 @@ window.views.perfil = {
       <div class="plan-period">${plan.period}</div>
       <ul class="plan-features">
         ${plan.features
-          .map((f) => `<li><i class="fas fa-check"></i> ${f}</li>`)
-          .join("")}
+            .map((f) => `<li><i class="fas fa-check"></i> ${f}</li>`)
+            .join("")}
       </ul>
-      <button class="select-plan-btn ${disabled}" data-plan="${
-          plan.id
-        }">${btnText}</button>
+      <button class="select-plan-btn ${disabled}" data-plan="${plan.id
+          }">${btnText}</button>
     `;
         container.appendChild(card);
       });
@@ -495,18 +494,15 @@ window.views.perfil = {
         const el = document.createElement("div");
         el.className = "album-card";
         el.innerHTML = `
-      <div class="album-options" data-id="${
-        album.id
-      }"><i class="fas fa-ellipsis-h"></i></div>
+      <div class="album-options" data-id="${album.id
+          }"><i class="fas fa-ellipsis-h"></i></div>
       <div class="album-image"><i class="fas fa-compact-disc"></i></div>
       <div class="album-info">
         <h3 class="album-name">${album.name}</h3>
-        <div class="album-details"><span>${album.year}</span><span>${
-          album.genre
-        }</span></div>
-        <div class="album-details"><span>${album.songs.length} canción${
-          album.songs.length !== 1 ? "es" : ""
-        }</span></div>
+        <div class="album-details"><span>${album.year}</span><span>${album.genre
+          }</span></div>
+        <div class="album-details"><span>${album.songs.length} canción${album.songs.length !== 1 ? "es" : ""
+          }</span></div>
       </div>
     `;
 
@@ -542,7 +538,7 @@ window.views.perfil = {
         el.className = "song-item";
         el.innerHTML = `
       <div class="song-info"><strong>${song.title}</strong><p>${song.artist}</p></div>
-      <div class="song-actions"><span>${song.duration}</span><i class="fas fa-play play-btn" title="Reproducir"></i></div>
+      <div class="song-actions"><span>${formatTime(song.duration)}</span><i class="fas fa-play play-btn" title="Reproducir"></i></div>
     `;
         albumSongsContainer.appendChild(el);
       });
