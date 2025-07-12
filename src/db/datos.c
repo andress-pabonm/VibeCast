@@ -410,7 +410,7 @@ bool VibeCast_LoadData(char **errmsg)
 
     // showData(); // Descomenta esta linea si quieres ver todos los datos guardados en la base de datos
 
-    // Cargar usuarios, artistas, álbumes y cacionesn
+    // Cargar usuarios, artistas, álbumes y canciones
     if (!obtener_registros(
             "Usuarios", "*", NULL,
             cargarUsuarios, NULL, errmsg))
