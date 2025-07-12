@@ -27,7 +27,8 @@ new_operfn(mostrar_canciones)
 interfaz(crearPlaylist)
 {
     const char *nombre = argv[0]; // Nombre de la playlist a crear
-    if (!nombre) {
+    if (!nombre)
+    {
         send_message("Error: Falta nombre de playlist\n");
         return false;
     }
@@ -62,7 +63,7 @@ message_handler(crearPlaylist)
 interfaz(agregarCancionPlaylist)
 {
     const char *nombrePlaylist = argv[0]; // Nombre de la playlist a la que se agregará la canción
-    int IdCancion = atoi(argv[1]); // ID de la canción a agregar
+    int IdCancion = atoi(argv[1]);        // ID de la canción a agregar
 
     Playlist *playlist = searchValueInLista(usuario->playlists, nombrePlaylist, cmpPlaylistConNombre);
 
@@ -109,10 +110,10 @@ message_handler(agregarCancionPlaylist)
 
 // ---------------------------------------------------------------------------------------------
 
-interfaz( eliminarCancionPlaylist)
-{   
-    const char *nombrePlaylist = argv[0];  // Nombre de la playlist
-    int Idcancion = atoi(argv[1]); // ID de la canción a eliminar
+interfaz(eliminarCancionPlaylist)
+{
+    const char *nombrePlaylist = argv[0]; // Nombre de la playlist
+    int Idcancion = atoi(argv[1]);        // ID de la canción a eliminar
 
     Playlist *playlist = searchValueInLista(usuario->playlists, nombrePlaylist, cmpPlaylistConNombre);
 
@@ -121,7 +122,7 @@ interfaz( eliminarCancionPlaylist)
         send_message("Error: La playlist '%s' no existe\n", nombrePlaylist);
         return false;
     }
-    
+
     Cancion *cancionEliminada = deleteValueInLista(playlist->canciones, &Idcancion, cmpCancionConId);
 
     if (cancionEliminada == NULL)
@@ -202,7 +203,6 @@ message_handler(eliminarPlaylist)
 
 // ---------------------------------------------------------------------------------------------
 
-
 interfaz(mostrarCancionesPlaylist)
 {
     const char *nombrePlaylist = argv[0]; // Nombre de la playlist a mostrar
@@ -211,7 +211,7 @@ interfaz(mostrarCancionesPlaylist)
 
     if (!playlist)
     {
-       send_message("Error: La playlist '%s' no existe\n", nombrePlaylist);
+        send_message("Error: La playlist '%s' no existe\n", nombrePlaylist);
 
         return false; // Retornar para evitar errores con las siguientes instrucciones
     }

@@ -9,20 +9,29 @@
 // Función para liberar la memoria de la expresión regular utilizada para validar emails.
 void free_re();
 
-/**
- * Variables globales
- * Estas estructuras estarán disponibles
- * para todos los archivos que incluyan
- * interfaces.h
- * #include <ui/interfaces.h>
- */
-
+// Usuario activo
 extern Usuario *usuario;
+
+// Cola de reproducción
 extern Cola cola_repr;
 
 /* Funciones principales */
 
-#define interfaz(name) bool func(name, void *arg, int argc, const char *argv[], char **msg)
+#define custom_interface(name, ...) bool func(name, void *arg, __VA_ARGS__, char **msg)
+#define interfaz(name) custom_interface(name, int argc, const char *argv[])
+
+#define required(expr, msg)    \
+    if (!(expr))               \
+    {                          \
+        VibeCast_SendError(    \
+            id,                \
+            HTTP_UNAUTHORIZED, \
+            msg,               \
+            STATE_FAILURE);    \
+        return;                \
+    }
+
+#define login_required() required(usuario, "Inicio de sesión requerido.")
 
 // Macro para facilitar enviar mensajes a las conexiones (message_handler)
 #define send_message(...) \
@@ -31,18 +40,18 @@ extern Cola cola_repr;
 
 new_operfn(getSongJSON);
 
-Lista recomendarCanciones();
-
-// === COLA DE REPRODUCCIÓN ==
-interfaz(AgregarCancionACola);
-interfaz(VaciarColaReproduccion);
-
 // === HISTORIAL ===
 interfaz(AgregarAHistorial);
 interfaz(MostrarHistorial);
 interfaz(VaciarHistorial);
 
 // === Premium ====
+
+Lista recomendarCanciones();
+
+// === COLA DE REPRODUCCIÓN ===
+interfaz(AgregarCancionACola);
+interfaz(VaciarColaReproduccion);
 interfaz(activarPremium);
 interfaz(desactivarPremium);
 interfaz(esUsuarioPremium);

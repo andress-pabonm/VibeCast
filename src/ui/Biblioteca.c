@@ -63,7 +63,15 @@ new_operfn(getPlaylistJSON)
     return FOREACH_CONTINUE;
 }
 
-message_handler(get_playlists)
+/* ================================================================ */
+// Funciones auxiliares
+/* ================================================================ */
+
+/* ================================================================ */
+// Obtener la lista de playlist para mostrar en Biblioteca
+/* ================================================================ */
+
+message_handler(obtener_playlists)
 {
     json_object *response = json_object_new_object();
     json_object *playlists_array = json_object_new_array();
@@ -75,6 +83,57 @@ message_handler(get_playlists)
     json_object_object_add(response, "playlists", playlists_array);
     json_object_object_add(response, "playlistSongs", songs_array);
 
-    VibeCast_SendJSON(id, HTTP_OK, response, "Playlists cargadas", STATE_SUCCESS);
+    VibeCast_SendJSON(
+        id,
+        HTTP_OK,
+        response,
+        "Playlists cargadas",
+        STATE_SUCCESS);
+
     json_object_put(response);
+}
+
+/* ================================================================ */
+// Crear una playlist
+/* ================================================================ */
+
+message_handler(crear_playlist)
+{
+    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
+}
+
+/* ================================================================ */
+// Eliminar una playlist
+/* ================================================================ */
+
+message_handler(eliminar_playlist)
+{
+    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
+}
+
+/* ================================================================ */
+// Actualizar la información de una playlist
+/* ================================================================ */
+
+message_handler(actualizar_playlist)
+{
+    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
+}
+
+/* ================================================================ */
+// Agregar una cacnión a una playlist
+/* ================================================================ */
+
+message_handler(agregar_a_playlist)
+{
+    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
+}
+
+/* ================================================================ */
+// Quitar una canción de una playlist
+/* ================================================================ */
+
+message_handler(quitar_de_playlist)
+{
+    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
 }

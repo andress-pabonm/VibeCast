@@ -172,31 +172,7 @@ window.views.perfil = {
     </div>
 
   `,
-  init: function () {
-    async function init() {
-      try {
-        const res = await window.get_user_data();
-
-        if (!res || res.status !== "ok" || res.type !== "json" || !res.data) {
-          throw new Error(res?.message || "No se pudo cargar el perfil");
-        }
-
-        const userData = res.data;
-
-        // Inicializa la vista base del perfil
-        initializeProfile(userData);
-
-        // Si el usuario es artista, cargar datos de álbumes
-        if (userData.isArtist) {
-          await loadArtistData(userData);
-        }
-      } catch (err) {
-        console.error("Error al cargar perfil:", err);
-        alert("No se pudo cargar el perfil, redirigiendo...");
-        // window.location.replace("../Login/index.html");
-      }
-    };
-
+  init: (function () {
     async function loadArtistData(userData) {
       try {
         const artistRes = await window.get_artist_data(userData.id);
@@ -295,7 +271,9 @@ window.views.perfil = {
         e.preventDefault();
 
         const newName = document.getElementById("edit-name").value.trim();
-        const newUsername = document.getElementById("edit-username").value.trim();
+        const newUsername = document
+          .getElementById("edit-username")
+          .value.trim();
         const newCountry = document.getElementById("edit-country").value.trim();
         const newEmail = document.getElementById("edit-email").value.trim();
 
@@ -355,17 +333,19 @@ window.views.perfil = {
       });
     }
 
-    function setupLogout() {
-      document.getElementById("logoutBtn").addEventListener("click", async () => {
-        try {
-          const res = await window.cerrar_sesion();
-          if (res.status === "ok") {
-            window.location.replace("pages/login.html");
+    async function setupLogout() {
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", async () => {
+          try {
+            const res = await window.cerrar_sesion();
+            if (res.status === "ok") {
+              location.replace("pages/login.html");
+            }
+          } catch (err) {
+            console.error("Error al cerrar sesión:", err);
           }
-        } catch (err) {
-          console.error("Error al cerrar sesión:", err);
-        }
-      });
+        });
     }
 
     function setSubscriptionInfo(user) {
@@ -466,7 +446,9 @@ window.views.perfil = {
           selected === "annual"
             ? expiration.setFullYear(expiration.getFullYear() + 1)
             : expiration.setMonth(expiration.getMonth() + 1);
-          userData.subscription.expiration = expiration.toISOString().split("T")[0];
+          userData.subscription.expiration = expiration
+            .toISOString()
+            .split("T")[0];
 
           setSubscriptionInfo(userData);
           document.getElementById("plansModal").classList.add("hidden");
@@ -542,7 +524,9 @@ window.views.perfil = {
 
     function showAlbumSongs(id, name, songs) {
       const albumSongsSection = document.getElementById("albumSongsSection");
-      const albumSongsContainer = document.getElementById("albumSongsContainer");
+      const albumSongsContainer = document.getElementById(
+        "albumSongsContainer"
+      );
       const currentAlbumTitle = document.getElementById("currentAlbumTitle");
 
       currentAlbumId = id;
@@ -554,7 +538,7 @@ window.views.perfil = {
         el.className = "song-item";
         el.innerHTML = `
       <div class="song-info"><strong>${song.title}</strong><p>${song.artist}</p></div>
-      <div class="song-actions"><span>${song.duration}</span><i class="fas fa-play play-btn" title="Reproducir"></i></div>
+      <div class="song-actions"><span>${formatTime(song.duration)}</span><i class="fas fa-play play-btn" title="Reproducir"></i></div>
     `;
         albumSongsContainer.appendChild(el);
       });
@@ -625,6 +609,29 @@ window.views.perfil = {
       });
     }
 
-    init();
-  },
+    return function () {
+      window
+        .obtener_info_usuario()
+        .then((res) => {
+          if (!res || res.status !== "ok" || res.type !== "json" || !res.data) {
+            throw new Error(res?.message || "No se pudo cargar el perfil");
+          }
+
+          const userData = res.data;
+
+          // Inicializa la vista base del perfil
+          initializeProfile(userData);
+
+          // Si el usuario es artista, cargar datos de álbumes
+          if (userData.isArtist) {
+            loadArtistData(userData);
+          }
+        })
+        .catch((err) => {
+          console.error("Error al cargar perfil:", err);
+          alert("No se pudo cargar el perfil, redirigiendo...");
+          // window.location.replace("../Login/index.html");
+        });
+    };
+  })(),
 };

@@ -52,6 +52,13 @@ interfaz(AgregarAmigo)
     // Obtener el username
     const char *username = argv[0];
 
+    // Validar que no sea el mismo usuario
+    if (!strcmp(usuario->username, username))
+    {
+        send_message("No puedes agregarte a ti mismo como amigo.");
+        return false;
+    }
+
     // Obtener lista de amigos del usuario actual
     Lista amigos = usuario->amigos;
 
@@ -60,7 +67,7 @@ interfaz(AgregarAmigo)
 
     if (amigo)
     {
-        send_message("El usuario %s ya es tu amigo.\n", amigo->username);
+        send_message("El usuario '%s' ya es tu amigo.\n", username);
         return false;
     }
 
@@ -69,18 +76,22 @@ interfaz(AgregarAmigo)
 
     if (!amigo)
     {
-        send_message("El usuario %s no existe en el sistema\n", username);
+        send_message("El usuario '%s' no existe.", username);
         return false;
     }
 
+    // Agregar en la base de datos
+    char *values = asprintf("%d, %d", usuario->id, amigo->id);
+    if (!nuevo_registro("Amigos", "id_usuario_1, id_usuario_2", values, msg))
+    {
+        freem(values);
+        return false;
+    }
+    freem(values);
+
     // Agregar a lista de amigos
     insertValueInLista(amigos, amigo);
-    send_message("El usuario %s ha sido agregado a tu lista de amigos\n", amigo->username);
-
-    char *values = asprintf("%d, %d", usuario->id);
-
-    nuevo_registro(
-        "Amigos", "id_usuario_1, id_usuario_2", values, NULL);
+    send_message("El usuario '%s' ha sido agregado a tu lista de amigos.", username);
 
     return true;
 }
@@ -98,11 +109,20 @@ interfaz(EliminarAmigo)
 
     if (!amigo)
     {
-        send_message("El usuario %s no está en tu lista de amigos.\n", username);
+        send_message("El usuario '%s' no está en tu lista de amigos.", username);
         return false;
     }
 
-    send_message("El usuario %s ha sido eliminado de tu lista de amigos\n", amigo->username);
+    char *condition = asprintf("id_usuario_1 = %d AND id_usuario_2 = %d", usuario->id, amigo->id);
+    if (!eliminar_registros("Amigos", condition, msg))
+    {
+        insertValueInLista(amigos, amigo);
+        freem(condition);
+        return false;
+    }
+    freem(condition);
+
+    send_message("El usuario '%s' ha sido eliminado de tu lista de amigos.", username);
 
     return true;
 }
@@ -114,13 +134,13 @@ json_object *amigo_to_json(Usuario *amigo)
 
     json_object_object_add(
         jobj,
-        "nombre",
-        json_object_new_string(amigo->nickname));
+        "id",
+        json_object_new_int(amigo->id));
 
     json_object_object_add(
         jobj,
-        "id",
-        json_object_new_int(amigo->id));
+        "nombre",
+        json_object_new_string(amigo->nickname));
 
     return jobj;
 }
@@ -131,7 +151,7 @@ new_operfn(getAmigos)
     return FOREACH_CONTINUE;
 }
 
-message_handler(get_amigos)
+message_handler(obtener_amigos)
 {
     // Crear un array para los amigos
     json_object *array = json_object_new_array();
@@ -155,29 +175,46 @@ message_handler(get_amigos)
     json_object_put(array);
 }
 
-// void mostrarAmigos()
-// {
-//     // Obtener lista de amigos del usuario actual
-//     Lista amigos = usuario->amigos;
-
-//     if (!amigos)
-//     {
-//         printf("No tienes amigos agregados\n");
-//         return;
-//     }
-
-//     printf("Tus amigos:\n");
-//     forEachInLista(amigos, mostrar_amigos, NULL); // Imprimir cada amigo en la lista
-// }
-
-Lista recomendarCanciones()
+message_handler(agregar_amigo)
 {
-    // Crear una lista para las canciones a recomendar
-    Lista listaCancionesRecomendadas = newLista(NULL); // Crear una nueva lista para las canciones recomendadas
+    init_data_json();
 
-    // Obtener las canciones del historial de cada amigo
-    forEachInLista(usuario->amigos, obtenerHistorialDeUsuario, listaCancionesRecomendadas); // Obtenemos la lista de recomendaciones de amigos
+    const char *username = get_string(get_array_idx(data, 0));
 
-    // Retornar la lista de recomendaciones
-    return listaCancionesRecomendadas;
+    int argc = 1;
+    const char **argv =
+        cast(const char *[],
+             username);
+
+    char **msg = arg;
+
+    bool success = VibeCast_AgregarAmigo(NULL, argc, argv, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    end_data_json();
+}
+
+message_handler(eliminar_amigo)
+{
+    init_data_json();
+
+    const char *username = get_string(get_array_idx(data, 0));
+
+    int argc = 1;
+    const char **argv =
+        cast(const char *[],
+             username);
+
+    char **msg = arg;
+
+    bool success = VibeCast_EliminarAmigo(NULL, argc, argv, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    end_data_json();
 }

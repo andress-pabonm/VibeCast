@@ -1,248 +1,288 @@
-// 2. This code loads the IFrame Player API code asynchronously.
-var tag = document.createElement("script");
-
-tag.src = "https://www.youtube.com/iframe_api";
-var firstScriptTag = document.getElementsByTagName("script")[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-// 3. This function creates an <iframe> (and YouTube player)
-//    after the API code downloads.
-var player;
-function onYouTubeIframeAPIReady() {
-  player = new YT.Player("player", {
-    height: "390",
-    width: "640",
-    videoId: "PgBvV9ofjmA",
-    playerVars: {
-      playsinline: 1,
-    },
-    events: {
-      onReady: onPlayerReady,
-      onStateChange: onPlayerStateChange,
-    },
-  });
-}
-
-// 4. The API will call this function when the video player is ready.
-function onPlayerReady(event) {
-  event.target.playVideo();
-}
-
-// 5. The API calls this function when the player's state changes.
-//    The function indicates that when playing a video (state=1),
-//    the player should play for six seconds and then stop.
-var done = false;
-function onPlayerStateChange(event) {
-  if (event.data == YT.PlayerState.PLAYING && !done) {
-    setTimeout(stopVideo, 1);
-    done = true;
-  }
-}
-function stopVideo() {
-  player.stopVideo();
-}
-
 const MusicPlayer = (function () {
-  let currentAudio = null;
+  // Cargar la API de YouTube
+  var tag = document.createElement("script");
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName("script")[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  let player;
   let isPlaying = false;
-  let currentQueue = [];
-  let currentIndex = 0;
-  let volume = 1;
+  let isDraggingVolume = false;
+  let isDraggingProgress = false;
+  let updateInterval;
 
-  // Elementos del DOM
-  const $ = (id) => document.getElementById(id);
-  const playPauseBtn = $("playPauseBtn");
-  const prevBtn = $("prevBtn");
-  const nextBtn = $("nextBtn");
-  const progressBar = $("progressBar");
-  const progress = $("progress");
-  const currentTimeEl = $("currentTime");
-  const totalTimeEl = $("totalTime");
-  const volumeSlider = $("volumeSlider");
-  const volumeLevel = $("volumeLevel");
-  const currentSongTitle = $("currentSongTitle");
-  const currentSongArtist = $("currentSongArtist");
-  const showQueueBtn = $("showQueueBtn");
-  const closePlayerBtn = $("closePlayerBtn");
-  const musicPlayer = $("musicPlayer");
+  function init(song) {
+    player = new YT.Player("player", {
+      // videoId: "tvj5Fpok9bY",
+      playerVars: {
+        controls: 0,
+        disablekb: 1,
+        fs: 0,
+      },
+      events: {
+        onReady: onPlayerReady,
+        onStateChange: onPlayerStateChange,
+      },
+    });
 
-  function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+    setupPlayerControls();
+    document.body.classList.add("player-closed");
+    document.querySelector(".music-player").classList.add("hidden");
   }
 
-  function cleanupAudio() {
-    if (currentAudio) {
-      currentAudio.pause();
-      currentAudio.src = ""; // Liberar
-      currentAudio = null;
+  function onPlayerReady(event) {
+    // Configuración inicial
+    event.target.setVolume(100); // Volumen inicial al 100%
+    updateVolumeDisplay(100);
+    playSong();
+  }
+
+  function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.PLAYING) {
+      isPlaying = true;
+      document.getElementById("playPauseBtn").innerHTML =
+        '<i class="fas fa-pause"></i>';
+      startProgressUpdate();
+    } else if (event.data == YT.PlayerState.PAUSED) {
+      isPlaying = false;
+      document.getElementById("playPauseBtn").innerHTML =
+        '<i class="fas fa-play"></i>';
+    } else if (event.data == YT.PlayerState.ENDED) {
+      isPlaying = false;
+      document.getElementById("playPauseBtn").innerHTML =
+        '<i class="fas fa-play"></i>';
+      stopProgressUpdate();
+      playSong();
     }
   }
 
-  function playSong() {
-    // Pide la siguiente canción de la cola al backend
-    window
-      .dequeue()
-      .then((res) => {
-        if (res?.status !== "ok" || !res.data || !res.data.youtubeId) {
-          console.warn(
-            "No se pudo reproducir la siguiente canción:",
-            res?.message || res
-          );
-          return;
-        }
+  function setupPlayerControls() {
+    // Botón play/pause
+    document
+      .getElementById("playPauseBtn")
+      .addEventListener("click", togglePlayPause);
 
-        const song = res.data; // debe contener: title, artist, youtubeId
-
-        // Limpiar cualquier audio o iframe anterior
-        cleanupAudio();
-
-        // Crear el reproductor de YouTube
-        createYouTubePlayer(song.youtubeId, () => {
-          showNotification(`🎵 Canción terminada: ${song.title}`);
-          playNext(); // seguir con la siguiente canción
-        });
-
-        // Actualizar UI
-        currentSongTitle.textContent = song.title || "Sin título";
-        currentSongArtist.textContent = song.artist || "Desconocido";
-        isPlaying = true;
-        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-
-        // Actualizar índice si está en la cola local
-        currentIndex = currentQueue.findIndex((s) => s.id === song.id);
-      })
-      .catch((err) => {
-        console.error("Error al hacer dequeue:", err);
+    // Botón cerrar reproductor
+    document
+      .getElementById("closePlayerBtn")
+      .addEventListener("click", function () {
+        player.pauseVideo();
+        document.body.classList.add("player-closed");
+        document.querySelector(".music-player").classList.add("hidden");
       });
+
+    // Control de volumen
+    const volumeSlider = document.getElementById("volumeSlider");
+    volumeSlider.addEventListener("mousedown", startVolumeDrag);
+    volumeSlider.addEventListener("click", handleVolumeClick);
+
+    document.addEventListener("mousemove", handleVolumeDrag);
+    document.addEventListener("mouseup", stopVolumeDrag);
+
+    // Barra de progreso
+    const progressBar = document.getElementById("progressBar");
+    progressBar.addEventListener("mousedown", startProgressDrag);
+    progressBar.addEventListener("click", handleProgressClick);
+
+    document.addEventListener("mousemove", handleProgressDrag);
+    document.addEventListener("mouseup", stopProgressDrag);
   }
 
-  function showNotification(msg) {
-    alert(msg);
+  function togglePlayPause() {
+    if (isPlaying) {
+      player.pauseVideo();
+    } else {
+      player.playVideo();
+    }
   }
 
-  function playNext() {
-    playSong(); // usa dequeue() para la próxima canción
+  // Funciones de volumen
+  function startVolumeDrag(e) {
+    isDraggingVolume = true;
+    updateVolume(e);
   }
 
-  function togglePlayer() {
-    musicPlayer.classList.toggle("hidden");
-    document.body.classList.toggle("player-closed");
+  function handleVolumeDrag(e) {
+    if (isDraggingVolume) updateVolume(e);
   }
 
-  function init() {
-    loadYouTubeAPI();
+  function stopVolumeDrag() {
+    isDraggingVolume = false;
+  }
 
-    playPauseBtn.addEventListener("click", () => {
-      if (!currentAudio) {
-        if (currentQueue.length > 0) {
-          playSong(currentQueue[0]);
+  function handleVolumeClick(e) {
+    updateVolume(e);
+  }
+
+  function updateVolume(e) {
+    const volumeSlider = document.getElementById("volumeSlider");
+    const rect = volumeSlider.getBoundingClientRect();
+    let volume = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+
+    volume = Math.max(0, Math.min(100, volume));
+    player.setVolume(volume);
+    updateVolumeDisplay(volume);
+  }
+
+  function updateVolumeDisplay(volume) {
+    document.getElementById("volumeLevel").style.width = volume + "%";
+    const volumeIcon = document.querySelector(".volume-control i");
+    volumeIcon.className =
+      volume === 0
+        ? "fas fa-volume-mute"
+        : volume < 50
+          ? "fas fa-volume-down"
+          : "fas fa-volume-up";
+  }
+
+  // Funciones de progreso
+  function startProgressDrag(e) {
+    isDraggingProgress = true;
+    updateProgress(e);
+    stopProgressUpdate();
+  }
+
+  function handleProgressDrag(e) {
+    if (isDraggingProgress) updateProgress(e);
+  }
+
+  function stopProgressDrag() {
+    isDraggingProgress = false;
+    if (isPlaying) startProgressUpdate();
+  }
+
+  function handleProgressClick(e) {
+    updateProgress(e);
+  }
+
+  function updateProgress(e) {
+    const progressBar = document.getElementById("progressBar");
+    const rect = progressBar.getBoundingClientRect();
+    let percent = ((e.clientX - rect.left) / rect.width) * 100;
+
+    percent = Math.max(0, Math.min(100, percent));
+    document.getElementById("progress").style.width = percent + "%";
+
+    const duration = player.getDuration();
+    const newTime = (percent / 100) * duration;
+    player.seekTo(newTime, true);
+
+    updateTimeInfo(newTime, duration);
+  }
+
+  function startProgressUpdate() {
+    stopProgressUpdate();
+    updateProgressBar();
+    updateInterval = setInterval(updateProgressBar, 1000);
+  }
+
+  function stopProgressUpdate() {
+    clearInterval(updateInterval);
+  }
+
+  function updateProgressBar() {
+    const currentTime = player.getCurrentTime();
+    const duration = player.getDuration();
+    const percent = (currentTime / duration) * 100;
+
+    if (!isDraggingProgress) {
+      document.getElementById("progress").style.width = percent + "%";
+    }
+
+    updateTimeInfo(currentTime, duration);
+  }
+
+  function updateTimeInfo(currentTime, duration) {
+    document.getElementById("currentTime").textContent =
+      formatTime(currentTime);
+    if (duration) {
+      document.getElementById("totalTime").textContent = formatTime(duration);
+    }
+  }
+
+  function updateSongInfo(title, artist) {
+    document.getElementById("currentSongTitle").textContent =
+      title || "No hay canción seleccionada";
+    document.getElementById("currentSongArtist").textContent =
+      artist || "VibeCast";
+  }
+
+  async function playSong() {
+    if (!player) {
+      console.warn("Reproductor no disponible.");
+      return;
+    }
+
+    try {
+      const res = await window.decolar();
+      console.log("decolar(): ", res);
+
+      if (res.status !== "ok") {
+        throw new Error(res.message);
+      }
+
+      console.log(res.message);
+      const song = res.data;
+
+      if (!song) return;
+
+      if (player) {
+        document.body.classList.remove("player-closed");
+        document.querySelector(".music-player").classList.remove("hidden");
+        player.loadVideoById(song.url);
+        updateSongInfo(song.title, song.artist);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  }
+
+  async function addSongToQueue(song, reset = false) {
+    if (!player || !song) return;
+
+    if (reset) {
+      try {
+        const res = await window.vaciar_cola();
+        console.log("vaciar_cola(): ", res);
+        if (res.status !== "ok") {
+          throw new Error(res.message);
         }
-        return;
-      }
 
-      if (isPlaying) {
-        currentAudio.pause();
-        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        player.stopVideo();
         isPlaying = false;
-      } else {
-        currentAudio
-          .play()
-          .then(() => {
-            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            isPlaying = true;
-          })
-          .catch(console.error);
-      }
-    });
-
-    prevBtn.addEventListener("click", () => {
-      if (currentQueue.length > 0 && currentIndex > 0) {
-        playSong(currentQueue[currentIndex - 1]);
-      }
-    });
-
-    nextBtn.addEventListener("click", playNext);
-
-    progressBar.addEventListener("click", (e) => {
-      if (!currentAudio || !currentAudio.duration) return;
-      const rect = progressBar.getBoundingClientRect();
-      const percent = (e.clientX - rect.left) / rect.width;
-      currentAudio.currentTime = percent * currentAudio.duration;
-    });
-
-    volumeSlider.addEventListener("click", (e) => {
-      const rect = volumeSlider.getBoundingClientRect();
-      const percent = (e.clientX - rect.left) / rect.width;
-      volume = Math.min(1, Math.max(0, percent));
-      volumeLevel.style.width = `${volume * 100}%`;
-      if (currentAudio) currentAudio.volume = volume;
-    });
-
-    showQueueBtn.addEventListener("click", () => {
-      if (currentQueue.length > 0) {
-        alert(
-          `Cola:\n${currentQueue
-            .map((s, i) => `${i + 1}. ${s.title} - ${s.artist}`)
-            .join("\n")}`
+      } catch (err) {
+        console.warn(
+          "No fue posible vaciar la cola de reproducción. ",
+          err.message
         );
-      } else {
-        alert("La cola de reproducción está vacía");
       }
-    });
+    }
 
-    closePlayerBtn.addEventListener("click", togglePlayer);
+    try {
+      const res = await window.encolar(song.id);
+      console.log("encolar(): ", res);
 
-    volumeLevel.style.width = `${volume * 100}%`;
+      if (res.status !== "ok") {
+        throw new Error(res.message);
+      }
+
+      console.log(res.message);
+
+      if (!isPlaying) {
+        playSong();
+      }
+    } catch (err) {
+      console.warn("Error al encolar canción. ", err.message);
+    }
   }
 
   return {
     init,
-    playSong,
-    addSongsToQueue(songs, autoPlay) {
-      if (!Array.isArray(songs)) songs = [songs];
-
-      if (autoPlay) {
-        // Vaciar cola de reproducción antes de añadir nuevas canciones
-        window
-          .vaciar_cola()
-          .then(() => {
-            console.log("Cola vaciada para reproducción automática");
-          })
-          .catch((err) => {
-            console.error("Error al vaciar la cola:", err);
-          });
-      }
-
-      songs.forEach((song, i) => {
-        if (!song || !song.id) {
-          console.warn("Canción inválida:", song);
-          return;
-        }
-
-        window
-          .enqueue(song.id)
-          .then((res) => {
-            if (res?.status === "ok") {
-              console.log(`✅ Encolada: ${song.title}`);
-              currentQueue.push(song); // mantener cola local para mostrar
-
-              // Reproducir si es la primera y no hay nada sonando
-              if (!isPlaying) {
-                playSong(); // llama dequeue() y reproduce la próxima canción
-              }
-            } else {
-              console.warn(
-                `❌ No se pudo encolar: ${song.title}`,
-                res?.message || res
-              );
-            }
-          })
-          .catch((err) => {
-            console.error(`Error al encolar ${song.title}:`, err);
-          });
-      });
-    },
+    addSongToQueue,
   };
 })();
+
+function onYouTubeIframeAPIReady() {
+  console.log("YouTube Iframe API ready!");
+  MusicPlayer.init();
+}

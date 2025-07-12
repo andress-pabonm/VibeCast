@@ -68,7 +68,6 @@ static select_handler(cargarOtrosDatosPorUsuario);
 select_handler(cargarUsuarios)
 {
     Usuario *usuario = newUsuario();
-
     if (!usuario)
         return 1;
 

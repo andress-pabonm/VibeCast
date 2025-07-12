@@ -29,6 +29,9 @@ bool VibeCast_BindFn(const char *name, message_handler_t msgh, void *arg);
 
 /* ================================================================ */
 
+// Envía cualquier objeto JSON (core)
+bool VibeCast_SendObj(const char *id, int status_code, const char *type, json_object *data, const char *msg, const char *status);
+
 // Envía un valor booleano (true/false)
 bool VibeCast_SendBool(const char *id, int status_code, bool value, const char *msg, const char *status);
 
@@ -50,8 +53,8 @@ bool VibeCast_SendJSON(const char *id, int status_code, json_object *object, con
 // Envía un valor nulo explícito
 bool VibeCast_SendNull(const char *id, int status_code, const char *msg, const char *status);
 
-// Envía cualquier objeto JSON (core)
-bool VibeCast_SendObj(const char *id, int status_code, const char *type, json_object *data, const char *msg, const char *status);
+// Envía un valor nulo explícito junto a un mensaje de error
+bool VibeCast_SendError(const char *id, int status_code, const char *msg, const char *status);
 
 // Estados generales
 #define STATUS_OK "ok"
@@ -97,55 +100,82 @@ static inline json_object *get_field(json_object *src, const char *field)
 }
 
 #define init_json(dest, src) json_object *dest = src
-#define end_json(src) json_object_put(src)
+#define end_json json_object_put
 #define init_data_json() init_json(data, get_json(req))
 #define end_data_json() end_json(data);
-#define get_string(src) json_object_get_string(src)
+#define get_string json_object_get_string
+#define get_int json_object_get_int
 
 /* ================================================================ */
 
+// ================================
 // Funciones de conexión
+// ================================
 
-message_handler(is_logged_in);        // Verificar si ha iniciado sesión
-message_handler(iniciar_sesion);      // Iniciar sesión
-message_handler(cerrar_sesion);       // Cerrar sesión
-message_handler(crear_cuenta);        // Crear cuenta
-message_handler(get_user_data);       // Para mostrar la información en la sección Perfil
-message_handler(actualizar_usuario);  // Para actualizar los datos del usuario
-message_handler(actualizar_password); // Para actualizar la contraseña
+/* ==== Sesión ==== */
 
-message_handler(get_amigos);
+message_handler(sesion_activa);  // Verificar si ha iniciado sesión
+message_handler(iniciar_sesion); // Iniciar sesión
+message_handler(cerrar_sesion);  // Cerrar sesión
 
-message_handler(crear_artista);
+/* ==== Cola de reproducción ==== */
 
-message_handler(get_canciones);       // Para el menú principal
-message_handler(get_recomendaciones); // Para el menú principal
+message_handler(encolar);     //  Agregar canción a cola de reproducción
+message_handler(decolar);     // Obtener siguiente canción o anuncio en  cola de reproducción
+message_handler(vaciar_cola); // Vaciar cola de reproducción
 
-message_handler(get_playlists); // Obtenemos las playlist del usuario
+/* ==== Inicio ==== */
 
-message_handler(next_song); // Para avanzar en la cola de reproducción
+message_handler(obtener_canciones);       // Para obtener las canciones a mostrar en la sección Inicio
+message_handler(obtener_recomendaciones); // Para obtener las recomendaciones a mostrar en la sección Inicio
+message_handler(generar_reporte);         // Para generar un reporte con las estadísticas de la aplicación
 
-message_handler(get_artist_data);
+/* ==== Biblioteca ==== */
 
-message_handler(mostrar_cola);
-message_handler(vaciar_cola);
-message_handler(enqueue);
-message_handler(dequeue);
+message_handler(obtener_playlists);   // Para obtener las playlists del usuario activo
+message_handler(crear_playlist);      // Crear playlist
+message_handler(eliminar_playlist);   // Eliminar playlist
+message_handler(actualizar_playlist); // Actualizar información de playlist
 
-message_handler(agregar_a_historial);
-message_handler(mostrar_historial);
+message_handler(agregar_a_playlist); // Agregar canción a playlist
+message_handler(quitar_de_playlist); // Quitar canción de playlist
+
+/* ==== Historial ==== */
+
+message_handler(obtener_historial); // Para obtener el historial del usuario activo
 message_handler(vaciar_historial);
 
-message_handler(activarPremium); 
-message_handler(desactivarPremium); 
-message_handler(esUsuarioPremium); 
-message_handler(renovarPremium);  
+/* ==== Amigos ==== */
 
-message_handler(crearPlaylist); 
-message_handler(agregarCancionPlaylist);
-message_handler(eliminarCancionPlaylist);
-message_handler(eliminarPlaylist);
-message_handler(mostrarCancionesPlaylist);
+message_handler(obtener_amigos); // Para obtener la lista de amigos del usuario activo
+message_handler(agregar_amigo);  // Para agregar un amigo
+message_handler(eliminar_amigo); // Para eliminar un amigo
+
+/* ==== Perfil ==== */
+
+// Usuario
+
+message_handler(crear_cuenta);    // Crear cuenta
+message_handler(eliminar_cuenta); // Eliminar cuenta
+
+message_handler(obtener_info_usuario);    // Para obtener la información del usuario activo
+message_handler(actualizar_info_usuario); // Para actualizar los datos del usuario
+message_handler(actualizar_password);     // Para actualizar la contraseña
+message_handler(activar_premium);         // Para activar el plan premium
+
+// Artista
+
+message_handler(obtener_info_artista); // Para obtener la información de artista del usuario activo
+message_handler(crear_artista);        // Crear perfil de artista
+message_handler(eliminar_artista);     // Eliminar perfil de artista
+
+message_handler(crear_album);      // Crear álbum
+message_handler(eliminar_album);   // Eliminar álbum
+message_handler(actualizar_album); // Actualizar información de álbum
+
+message_handler(crear_cancion);      // Crear canción
+message_handler(eliminar_cancion);   // Eliminar canción
+message_handler(actualizar_cancion); // Actualizar información de canción
 
 /* ================================================================ */
 
