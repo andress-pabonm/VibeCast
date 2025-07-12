@@ -11,21 +11,16 @@
   padding: 0.75rem 1.5rem;
   z-index: 100;
   gap: 20px;
+  min-width: 800px;
+  justify-content: center;
 }
 
-.music-player .hidden {
-  transform: translateY(100%);
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Info de la canción - Mejorado para mobile */
+/* Info de la canción */
 .song-info-player {
+  display: flex;
+  flex-direction: column;
+  margin-right: auto;
   width: 250px;
-  min-width: 0;
-  flex-shrink: 0;
-  overflow: hidden;
-  transition: all 0.3s ease;
 }
 
 .song-info-player .song-title {
@@ -157,11 +152,8 @@
 /* Acciones del reproductor */
 .player-actions {
   display: flex;
-  align-items: center;
   gap: 1rem;
-  width: 200px;
-  justify-content: flex-end;
-  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .volume-control {
@@ -280,6 +272,10 @@
   animation: fadeIn 0.3s ease-out;
 }
 
+#player {
+  display: none;
+}
+
 /* Animación sutil al cambiar canciones */
 @keyframes fadeIn {
   from {
@@ -291,7 +287,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-#player {
-  display: none;
 }

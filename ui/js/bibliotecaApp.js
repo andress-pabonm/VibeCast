@@ -138,7 +138,7 @@ window.views.biblioteca = {
                 <p>${song.artist}</p>
             </div>
             <div class="song-actions">
-                <span>${convertSecs(song.duration)}</span>
+                <span>${formatTime(song.duration)}</span>
                 <i class="fas fa-play play-btn" title="Reproducir"></i>
             </div>
         `;
