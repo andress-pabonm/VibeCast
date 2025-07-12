@@ -1,8 +1,18 @@
 #include <ui/interfaces.h>
 
-/* ======== Cargar canciones en el menú principal ======== */
+/* ================================================================ */
+// Funciones auxiliares
+/* ================================================================ */
 
-message_handler(get_canciones)
+static Lista cancionesRecomendadas();
+static new_operfn(obtenerHistorialAmigos);
+static new_operfn(rehacerHistorial);
+
+/* ================================================================ */
+// Cargar canciones en la sección de Inicio
+/* ================================================================ */
+
+message_handler(obtener_canciones)
 {
     json_object *array = json_object_new_array();
 
@@ -18,15 +28,44 @@ message_handler(get_canciones)
     json_object_put(array);
 }
 
-/* ======== Cargar recomendaciones en el menú principal ======== */
+/* ================================================================ */
+// Cargar reomendaciones en la sección de Inicio
+/* ================================================================ */
 
-new_operfn(rehacerHistorial)
+message_handler(obtener_recomendaciones)
 {
-    insertValueInPila(arg, val);
-    return FOREACH_CONTINUE;
+    json_object *array = json_object_new_array();
+
+    destroyLista(
+        cancionesRecomendadas(),
+        getSongJSON,
+        array);
+
+    VibeCast_SendArray(
+        id,
+        HTTP_OK,
+        array,
+        "Recomendaciones cargadas",
+        STATE_SUCCESS);
+
+    json_object_put(array);
 }
 
-new_operfn(getHistorialAmigos)
+static Lista cancionesRecomendadas()
+{
+    // Crear una lista para las canciones a recomendar
+    Lista recomendaciones = newLista(NULL);
+
+    // Obtener las canciones del historial de cada amigo
+    forEachInLista(usuario->amigos,
+                   obtenerHistorialAmigos,
+                   recomendaciones);
+
+    // Retornar la lista de recomendaciones
+    return recomendaciones;
+}
+
+static new_operfn(obtenerHistorialAmigos)
 {
     Usuario *amigo = val;
 
@@ -68,34 +107,17 @@ new_operfn(getHistorialAmigos)
     return FOREACH_CONTINUE;
 }
 
-Lista cancionesRecomendadas()
+static new_operfn(rehacerHistorial)
 {
-    // Crear una lista para las canciones a recomendar
-    Lista recomendaciones = newLista(NULL); // Crear una nueva lista para las canciones recomendadas
-
-    // Obtener las canciones del historial de cada amigo
-    forEachInLista(usuario->amigos, getHistorialAmigos, recomendaciones); // Obtenemos la lista de recomendaciones de amigos
-
-    // Retornar la lista de recomendaciones
-    return recomendaciones;
-}
-
-new_operfn(getRecomendacionJSON)
-{
-    Cancion *cancion = val;
-
+    insertValueInPila(arg, val);
     return FOREACH_CONTINUE;
 }
 
-message_handler(get_recomendaciones)
+/* ================================================================ */
+// Generar reporte de estadísticas
+/* ================================================================ */
+
+message_handler(generar_reporte)
 {
-    json_object *array = json_object_new_array();
-
-    destroyLista(
-        cancionesRecomendadas(),
-        getRecomendacionJSON,
-        array);
-
-    VibeCast_SendArray(id, HTTP_OK, array, "Recomendaciones cargadas", STATE_SUCCESS);
-    json_object_put(array);
+    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
 }

@@ -209,3 +209,11 @@ bool VibeCast_SendNull(const char *id, int status_code, const char *msg, const c
     json_object_put(val);
     return ok;
 }
+
+bool VibeCast_SendError(const char *id, int status_code, const char *msg, const char *status)
+{
+    json_object *val = json_object_new_null();
+    bool ok = VibeCast_SendObj(id, status_code, "error", val, msg, status);
+    json_object_put(val);
+    return ok;
+}

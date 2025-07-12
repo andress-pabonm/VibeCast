@@ -151,7 +151,7 @@ new_operfn(getAmigos)
     return FOREACH_CONTINUE;
 }
 
-message_handler(get_amigos)
+message_handler(obtener_amigos)
 {
     // Crear un array para los amigos
     json_object *array = json_object_new_array();
@@ -174,21 +174,6 @@ message_handler(get_amigos)
     // Liberar la memoria
     json_object_put(array);
 }
-
-// void mostrarAmigos()
-// {
-//     // Obtener lista de amigos del usuario actual
-//     Lista amigos = usuario->amigos;
-
-//     if (!amigos)
-//     {
-//         printf("No tienes amigos agregados\n");
-//         return;
-//     }
-
-//     printf("Tus amigos:\n");
-//     forEachInLista(amigos, mostrar_amigos, NULL); // Imprimir cada amigo en la lista
-// }
 
 message_handler(agregar_amigo)
 {

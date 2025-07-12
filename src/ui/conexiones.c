@@ -35,9 +35,9 @@ bool VibeCast_InitBindings()
 
     /* ==== Amigos ==== */
 
-    bind_fn(get_amigos, &msg);    // Para obtener la lista de amigos del usuario activo
-    bind_fn(agregar_amigo, &msg); // Para agregar un amigo
-    bind_fn(quitar_amigo, &msg);  // Para eliminar un amigo
+    bind_fn(obtener_amigos, &msg); // Para obtener la lista de amigos del usuario activo
+    bind_fn(agregar_amigo, &msg);  // Para agregar un amigo
+    bind_fn(eliminar_amigo, &msg); // Para eliminar un amigo
 
     /* ==== Perfil ==== */
 
