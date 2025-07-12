@@ -157,6 +157,24 @@ interfaz(VaciarHistorial)
     return true;
 }
 
+/*
+const mockHistory = [
+      {
+        id: 1,
+        songId: 101,
+        title: "Bohemian Rhapsody",
+        artist: "Queen",
+        duration: "5:55",
+        playedAt: new Date(Date.now() - 1000 * 60 * 30), // 30 minutos atrás LOGICA DE TIEMPO
+        plays: 3
+      },
+ */
+
+message_handler(obtener_historial)
+{
+    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
+}
+
 message_handler(vaciar_historial)
 {
     VibeCast_VaciarHistorial(NULL, 0, NULL, NULL);

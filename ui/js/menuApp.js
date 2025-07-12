@@ -50,7 +50,7 @@ window.views.inicio = {
       if (!songsContainer) return;
 
       try {
-        const res = await window.get_canciones(); // ← reemplaza mock
+        const res = await window.obtener_canciones(); // ← reemplaza mock
         console.log("canciones():", res);
 
         if (
@@ -83,7 +83,7 @@ window.views.inicio = {
       if (!recommendationsContainer) return;
 
       try {
-        const res = await window.get_recomendaciones(); // ← reemplaza mock
+        const res = await window.obtener_recomendaciones(); // ← reemplaza mock
         console.log("recomendaciones():", res);
 
         if (
@@ -122,7 +122,7 @@ window.views.inicio = {
         <p>${song.artist}</p>
     </div>
     <div class="song-actions">
-        <span>${convertSecs(song.duration)}</span>
+        <span>${formatTime(song.duration)}</span>
         <i class="fas fa-play"></i>
         <i class="fas fa-plus"></i>
     </div>`;
@@ -164,13 +164,13 @@ window.views.inicio = {
         if (e.target.classList.contains("fa-play")) {
           console.log("▶ Encolando y reproduciendo:", song.title);
 
-          MusicPlayer.addSongsToQueue(song, true);
+          MusicPlayer.addSongToQueue(song, true);
         }
 
         if (e.target.classList.contains("fa-plus")) {
           console.log("➕ Encolando (sin reproducir):", song.title);
 
-          MusicPlayer.addSongsToQueue(song, false);
+          MusicPlayer.addSongToQueue(song, false);
         }
       });
     }

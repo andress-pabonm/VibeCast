@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const res = await window.is_logged_in();
+    const res = await window.sesion_activa();
     console.log("is_logged_in():", res);
 
     if (res.status !== "ok" || res.type !== "boolean" || res.data !== true) {
