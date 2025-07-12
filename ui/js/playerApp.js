@@ -282,6 +282,10 @@ const MusicPlayer = (function () {
     }
   }
 
+  function addSongsToQueue(songs) {
+    songs.forEach((song) => addSongToQueue(song));
+  }
+
   function showQueueAlert() {
     alert("En una cola de reproducción no se puede retroceder\nLas canciones solo avanzan en orden de llegada");
   }
@@ -289,6 +293,7 @@ const MusicPlayer = (function () {
   return {
     init,
     addSongToQueue,
+    addSongsToQueue
   };
 })();
 

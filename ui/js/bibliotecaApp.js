@@ -24,6 +24,19 @@ window.views.biblioteca = {
             </div>
         </section>
 
+        <!-- Modal para editar playlist -->
+        <div class="modal hidden" id="editPlaylistModal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h3>Editar playlist</h3>
+                <input type="text" id="editPlaylistNameInput" placeholder="Nombre de la playlist" />
+                <div class="modal-buttons">
+                    <button id="savePlaylistBtn">Guardar</button>
+                    <button id="deletePlaylistBtn">Eliminar</button>
+                </div>
+            </div>
+        </div>
+
       <!-- Sección de Canciones -->
       <section class="songs-section hidden" id="songsSection">
           <div class="songs-header">
@@ -55,12 +68,8 @@ window.views.biblioteca = {
     // Variables globales
     const playlistsContainer = document.getElementById("playlistsContainer");
     const songsSection = document.getElementById("songsSection");
-    const playlistSongsContainer = document.getElementById(
-      "playlistSongsContainer"
-    );
-    const currentPlaylistTitle = document.getElementById(
-      "currentPlaylistTitle"
-    );
+    const playlistSongsContainer = document.getElementById("playlistSongsContainer");
+    const currentPlaylistTitle = document.getElementById("currentPlaylistTitle");
     const newPlaylistBtn = document.getElementById("newPlaylistBtn");
     const newPlaylistModal = document.getElementById("newPlaylistModal");
     const closeModal = document.querySelectorAll(".close-modal");
@@ -70,9 +79,7 @@ window.views.biblioteca = {
     const editPlaylistModal = document.getElementById("editPlaylistModal");
     const savePlaylistBtn = document.getElementById("savePlaylistBtn");
     const deletePlaylistBtn = document.getElementById("deletePlaylistBtn");
-    const editPlaylistNameInput = document.getElementById(
-      "editPlaylistNameInput"
-    );
+    const editPlaylistNameInput = document.getElementById("editPlaylistNameInput");
     const addToQueueBtn = document.getElementById("addToQueueBtn");
     let currentPlaylistId = null;
     let currentPlaylistSongs = {};
@@ -80,7 +87,7 @@ window.views.biblioteca = {
 
     async function loadPlaylists() {
       try {
-        const res = await window.get_playlists();
+        const res = await window.obtener_playlists();
         console.log("get_playlists():", res);
 
         if (res.status === "ok" && res.type === "json") {
@@ -114,8 +121,27 @@ window.views.biblioteca = {
         playlistCard.addEventListener("click", () =>
           showPlaylistSongs(playlist.id, playlist.name)
         );
+
+        // Evento para mostrar las canciones al hacer clic en la card
+        playlistCard.addEventListener("click", () =>
+          showPlaylistSongs(playlist.id, playlist.name)
+        );
+
+        // Evento para mostrar opciones al hacer clic en los tres puntos
+        const optionsBtn = playlistCard.querySelector(".playlist-options");
+        optionsBtn.addEventListener("click", (e) => {
+          e.stopPropagation(); // Evita que se active el clic de la card
+          showEditPlaylistModal(playlist.id, playlist.name);
+        });
+
         playlistsContainer.appendChild(playlistCard);
       });
+    }
+
+    function showEditPlaylistModal(playlistId, playlistName) {
+      currentPlaylistId = playlistId;
+      editPlaylistNameInput.value = playlistName;
+      editPlaylistModal.classList.remove("hidden");
     }
 
     function showPlaylistSongs(playlistId, playlistName) {
@@ -172,43 +198,70 @@ window.views.biblioteca = {
         });
       });
 
-      // Crear nueva playlist (esto aún es local y deberías implementar lógica real en el backend)
-      createPlaylistBtn.addEventListener("click", () => {
-        const playlistName = playlistNameInput.value.trim();
-        if (playlistName) {
-          alert("Funcionalidad de creación de playlist no implementada aún.");
+      // Crear nueva playlist
+      createPlaylistBtn.addEventListener("click", async () => {
+        try {
+          const playlistName = playlistNameInput.value.trim();
+          const res = await window.crear_playlist(playlistName);
+
+          if (res.status !== "ok") {
+            throw new Error(res.message);
+          }
+
+          console.log(res.message);
+
           playlistNameInput.value = "";
           newPlaylistModal.classList.add("hidden");
+
+          loadPlaylists(); //Mostrar playlist creada
+        } catch (error) {
+          console.warn(error.message);
         }
       });
 
-      // Guardar cambios en playlist (solo nombre, se requiere lógica en backend)
-      savePlaylistBtn.addEventListener("click", () => {
-        const playlistName = editPlaylistNameInput.value.trim();
-        if (playlistName && currentPlaylistId) {
-          const playlist = currentPlaylists.find(
-            (p) => p.id === currentPlaylistId
-          );
-          if (playlist) {
-            alert("Funcionalidad de edición no implementada aún.");
+      // Guardar cambios en playlist
+      savePlaylistBtn.addEventListener("click", async () => {
+        try {
+          const playlistName = editPlaylistNameInput.value.trim();
+
+          if (playlistName && currentPlaylistId) {
+            const res = await window.actualizar_playlist(currentPlaylistId, playlistName);
+
+            if (res.status !== "ok") {
+              throw new Error(res.message);
+            }
+
+            console.log(res.message);
+
+            loadPlaylists();
+
             editPlaylistModal.classList.add("hidden");
           }
+        } catch (error) {
+          console.warn(error.message);
         }
       });
 
-      // Eliminar playlist (falta lógica real)
-      deletePlaylistBtn.addEventListener("click", () => {
-        if (
-          currentPlaylistId &&
-          confirm("¿Estás seguro de eliminar esta playlist?")
-        ) {
-          alert("Funcionalidad de eliminación no implementada aún.");
-          editPlaylistModal.classList.add("hidden");
-          songsSection.classList.add("hidden");
-          document
-            .querySelector(".playlists-section")
-            .classList.remove("hidden");
-          loadPlaylists();
+      // Eliminar playlist
+      deletePlaylistBtn.addEventListener("click", async () => {
+        try {
+          if (currentPlaylistId && confirm("¿Estás seguro de eliminar esta playlist?")) {
+            const res = window.eliminar_playlist(currentPlaylistId);
+
+            if (res.status !== "ok") {
+              throw new Error(res.message);
+            }
+
+            console.log(res.message);
+            loadPlaylists();
+
+            editPlaylistModal.classList.add("hidden");
+            songsSection.classList.add("hidden");
+
+            document.querySelector(".playlists-section").classList.remove("hidden");
+          }
+        } catch (error) {
+          console.warn(error.message);
         }
       });
 

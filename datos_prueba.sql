@@ -2,7 +2,7 @@ INSERT INTO Usuarios (username, email, password, nickname, pais, plan, tiempo_es
 ("alice123", "alice@mail.com", "pass1", "Alice", "Ecuador", 1, 3600, 5),
 ("bob321", "bob@mail.com", "pass2", "Bob", "Ecuador", 0, 1800, 2),
 ("carla_music", "carla@mail.com", "pass3", "Carla", "Colombia", 1, 5400, 0),
-("davebeat", "dave@mail.com", "pass4", "Dave", "México", 0, 0, 0),
+("Yoasobi", "nose@mail.com", "pass4", "Yovfesd", "Japón", 0, 0, 0),
 ("eva88", "eva@mail.com", "pass5", "Eva", "Argentina", 1, 0, 0);
 
 INSERT INTO Amigos (id_usuario_1, id_usuario_2) VALUES
@@ -16,7 +16,7 @@ INSERT INTO Artistas (id_usuario, nombre) VALUES
 
 INSERT INTO Albumes (id_artista, nombre, fecha_creacion) VALUES
 (3, "Primera Ola", "2024-01-10"),
-(4, "Ritmos Urbanos", "2024-02-20");
+(4, "Idol", "2024-02-20");
 
 INSERT INTO Canciones (id_album, nombre, genero, fecha_publicacion, duracion, url, popularidad, reproducciones) VALUES
 (2, "Idol", "Pop", "2023-04-12", 225, "PgBvV9ofjmA", 1564, 2000),
