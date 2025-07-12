@@ -54,25 +54,31 @@ window.views.amigos = {
     const sendRequestBtn = document.getElementById("sendRequestBtn");
     const friendSearch = document.getElementById("friendSearch");
 
-    // Datos de ejemplo
-    let friendsData = [
-      { id: 1, name: "María García" },
-      { id: 2, name: "Carlos López" },
-      { id: 3, name: "Ana Martínez" },
-      { id: 4, name: "David Fernández" },
-    ];
-
     // Cargar amigos
-    function loadFriends() {
+    async function loadFriends() {
       // Limpiar lista (excepto la plantilla)
       document
         .querySelectorAll(".friend-card:not(.template)")
         .forEach((el) => el.remove());
 
-      friendsData.forEach((friend) => {
-        const friendElement = createFriendElement(friend);
-        friendsList.appendChild(friendElement);
-      });
+      try {
+        const res = window.obtener_amigos();
+
+        if (res.status !== "ok") {
+          throw new Error(res.message);
+        }
+
+        console.log(res.message);
+
+        const friendsData = res.data;
+
+        friendsData.forEach((friend) => {
+          const friendElement = createFriendElement(friend);
+          friendsList.appendChild(friendElement);
+        });
+      } catch (err) {
+        console.warn(err.message);
+      }
     }
 
     // Crear elemento de amigo desde plantilla
