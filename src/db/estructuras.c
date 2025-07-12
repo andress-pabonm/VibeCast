@@ -63,7 +63,7 @@ void destroyUsuario(Usuario *usuario)
     freem(usuario->pais);
 
     destroyLista(usuario->amigos, NULL, NULL);
-    destroyLista(usuario->playlists, destroyCanciones, NULL);
+    destroyLista(usuario->playlists, destroyPlaylists, NULL);
     destroyPila(usuario->historial.reproducciones, destroyReproducciones, NULL);
     destroyArtista(usuario->artista);
 
