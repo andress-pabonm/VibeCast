@@ -228,10 +228,11 @@
   animation: fadeIn 0.3s ease-out;
 }
 
-/*#player {
+#player {
   display: none;
 }
-*/
+
+
 /* Animación sutil al cambiar canciones */
 @keyframes fadeIn {
   from {
