@@ -1,68 +1,88 @@
 #include <ui/interfaces.h>
-#include <db/dbmgr.h>
 
-// new_operfn(mostrarAmigo)
-// {
-//     Usuario *amigo = val;                      // Puntero al usuario amigo actual
-//     printf("%d): %s\n", idx, amigo->username); // Muestra el índice y el nombre de usuario del amigo
+/* ================================================================ */
+// DECLARACIONES DE FUNCIONES INTERNAS
+/* ================================================================ */
 
-//     return FOREACH_CONTINUE; // Continúa el bucle
-// }
+static new_operfn(getAmigoJSON);
 
-new_operfn(obtenerHistorialDeUsuario)
+static interfaz(AgregarAmigo);
+
+static interfaz(EliminarAmigo);
+static new_operfn(obtenerHistorialDeUsuario);
+
+/* ================================================================ */
+// BLOQUE: obtener_amigos — Obtener la lista de amigos
+/* ================================================================ */
+
+message_handler(obtener_amigos)
 {
-    Usuario *amigo = val;                   // Es un puntero a usuario que esta en la lista de amigos
-    Lista ListaCancionesRecomendadas = arg; // Argumento para la funcion de reccorrer la lista de amigos
+    json_object *array = json_object_new_array();
 
-    Pila historial = amigo->historial.reproducciones;
-    Pila TempHistorial = newPila();
+    forEachInLista(usuario->amigos, getAmigos, array);
 
-    // Obtenemos la pila de reproducciones del historial del usuario
-    Cancion *canciontemp;
-    Reproduccion *reproducciontemp = deleteValueInPila(historial);
+    size_t len = json_object_array_length(array);
 
-    while (reproducciontemp)
-    {
-        // Recorremos la pila de reproducciones del usuario
-        if (!searchValueInLista(ListaCancionesRecomendadas, &reproducciontemp->cancion->id, cmpCancionConId))
-        {
-            canciontemp = searchValueInLista(canciones, &reproducciontemp->cancion->id, cmpCancionConId);
-            insertValueInLista(ListaCancionesRecomendadas, canciontemp);
-        }
+    VibeCast_SendArray(
+        id,
+        (len > 0) ? HTTP_OK : HTTP_NO_CONTENT,
+        array,
+        "Amigos cargados",
+        STATE_SUCCESS);
 
-        insertValueInPila(TempHistorial, reproducciontemp); // Insertamos la reproduccion en la pila temporal
-        reproducciontemp = deleteValueInPila(historial);    // Obtenemos la siguiente reproduccion
-    }
-
-    reproducciontemp = deleteValueInPila(TempHistorial); // Obtenemos la ultima reproduccion
-
-    while (reproducciontemp)
-    {
-        insertValueInPila(historial, reproducciontemp);
-        reproducciontemp = deleteValueInPila(TempHistorial); // Insertamos las reproducciones de la pila temporal en la pila de reproducciones del historial
-    }
-
-    destroyPila(TempHistorial, NULL, NULL); // Destruimos la pila temporal
-
-    return FOREACH_CONTINUE; // Continuar recorriendo la lista de amigos
+    json_object_put(array);
 }
 
-interfaz(AgregarAmigo)
+static new_operfn(getAmigoJSON)
 {
-    // Obtener el username
+    Usuario *amigo = val;
+
+    // Convertir a formato JSON
+    json_object *jobj = json_object_new_object();
+    json_object_object_add(jobj, "id", json_object_new_int(amigo->id));
+    json_object_object_add(jobj, "nombre", json_object_new_string(amigo->nickname));
+
+    // Insertarlo en la lista JSON
+    json_object_array_add(arg, jobj);
+
+    return FOREACH_CONTINUE;
+}
+
+/* ================================================================ */
+// BLOQUE: agregar_amigo — Agregar un nuevo amigo
+/* ================================================================ */
+
+message_handler(agregar_amigo)
+{
+    init_data_json();
+
+    const char *username = get_string(get_array_idx(data, 0));
+
+    int argc = 1;
+    const char *argv[] = {username};
+    char **msg = arg;
+
+    bool success = VibeCast_AgregarAmigo(NULL, argc, argv, msg);
+    VibeCast_SendNull(id, HTTP_OK, msg ? *msg : NULL, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    end_data_json();
+}
+
+static interfaz(AgregarAmigo)
+{
     const char *username = argv[0];
 
-    // Validar que no sea el mismo usuario
     if (!strcmp(usuario->username, username))
     {
         send_message("No puedes agregarte a ti mismo como amigo.");
         return false;
     }
 
-    // Obtener lista de amigos del usuario actual
     Lista amigos = usuario->amigos;
 
-    // Verificar si el usuario ya es amigo
     Usuario *amigo = searchValueInLista(amigos, username, cmpUsuarioConUsername);
 
     if (amigo)
@@ -71,7 +91,6 @@ interfaz(AgregarAmigo)
         return false;
     }
 
-    // Buscar usuario en el sistema global
     amigo = searchValueInABB(usuarios, username, cmpUsuarioConUsername);
 
     if (!amigo)
@@ -80,7 +99,6 @@ interfaz(AgregarAmigo)
         return false;
     }
 
-    // Agregar en la base de datos
     char *values = asprintf("%d, %d", usuario->id, amigo->id);
     if (!nuevo_registro("Amigos", "id_usuario_1, id_usuario_2", values, msg))
     {
@@ -89,22 +107,42 @@ interfaz(AgregarAmigo)
     }
     freem(values);
 
-    // Agregar a lista de amigos
     insertValueInLista(amigos, amigo);
     send_message("El usuario '%s' ha sido agregado a tu lista de amigos.", username);
 
     return true;
 }
 
-interfaz(EliminarAmigo)
+/* ================================================================ */
+// BLOQUE: eliminar_amigo — Eliminar un amigo existente
+/* ================================================================ */
+
+message_handler(eliminar_amigo)
 {
-    // Obtener el username a eliminar
+    init_data_json();
+
+    const char *username = get_string(get_array_idx(data, 0));
+
+    int argc = 1;
+    const char **argv = cast(const char *[], username);
+
+    char **msg = arg;
+
+    bool success = VibeCast_EliminarAmigo(NULL, argc, argv, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    end_data_json();
+}
+
+static interfaz(EliminarAmigo)
+{
     const char *username = argv[0];
 
-    // Obtener lista de amigos del usuario actual
     Lista amigos = usuario->amigos;
 
-    // Eliminar de la lista de amigos
     Usuario *amigo = deleteValueInLista(amigos, username, cmpUsuarioConUsername);
 
     if (!amigo)
@@ -125,96 +163,4 @@ interfaz(EliminarAmigo)
     send_message("El usuario '%s' ha sido eliminado de tu lista de amigos.", username);
 
     return true;
-}
-
-json_object *amigo_to_json(Usuario *amigo)
-{
-    // Creo un nuevo objeto JSON
-    json_object *jobj = json_object_new_object();
-
-    json_object_object_add(
-        jobj,
-        "id",
-        json_object_new_int(amigo->id));
-
-    json_object_object_add(
-        jobj,
-        "nombre",
-        json_object_new_string(amigo->nickname));
-
-    return jobj;
-}
-
-new_operfn(getAmigos)
-{
-    json_object_array_add(arg, amigo_to_json(val));
-    return FOREACH_CONTINUE;
-}
-
-message_handler(obtener_amigos)
-{
-    // Crear un array para los amigos
-    json_object *array = json_object_new_array();
-
-    // Recorrer la lista de amigos para agregarlos a (array)
-    forEachInLista(usuario->amigos, getAmigos, array);
-
-    size_t len = json_object_array_length(array);
-
-    // Enviar la lista a la interfaz gráfica
-    VibeCast_SendArray(
-        id,
-        (len > 0)
-            ? HTTP_OK
-            : HTTP_NO_CONTENT,
-        array,
-        "Amigos cargados",
-        STATE_SUCCESS);
-
-    // Liberar la memoria
-    json_object_put(array);
-}
-
-message_handler(agregar_amigo)
-{
-    init_data_json();
-
-    const char *username = get_string(get_array_idx(data, 0));
-
-    int argc = 1;
-    const char **argv =
-        cast(const char *[],
-             username);
-
-    char **msg = arg;
-
-    bool success = VibeCast_AgregarAmigo(NULL, argc, argv, msg);
-    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
-
-    freem(*msg);
-    *msg = NULL;
-
-    end_data_json();
-}
-
-message_handler(eliminar_amigo)
-{
-    init_data_json();
-
-    const char *username = get_string(get_array_idx(data, 0));
-
-    int argc = 1;
-    const char **argv =
-        cast(const char *[],
-             username);
-
-    char **msg = arg;
-
-    bool success = VibeCast_EliminarAmigo(NULL, argc, argv, msg);
-    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
-
-    freem(*msg);
-    *msg = NULL;
-
-    end_data_json();
 }

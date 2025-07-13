@@ -25,8 +25,8 @@ bool VibeCast_InitBindings()
     bind_fn(eliminar_playlist, &msg);   // Eliminar playlist
     bind_fn(actualizar_playlist, &msg); // Actualizar información de playlist
 
-    bind_fn(agregar_a_playlist, &msg); // Agregar canción a playlist
-    bind_fn(quitar_de_playlist, &msg); // Quitar canción de playlist
+    bind_fn(agregar_a_playlist, &msg);   // Agregar canción a playlist
+    bind_fn(eliminar_de_playlist, &msg); // Quitar canción de playlist
 
     /* ==== Historial ==== */
 

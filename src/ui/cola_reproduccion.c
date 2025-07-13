@@ -1,7 +1,7 @@
 #include <ui/interfaces.h>
 
-Cola cola_repr = NULL;
-
+/* ================================================================ */
+// DEFINICIÓN DE ESTRUCTURAS INTERNAS
 /* ================================================================ */
 
 typedef enum
@@ -12,58 +12,52 @@ typedef enum
 
 typedef struct NodoColaRepr
 {
-    void *dato;            // Puntero GENÉRICO. Apuntará a una CancionGobal o a un Anuncio.
-    ElementoColaTipo tipo; // La ETIQUETA que nos dice qué es 'dato'.
+    void *dato;            // Puntero genérico: Cancion o Anuncio
+    ElementoColaTipo tipo; // Etiqueta del tipo de dato
 } *NodoColaRepr;
 
 /* ================================================================ */
-
+// DECLARACIÓN DE FUNCIONES INTERNAS
 /* ================================================================ */
 
-static void agregarACola(void *dato, ElementoColaTipo tipo)
-{
-    NodoColaRepr nodo = alloc(struct NodoColaRepr, NULL);
-    if (!nodo)
-        return;
+static interfaz(Encolar);
+static interfaz(Decolar);
+static interfaz(VaciarCola);
 
-    nodo->dato = dato;
-    nodo->tipo = tipo;
+static interfaz(AgregarCancionACola);
+static void agregarCancionACola(Cancion *cancion);
+static void agregarACola(void *dato, ElementoColaTipo tipo);
 
-    if (!cola_repr)
-        cola_repr = newCola();
-
-    insertValueInCola(cola_repr, nodo);
-}
-
-bool agregarCancionACola(Cancion *cancion)
-{
-    static int cant_canciones = 0;
-
-    // 1. Siempre se agrega la canción a la cola.
-    // Se usa la función 'encolar' interna, pasándole la canción y su TIPO.
-    agregarACola(cancion, TIPO_CANCION);
-    cant_canciones++;
-
-    // 2. Se aplica la lógica SOLO para usuarios free.
-    if (cant_canciones == 3)
-    {
-        // Verificar si es FREEMIUM
-        if (usuario->plan == PLAN_FREEMIUM)
-        {
-            // Agregar un anuncio
-            Anuncio *anuncio = deleteValueInCola(anuncios);
-            agregarACola(anuncio, TIPO_ANUNCIO);
-        }
-
-        cant_canciones = 0;
-    }
-
-    return true;
-}
+static interfaz(VaciarColaReproduccion);
 
 /* ================================================================ */
+// VARIABLE GLOBAL DE COLA DE REPRODUCCIÓN
+/* ================================================================ */
 
-interfaz(AgregarCancionACola)
+Cola cola_repr = NULL;
+
+/* ================================================================ */
+// BLOQUE: encolar — Agregar canción a la cola
+/* ================================================================ */
+
+message_handler(encolar)
+{
+    init_data_json();
+    const char *id_cancion = get_string(get_array_idx(data, 0));
+
+    const char *argv[] = {id_cancion};
+    char **msg = arg;
+    bool ok = VibeCast_AgregarCancionACola(NULL, 1, argv, msg);
+
+    VibeCast_SendNull(id, ok ? HTTP_CREATED : HTTP_BAD_REQUEST, *msg, STATE_BOOL(ok));
+
+    freem(*msg);
+    *msg = NULL;
+
+    end_data_json();
+}
+
+static interfaz(AgregarCancionACola)
 {
     int id = atoi(argv[0]);
 
@@ -87,35 +81,46 @@ interfaz(AgregarCancionACola)
     return true;
 }
 
-interfaz(VaciarColaReproduccion)
+static void agregarCancionACola(Cancion *cancion)
 {
-    destroyCola(cola_repr, NULL, NULL);
-    cola_repr = NULL;
-    send_message("Cola de reproducción vaciada.");
+    static int cant_canciones = 0;
 
-    return true;
+    agregarACola(cancion, TIPO_CANCION);
+    cant_canciones++;
+
+    if (cant_canciones == 3)
+    {
+        if (usuario->plan == PLAN_FREEMIUM)
+        {
+            Anuncio *anuncio = deleteValueInCola(anuncios);
+            agregarACola(anuncio, TIPO_ANUNCIO);
+        }
+
+        cant_canciones = 0;
+    }
 }
 
-message_handler(encolar)
+static void agregarACola(void *dato, ElementoColaTipo tipo)
 {
-    init_data_json();
-    const char *id_cancion = get_string(get_array_idx(data, 0));
+    NodoColaRepr nodo = alloc(struct NodoColaRepr, NULL);
+    if (!nodo)
+        return;
 
-    const char *argv[] = {id_cancion};
-    char **msg = arg;
-    bool ok = VibeCast_AgregarCancionACola(NULL, 1, argv, msg);
+    nodo->dato = dato;
+    nodo->tipo = tipo;
 
-    VibeCast_SendNull(id, ok ? HTTP_CREATED : HTTP_BAD_REQUEST, *msg, STATE_BOOL(ok));
+    if (!cola_repr)
+        cola_repr = newCola();
 
-    freem(*msg);
-    *msg = NULL;
-
-    end_data_json();
+    insertValueInCola(cola_repr, nodo);
 }
+
+/* ================================================================ */
+// BLOQUE: decolar — Reproducir siguiente elemento
+/* ================================================================ */
 
 message_handler(decolar)
 {
-
     if (!cola_repr)
         cola_repr = newCola();
 
@@ -158,8 +163,21 @@ message_handler(decolar)
     json_object_put(jobj);
 }
 
+/* ================================================================ */
+// BLOQUE: vaciar_cola — Vaciar la cola de reproducción
+/* ================================================================ */
+
 message_handler(vaciar_cola)
 {
     VibeCast_VaciarColaReproduccion(NULL, 0, NULL, NULL);
     VibeCast_SendNull(id, HTTP_OK, "Cola vaciada", STATE_SUCCESS);
+}
+
+static interfaz(VaciarColaReproduccion)
+{
+    destroyCola(cola_repr, NULL, NULL);
+    cola_repr = NULL;
+    send_message("Cola de reproducción vaciada.");
+
+    return true;
 }

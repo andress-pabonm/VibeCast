@@ -1,74 +1,15 @@
 #include <ui/interfaces.h>
 
-new_operfn(getSongJSON)
-{
-    Cancion *cancion = val;
-    json_object *song_json = json_object_new_object();
-
-    json_object_object_add(song_json, "id", json_object_new_int(cancion->id));
-    json_object_object_add(song_json, "title", json_object_new_string(cancion->nombre));
-    json_object_object_add(song_json, "artist", json_object_new_string(cancion->album->artista->nombre));
-    json_object_object_add(song_json, "duration", json_object_new_int(cancion->duracion));
-    json_object_object_add(song_json, "url", json_object_new_string(cancion->url));
-
-    json_object_array_add(arg, song_json);
-
-    return FOREACH_CONTINUE;
-}
-
-// new_operfn(findPlaylistById)
-// {
-//     Playlist *p = val;
-//     int *targetId = arg;
-//     if (p->id == *targetId)
-//     {
-//         *(Playlist **)arg = p;
-//         return FOREACH_BREAK;
-//     }
-
-//     return FOREACH_CONTINUE;
-// }
-
-// Convierte las canciones de una playlist en JSON
-new_operfn(getPlaylistSongsJSON)
-{
-    Playlist *playlist = val;
-
-    // Crea un arreglo para las canciones de la playlist
-    json_object *songs_array = json_object_new_array();
-
-    // Recorre la playlist
-    forEachInLista(playlist->canciones, getSongJSON, songs_array);
-
-    // Añadirlo al arreglo principal
-    char *id_playlist = asprintf("%d", playlist->id);
-    json_object_object_add(arg, id_playlist, songs_array);
-    freem(id_playlist);
-
-    return FOREACH_CONTINUE;
-}
-
-// Convierte una playlist en JSON
-new_operfn(getPlaylistJSON)
-{
-    Playlist *playlist = val;
-    json_object *playlist_json = json_object_new_object();
-
-    json_object_object_add(playlist_json, "id", json_object_new_int(playlist->id));
-    json_object_object_add(playlist_json, "name", json_object_new_string(playlist->nombre));
-    json_object_object_add(playlist_json, "songCount", json_object_new_int(getListaLength(playlist->canciones)));
-
-    json_object_array_add(arg, playlist_json);
-
-    return FOREACH_CONTINUE;
-}
-
 /* ================================================================ */
-// Funciones auxiliares
+// DECLARACIONES DE FUNCIONES INTERNAS
 /* ================================================================ */
 
+static new_operfn(getSongJSON);
+static new_operfn(getPlaylistJSON);
+static new_operfn(getPlaylistSongsJSON);
+
 /* ================================================================ */
-// Obtener la lista de playlist para mostrar en Biblioteca
+// BLOQUE: obtener_playlists — Cargar playlists en la sección de biblioteca
 /* ================================================================ */
 
 message_handler(obtener_playlists)
@@ -93,8 +34,56 @@ message_handler(obtener_playlists)
     json_object_put(response);
 }
 
+static new_operfn(getPlaylistJSON)
+{
+    Playlist *playlist = val;
+    json_object *playlist_json = json_object_new_object();
+
+    json_object_object_add(playlist_json, "id", json_object_new_int(playlist->id));
+    json_object_object_add(playlist_json, "name", json_object_new_string(playlist->nombre));
+    json_object_object_add(playlist_json, "songCount", json_object_new_int(getListaLength(playlist->canciones)));
+
+    json_object_array_add(arg, playlist_json);
+
+    return FOREACH_CONTINUE;
+}
+
+static new_operfn(getPlaylistSongsJSON)
+{
+    Playlist *playlist = val;
+
+    // Crea un arreglo para las canciones de la playlist
+    json_object *songs_array = json_object_new_array();
+
+    // Recorre la playlist
+    forEachInLista(playlist->canciones, getSongJSON, songs_array);
+
+    // Añadirlo al arreglo principal
+    char *id_playlist = asprintf("%d", playlist->id);
+    json_object_object_add(arg, id_playlist, songs_array);
+    freem(id_playlist);
+
+    return FOREACH_CONTINUE;
+}
+
+static new_operfn(getSongJSON)
+{
+    Cancion *cancion = val;
+    json_object *song_json = json_object_new_object();
+
+    json_object_object_add(song_json, "id", json_object_new_int(cancion->id));
+    json_object_object_add(song_json, "title", json_object_new_string(cancion->nombre));
+    json_object_object_add(song_json, "artist", json_object_new_string(cancion->album->artista->nombre));
+    json_object_object_add(song_json, "duration", json_object_new_int(cancion->duracion));
+    json_object_object_add(song_json, "url", json_object_new_string(cancion->url));
+
+    json_object_array_add(arg, song_json);
+
+    return FOREACH_CONTINUE;
+}
+
 /* ================================================================ */
-// Crear una playlist
+// BLOQUE: crear_playlist — Crear una nueva playlist
 /* ================================================================ */
 
 message_handler(crear_playlist)
@@ -103,7 +92,7 @@ message_handler(crear_playlist)
 }
 
 /* ================================================================ */
-// Eliminar una playlist
+// BLOQUE: eliminar_playlist — Eliminar una playlist existente
 /* ================================================================ */
 
 message_handler(eliminar_playlist)
@@ -112,7 +101,7 @@ message_handler(eliminar_playlist)
 }
 
 /* ================================================================ */
-// Actualizar la información de una playlist
+// BLOQUE: actualizar_playlist — Actualizar datos de una playlist
 /* ================================================================ */
 
 message_handler(actualizar_playlist)
@@ -121,7 +110,7 @@ message_handler(actualizar_playlist)
 }
 
 /* ================================================================ */
-// Agregar una cacnión a una playlist
+// BLOQUE: agregar_a_playlist — Agregar una canción a una playlist
 /* ================================================================ */
 
 message_handler(agregar_a_playlist)
@@ -130,10 +119,10 @@ message_handler(agregar_a_playlist)
 }
 
 /* ================================================================ */
-// Quitar una canción de una playlist
+// BLOQUE: elminar_de_playlist — Eliminar una canción de una playlist
 /* ================================================================ */
 
-message_handler(quitar_de_playlist)
+message_handler(eliminar_de_playlist)
 {
     VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
 }
