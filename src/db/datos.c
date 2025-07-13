@@ -44,12 +44,9 @@ static new_cmpfn(cmpArtistas)
 // ========================== Declaraciones =========================
 
 static select_handler(cargarArtistaPorUsuario);
-static select_handler(cargarAlbumesPorArtista);
-static select_handler(cargarCancionesPorAlbum);
 
 static select_handler(cargarAmigosPorUsuario);
 
-static select_handler(cargarPlaylistsPorUsuario);
 static select_handler(cargarCancionesPorPlaylist);
 
 static select_handler(cargarHistorialPorUsuario);
@@ -123,7 +120,7 @@ static select_handler(cargarArtistaPorUsuario)
 #define ALBUM_NOMBRE 1
 #define ALBUM_FECHA_CREACION 2
 
-static select_handler(cargarAlbumesPorArtista)
+select_handler(cargarAlbumesPorArtista)
 {
     Album *album = newAlbum();
     if (!album)
@@ -152,7 +149,7 @@ static select_handler(cargarAlbumesPorArtista)
 #define CANCION_POPULARIDAD 7
 #define CANCION_REPRODUCCIONES 8
 
-static select_handler(cargarCancionesPorAlbum)
+select_handler(cargarCancionesPorAlbum)
 {
     Cancion *cancion = newCancion();
     if (!cancion)
@@ -190,7 +187,7 @@ static select_handler(cargarAmigosPorUsuario)
 #define PLAYLIST_ID 0
 #define PLAYLIST_NOMBRE 1
 
-static select_handler(cargarPlaylistsPorUsuario)
+select_handler(cargarPlaylistsPorUsuario)
 {
     Playlist *playlist = newPlaylist();
     if (!playlist)
@@ -373,6 +370,7 @@ bool VibeCast_FreeData()
     destroyABB(artistas, NULL, NULL);
     destroyLista(canciones, NULL, NULL);
     destroyCola(anuncios, destroyAnuncios, NULL);
+    VibeCast_CloseDB();
 
     return true;
 }
