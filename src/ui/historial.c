@@ -5,18 +5,53 @@
 /* ================================================================ */
 
 bool agregarAHistorial(Usuario *usuario, Cancion *cancion, Anuncio *anuncio);
-bool mostrarHistorial(Usuario *usuario);
 bool vaciarHistorial(Usuario *usuario);
-Lista getHistorial();
+static interfaz(ObtenerHistorial);
 
 /* ================================================================ */
-// BLOQUE: mostrar_historial — Mostrar historial (actualmente inactivo)
+// BLOQUE: obtener_historial — Mostrar historial (actualmente inactivo)
 /* ================================================================ */
 
-message_handler(mostrar_historial)
+message_handler(obtener_historial)
 {
-    // VibeCast_MostrarHistorial(NULL, 0, NULL, NULL);
-    // VibeCast_SendText(id, HTTP_OK, "Historial mostrado en consola", "Historial", STATE_SUCCESS);
+    json_object *array = json_object_new_array();
+
+    char **msg = arg;
+
+    bool success = VibeCast_ObtenerHistorial(array, 0, NULL, msg);
+    VibeCast_SendArray(id, HTTP_OK, array, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+}
+
+static interfaz(ObtenerHistorial)
+{
+    json_object *jobj = json_object_new_object();
+
+    Pila historial = usuario->historial.reproducciones;
+    Pila tmpHistorial = newPila();
+
+    Reproduccion *repr = deleteValueInPila(historial);
+
+    while (repr)
+    {
+        json_object_object_add(jobj, "songId", json_object_new_int(repr->cancion->id));
+        json_object_object_add(jobj, "title", json_object_new_string(repr->cancion->nombre));
+        json_object_object_add(jobj, "artist", json_object_new_string(repr->cancion->album->artista->nombre));
+        json_object_object_add(jobj, "duration", json_object_new_int(repr->cancion->duracion));
+        json_object_object_add(jobj, "playedAt", json_object_new_string(repr->fechaEscuchado));
+
+        json_object_array_add(arg, jobj);
+
+        insertValueInPila(tmpHistorial, repr);
+
+        repr = deleteValueInPila(historial);
+    }
+
+    destroyPila(tmpHistorial, rehacerHistorial, historial);
+
+    return true;
 }
 
 /* ================================================================ */
@@ -73,25 +108,9 @@ bool agregarAHistorial(Usuario *usuario, Cancion *cancion, Anuncio *anuncio)
     insertValueInPila(usuario->historial.reproducciones, reproduccion);
     usuario->historial.tiempoEscuchado += cancion->duracion;
 
+    printf("Me gusta el sexo lesbico\nAñanadiendo cancion %s\n", cancion->nombre);
+
     return true;
-}
-
-/* ================================================================ */
-// BLOQUE: obtener_historial — Obtener historial (no implementado)
-/* ================================================================ */
-
-message_handler(obtener_historial)
-{
-    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
-}
-
-Lista getHistorial()
-{
-    Pila historial = usuario->historial.reproducciones;
-    Pila tmpHistorial = newPila();
-    Lista reprs = newLista(NULL);
-
-    return reprs;
 }
 
 /* ================================================================ */
@@ -159,22 +178,6 @@ interfaz(MostrarHistorial)
         insertValueInPila(pila, r);
 
     destroyPila(temp, NULL, NULL);
-
-    return true;
-}
-
-bool mostrarHistorial(Usuario *usuario)
-{
-    Pila historial = usuario->historial.reproducciones;
-    Reproduccion *repr = deleteValueInPila(historial);
-
-    while (repr != NULL)
-    {
-        if (repr)
-            printf("Canción: %s, Fecha: %s\n", repr->cancion->nombre, repr->fechaEscuchado);
-
-        repr = deleteValueInPila(historial);
-    }
 
     return true;
 }

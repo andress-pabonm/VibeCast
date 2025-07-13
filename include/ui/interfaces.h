@@ -64,4 +64,9 @@ interfaz(eliminarCancionPlaylist);
 interfaz(eliminarPlaylist);
 interfaz(mostrarCancionesPlaylist);
 
+new_operfn(getSongJSON);
+
+bool agregarAHistorial(Usuario *usuario, Cancion *cancion, Anuncio *anuncio);
+new_operfn(rehacerHistorial);
+
 #endif // VIBECAST_INTERFACES_H

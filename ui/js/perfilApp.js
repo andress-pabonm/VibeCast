@@ -229,17 +229,12 @@ window.views.perfil = {
       } else {
         becomeArtistBtn.addEventListener("click", async () => {
           try {
-            const res = await window.become_artist();
+            const res = await window.crear_artista();
             if (res.status === "ok") {
-              alert(
-                "¡Ahora eres un artista! Se ha creado tu primer álbum y canción."
-              );
+              alert("¡Ahora eres un artista! Se ha creado tu primer álbum y canción.");
               location.reload();
             } else {
-              alert(
-                "Error al convertirte en artista: " +
-                (res.message || "Error desconocido")
-              );
+              alert("Error al convertirte en artista: " + (res.message || "Error desconocido"));
             }
           } catch (err) {
             console.error("Error:", err);
@@ -610,8 +605,7 @@ window.views.perfil = {
     }
 
     return function () {
-      window
-        .obtener_info_usuario()
+      window.obtener_info_usuario()
         .then((res) => {
           if (!res || res.status !== "ok" || res.type !== "json" || !res.data) {
             throw new Error(res?.message || "No se pudo cargar el perfil");
@@ -629,8 +623,6 @@ window.views.perfil = {
         })
         .catch((err) => {
           console.error("Error al cargar perfil:", err);
-          alert("No se pudo cargar el perfil, redirigiendo...");
-          // window.location.replace("../Login/index.html");
         });
     };
   })(),

@@ -55,6 +55,8 @@ message_handler(encolar)
     *msg = NULL;
 
     end_data_json();
+
+    puts("Que rico el sexo lesbico la plenaaaa\nCancion encolada\n");
 }
 
 static interfaz(AgregarCancionACola)
@@ -134,8 +136,8 @@ message_handler(decolar)
 
     json_object *jobj = new_json_object();
 
-    Cancion *c;
-    Anuncio *a;
+    Cancion *c = NULL;
+    Anuncio *a = NULL;
 
     switch (nodo->tipo)
     {
@@ -156,6 +158,8 @@ message_handler(decolar)
     default:
         break;
     }
+
+    agregarAHistorial(usuario, c, a);
 
     freem(nodo);
 

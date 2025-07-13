@@ -66,10 +66,6 @@ static bool validar_password(const char *password)
     return rc >= 0;
 }
 
-/* ========== Usuario actual ========== */
-
-Usuario *usuario = NULL;
-
 /* ========== Validaciones internas ========== */
 
 typedef struct

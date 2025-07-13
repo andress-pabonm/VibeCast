@@ -19,7 +19,6 @@ static interfaz(ObtenerCanciones);
 static interfaz(ObtenerRecomendaciones);
 static Lista cancionesRecomendadas();
 static new_operfn(obtenerHistorialAmigos);
-static new_operfn(rehacerHistorial);
 
 static interfaz(GenerarReporte);
 
@@ -118,7 +117,7 @@ static new_operfn(obtenerHistorialAmigos)
     return FOREACH_CONTINUE;
 }
 
-static new_operfn(rehacerHistorial)
+new_operfn(rehacerHistorial)
 {
     insertValueInPila(arg, val);
     return FOREACH_CONTINUE;
@@ -201,7 +200,7 @@ static new_operfn(ObtenerHistorial)
         else
         {
             artistaTemp = alloc(PopularidadArtista, NULL);
-            artistaTemp->artista = reproducciontemp->cancion->album->artista->nombre;
+            artistaTemp->artista = searchValueInABB(artistas, reproducciontemp->cancion->album->artista->nombre, cmpArtistaConNombre);
             artistaTemp->popularidad = 1;
 
             insertValueInLista(listaArtistas, artistaTemp); // Obtenemos el artista de la cancion
@@ -266,7 +265,7 @@ interfaz(GenerarTop5Canciones)
 
     int *reproducciones = malloc_cpy(longitud * sizeof(int), 0); // vector en el heap
 
-    forEachInLista(canciones, obtener_reproducciones, reproducciones);
+    forEachInLista(canciones, obtenerReproducciones, reproducciones);
 
     qsort(reproducciones, longitud, sizeof(int), cmpIntDesc); // Buffer, tamaño del buffer, tamaño de cada elemento, funcion de comparacion
 
@@ -311,7 +310,7 @@ interfaz(GenerarTop3Artistas)
 
     for (int i = 0; i < longitud && i < 3; i++)
     {
-        fprintf(archivo, "%d) %s - %d canciones guardadas\n", i + 1, pArtistas[i]->artista, pArtistas[i]->popularidad);
+        fprintf(archivo, "%d) %s - %d canciones guardadas\n", i + 1, pArtistas[i]->artista->nombre, pArtistas[i]->popularidad);
     }
 
     fclose(archivo);

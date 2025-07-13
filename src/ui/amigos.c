@@ -19,7 +19,7 @@ message_handler(obtener_amigos)
 {
     json_object *array = json_object_new_array();
 
-    forEachInLista(usuario->amigos, getAmigos, array);
+    forEachInLista(usuario->amigos, getAmigoJSON, array);
 
     size_t len = json_object_array_length(array);
 

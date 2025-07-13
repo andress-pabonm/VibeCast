@@ -11,7 +11,7 @@
 /**
  * Tipo para funciones de comunicación con webview.
  * @param id: Identificador de la solicitud.
- * @param req: Petición enviada por la interfaz gráfica. Formato: "[contenido_de_la_solicitud]"
+ * @param req: Petición enviada por la interfa1z gráfica. Formato: "[contenido_de_la_solicitud]"
  * @param arg: Argumento pasado al enlazar la función. (Será el estado de la aplicación)
  */
 typedef void (*message_handler_t)(const char *id, const char *req, void *arg);

@@ -39,6 +39,8 @@ window.views.historial = {
 
         let filteredHistory = res.data;
 
+        console.log(filteredHistory);
+
         filteredHistory.sort((a, b) => b.playedAt - a.playedAt);
 
         filteredHistory.forEach((item) => {
@@ -49,7 +51,7 @@ window.views.historial = {
                     <div class="song-title">${item.title}</div>
                     <div class="play-date">
                         <i class="far fa-clock"></i>
-                        ${formatDate(item.playedAt)} · 
+                        ${item.playedAt} · 
                         ${item.plays} ${item.plays === 1 ? "reproducción" : "reproducciones"}
                     </div>
                 </div>

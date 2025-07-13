@@ -254,20 +254,6 @@ message_handler(actualizar_cancion)
 #include <ui/interfaces.h>
 #include <db/dbmgr.h>
 
-new_cmpfn(cmpCancionConNombre)
-{
-    const Cancion *c = val_1;         // Puntero a Cancion
-    const char *nombre = val_2;       // Puntero a nombre (string) a comparar
-    return strcmp(c->nombre, nombre); // Compara el nombre de la canción con el nombre dado
-}
-
-new_cmpfn(cmpAlbumConNombre)
-{
-    const Album *A = val_1;           // Puntero a Album
-    const char *nombre = val_2;       // Puntero a nombre (string) a comparar
-    return strcmp(A->nombre, nombre); // Compara el nombre del álbum con el nombre dado
-}
-
 select_handler(obteneridCancion)
 {
     sscanf(argv[0], "%d", cast(int *, arg)); // Asigna el ID de la canción al puntero proporcionado

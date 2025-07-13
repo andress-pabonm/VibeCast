@@ -4,7 +4,6 @@
 // DECLARACIONES DE FUNCIONES INTERNAS
 /* ================================================================ */
 
-static new_operfn(getSongJSON);
 static new_operfn(getPlaylistJSON);
 static new_operfn(getPlaylistSongsJSON);
 
@@ -66,7 +65,7 @@ static new_operfn(getPlaylistSongsJSON)
     return FOREACH_CONTINUE;
 }
 
-static new_operfn(getSongJSON)
+new_operfn(getSongJSON)
 {
     Cancion *cancion = val;
     json_object *song_json = json_object_new_object();
