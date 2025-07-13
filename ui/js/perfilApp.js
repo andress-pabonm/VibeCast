@@ -175,7 +175,7 @@ window.views.perfil = {
   init: (function () {
     async function loadArtistData(userData) {
       try {
-        const artistRes = await window.get_artist_data(userData.id);
+        const artistRes = await window.obtener_info_artista(userData.id);
         if (artistRes.status === "ok" && artistRes.type === "json") {
           userData.albums = artistRes.data.albums || [];
           setupArtistView(userData);

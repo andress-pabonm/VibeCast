@@ -62,7 +62,7 @@ window.views.amigos = {
         .forEach((el) => el.remove());
 
       try {
-        const res = window.obtener_amigos();
+        const res = await window.obtener_amigos();
 
         if (res.status !== "ok") {
           throw new Error(res.message);
@@ -90,10 +90,21 @@ window.views.amigos = {
       friendCard.querySelector(".friend-name").textContent = friend.name;
 
       // Configurar evento de eliminación
-      friendCard.querySelector(".remove").addEventListener("click", () => {
-        if (confirm(`¿Eliminar a ${friend.name} de tus amigos?`)) {
-          friendsData = friendsData.filter((f) => f.id !== friend.id);
-          loadFriends();
+      friendCard.querySelector(".remove").addEventListener("click", async () => {
+        try {
+          if (confirm(`¿Eliminar a ${friend.name} de tus amigos?`)) {
+            const res = await window.eliminar_amigo(friend.id);
+
+            if (res.status !== "ok") {
+              throw new Error(res.message);
+            }
+
+            console.log(res.message);
+
+            loadFriends();
+          }
+        } catch (error) {
+          console.warn(error.message);
         }
       });
 
@@ -117,7 +128,6 @@ window.views.amigos = {
       });
     });
 
-    // Resto del código se mantiene igual...
     addFriendBtn.addEventListener("click", () => {
       addFriendModal.classList.remove("hidden");
     });
@@ -126,26 +136,25 @@ window.views.amigos = {
       addFriendModal.classList.add("hidden");
     });
 
-    sendRequestBtn.addEventListener("click", () => {
-      const username = document.getElementById("friendUsername").value.trim();
-      if (username) {
-        // Añadir nuevo amigo (ejemplo)
-        const newFriend = {
-          id: friendsData.length + 1,
-          name: username,
-        };
-        friendsData.push(newFriend);
-        loadFriends();
+    sendRequestBtn.addEventListener("click", async () => {
+      try {
+        const username = document.getElementById("friendUsername").value.trim();
+        if (username) {
+          const res = await window.agregar_amigo(username);
 
-        alert(`Solicitud enviada a ${username}`);
-        document.getElementById("friendUsername").value = "";
-        addFriendModal.classList.add("hidden");
-      }
-    });
+          if (res.status !== "ok") {
+            throw new Error(res.message);
+          }
 
-    addFriendModal.addEventListener("click", (e) => {
-      if (e.target === addFriendModal) {
-        addFriendModal.classList.add("hidden");
+          console.log(res.message);
+
+          loadFriends();
+
+          document.getElementById("friendUsername").value = "";
+          addFriendModal.classList.add("hidden");
+        }
+      } catch (error) {
+        console.warn(error.message);
       }
     });
 
