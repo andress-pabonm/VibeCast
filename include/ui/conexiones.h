@@ -137,8 +137,8 @@ message_handler(crear_playlist);      // Crear playlist
 message_handler(eliminar_playlist);   // Eliminar playlist
 message_handler(actualizar_playlist); // Actualizar información de playlist
 
-message_handler(agregar_a_playlist); // Agregar canción a playlist
-message_handler(quitar_de_playlist); // Quitar canción de playlist
+message_handler(agregar_a_playlist);   // Agregar canción a playlist
+message_handler(eliminar_de_playlist); // Eliminar canción de playlist
 
 /* ==== Historial ==== */
 

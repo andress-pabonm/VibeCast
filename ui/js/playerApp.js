@@ -11,9 +11,9 @@ const MusicPlayer = (function () {
   let isDraggingProgress = false;
   let updateInterval;
 
-  function init(song) {
+  function init() {
     player = new YT.Player("player", {
-      //videoId: "A98ASkT5EXY",
+      // videoId: "V5cI_vpIsvs",
       playerVars: {
         controls: 0,
         disablekb: 1,
@@ -28,6 +28,12 @@ const MusicPlayer = (function () {
     setupPlayerControls();
     document.body.classList.add("player-closed");
     document.querySelector(".music-player").classList.add("hidden");
+
+    // Botón siguiente canción
+    document.getElementById("nextBtn").addEventListener("click", playSong);
+
+    // Botón anterior canción
+    document.getElementById("prevBtn").addEventListener("click", showQueueAlert);
   }
 
   function onPlayerReady(event) {
@@ -276,9 +282,18 @@ const MusicPlayer = (function () {
     }
   }
 
+  function addSongsToQueue(songs) {
+    songs.forEach((song) => addSongToQueue(song));
+  }
+
+  function showQueueAlert() {
+    alert("En una cola de reproducción no se puede retroceder\nLas canciones solo avanzan en orden de llegada");
+  }
+
   return {
     init,
     addSongToQueue,
+    addSongsToQueue
   };
 })();
 

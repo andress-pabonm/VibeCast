@@ -173,6 +173,28 @@
     color: var(--detalle);
 }
 
+.playlist-options {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    cursor: pointer;
+    transition: var(--transicion-rapida);
+}
+
+
+.playlist-options i {
+    color: var(--blanco);
+    font-size: 2rem;
+}
+
 /* ========== SECCIÓN DE CANCIONES ========== */
 .songs-header {
     display: flex;
