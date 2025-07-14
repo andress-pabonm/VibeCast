@@ -390,7 +390,7 @@ static interfaz(EliminarDePlaylist)
 
     if (!ok)
     {
-        insertValueInLista(playlist, cancion);
+        insertValueInLista(playlist->canciones, cancion);
         send_message("No fue posible eliminar la canción de la playlist.");
         return false;
     }
