@@ -104,13 +104,6 @@ INSERT INTO Playlist_Canciones (id_playlist, id_cancion) VALUES
 (2, 2),
 (2, 4);
 
-INSERT INTO Reproducciones (id_usuario, id_cancion, fecha_escuchado) VALUES
-(1, 1, "2025-06-20 10:00:00"),
-(1, 3, "2025-06-20 11:30:00"),
-(2, 2, "2025-06-21 09:00:00"),
-(2, 4, "2025-06-21 09:05:00"),
-(3, 1, "2025-06-22 08:00:00");
-
 INSERT INTO Anuncios (id_usuario, url) VALUES
 (2, "ads/plan_basico/ad1.mp3"),
 (2, "ads/plan_basico/ad2.mp3"),
