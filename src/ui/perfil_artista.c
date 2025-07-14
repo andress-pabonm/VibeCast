@@ -306,7 +306,38 @@ message_handler(eliminar_album)
 
 static interfaz(EliminarAlbum)
 {
-    
+    const char *nombreAlbum = argv[0];
+
+    // Validar que el artista exista
+    if (!usuario->artista)
+    {
+        send_message("Error: El usuario no es un artista\n");
+        return false;
+    }
+
+    Lista albumes = usuario->artista->albumes;
+    Album *album = searchValueInLista(albumes, nombreAlbum, cmpAlbumConNombre);
+
+    // Validar que exista el álbum
+    if (!album)
+    {
+        send_message("Error: El álbum '%s' no existe\n", nombreAlbum);
+        return false;
+    }
+
+    if (getListaLength(album->canciones) > 0)
+    {
+        send_message("No es posible eliminar el álbum porque contiene canciones populares.");
+        return false;
+    }
+
+    // Eliminar el álbum de la lista
+    deleteValueInLista(albumes, album, cmpAlbumConNombre);
+
+    destroyAlbum(album);
+
+    send_message("Álbum eliminado.");
+    return true;
 }
 
 /* ===================================================== */
