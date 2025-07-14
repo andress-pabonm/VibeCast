@@ -27,23 +27,30 @@ static interfaz(EliminarDePlaylist);
 message_handler(obtener_playlists)
 {
     json_object *response = json_object_new_object();
+    char **msg = arg;
+
+    bool success = VibeCast_ObtenerPlaylists(response, 0, NULL, msg);
+    VibeCast_SendJSON(id, HTTP_OK, response, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    json_object_put(response);
+}
+
+static interfaz(ObtenerPlaylists)
+{
     json_object *playlists_array = json_object_new_array();
     json_object *songs_array = json_object_new_object();
 
     forEachInLista(usuario->playlists, getPlaylistJSON, playlists_array);
     forEachInLista(usuario->playlists, getPlaylistSongsJSON, songs_array);
 
-    json_object_object_add(response, "playlists", playlists_array);
-    json_object_object_add(response, "playlistSongs", songs_array);
+    json_object_object_add(arg, "playlists", playlists_array);
+    json_object_object_add(arg, "playlistSongs", songs_array);
 
-    VibeCast_SendJSON(
-        id,
-        HTTP_OK,
-        response,
-        "Playlists cargadas",
-        STATE_SUCCESS);
-
-    json_object_put(response);
+    send_message("Playlists cargadas.");
+    return true;
 }
 
 static new_operfn(getPlaylistJSON)
