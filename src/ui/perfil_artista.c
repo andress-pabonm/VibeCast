@@ -1,27 +1,114 @@
 #include <ui/interfaces.h>
 
-static new_cmpfn(cmpArtistaConNombre)
+/* ================================================================ */
+// DECLARACIONES DE FUNCIONES INTERNAS
+/* ================================================================ */
+
+static interfaz(ObtenerInfoArtista);
+static new_operfn(getAlbumJSON);
+
+static interfaz(CrearArtista);
+static new_cmpfn(cmpArtistaConNombre);
+
+static interfaz(EliminarArtista);
+
+static interfaz(CrearAlbum);
+static new_cmpfn(cmpAlbumConNombre);
+
+static interfaz(EliminarAlbum);
+
+static interfaz(ActualizarAlbum);
+
+static interfaz(CrearCancion);
+static new_cmpfn(cmpCancionConNombre);
+static select_handler(obteneridCancion);
+
+static interfaz(EliminarCancion);
+
+static interfaz(ActualizarCancion);
+
+/* ======================================================== */
+// BLOQUE: obtener_info_artista — Cargar artistas en perfil
+/* ======================================================== */
+
+message_handler(obtener_info_artista)
 {
-    const Artista *a = val_1;
-    const char *n = val_2;
-    return strcmp(a->nombre, n);
+    // Validar que el artista está creado
+    if (!usuario->artista)
+    {
+        VibeCast_SendText(id, HTTP_OK, "", "El usuario no es artista", STATE_FAILURE);
+        return;
+    }
+
+    json_object *response = json_object_new_object();
+    char **msg = arg;
+
+    bool success = VibeCast_ObtenerInfoArtista(response, 0, NULL, msg);
+    VibeCast_SendJSON(id, HTTP_OK, response, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    json_object_put(response);
 }
 
-static new_cmpfn(cmpAlbumConNombre)
+static interfaz(ObtenerInfoArtista)
 {
-    const Album *a = val_1;
-    const char *n = val_2;
-    return strcmp(a->nombre, n);
+    json_object *response = json_object_new_object();
+    json_object *albumsArray = json_object_new_array();
+
+    forEachInLista(usuario->artista->albumes, getAlbumJSON, albumsArray);
+
+    json_object_object_add(response, "albums", albumsArray);
+
+    VibeCast_SendJSON(arg, HTTP_OK, response, "Álbumes cargados", STATE_SUCCESS);
+
+    return true;
 }
 
-static new_cmpfn(cmpCancionConNombre)
+static new_operfn(getAlbumJSON)
 {
-    const Cancion *c = val_1;
-    const char *n = val_2;
-    return strcmp(c->nombre, n);
+    Album *album = val;
+    json_object *jobj = json_object_new_object();
+
+    json_object_object_add(jobj, "id", json_object_new_int(album->id));
+    json_object_object_add(jobj, "name", json_object_new_string(album->nombre));
+    json_object_object_add(jobj, "year", json_object_new_string(album->fechaCreacion));
+
+    json_object *songsArray = json_object_new_array();
+
+    forEachInLista(album->canciones, getSongJSON, songsArray);
+
+    json_object_object_add(jobj, "songs", songsArray);
+
+    json_object_array_add(arg, jobj);
+
+    return FOREACH_CONTINUE;
 }
 
-interfaz(CrearArtista)
+/* ============================================== */
+// BLOQUE: crear_artista — Crea artista en perfil
+/* ============================================== */
+
+message_handler(crear_artista)
+{
+    init_data_json();
+    const char *nombreArtista = get_string(get_array_idx(data, 0));
+
+    const char *argv[] = {nombreArtista};
+    int argc = sizeof(argv) / sizeof(*argv);
+
+    char **msg = arg;
+    bool success = VibeCast_CrearArtista(usuario, argc, argv, msg);
+
+    VibeCast_SendText(id, HTTP_OK, *msg, success ? "Artista creado" : "Fallo al crear artista", STATE_BOOL(success));
+
+    puts(*msg);
+    freem(*msg);
+    *msg = NULL;
+}
+
+static interfaz(CrearArtista)
 {
     const char *nombreArtista = argv[0];
 
@@ -41,7 +128,56 @@ interfaz(CrearArtista)
     return true;
 }
 
-interfaz(CrearAlbum)
+static new_cmpfn(cmpArtistaConNombre)
+{
+    const Artista *a = val_1;
+    const char *n = val_2;
+    return strcmp(a->nombre, n);
+}
+
+/* ===================================================== */
+// BLOQUE: eliminar_artista — Eliminar artista en perfil
+/* ===================================================== */
+
+message_handler(eliminar_artista)
+{
+    json_object *response = json_object_new_object();
+    char **msg = arg;
+
+    bool success = VibeCast_EliminarArtista(response, 0, NULL, msg);
+    VibeCast_SendJSON(id, HTTP_OK, response, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    json_object_put(response);
+}
+
+static interfaz(EliminarArtista)
+{
+    // Implmentar logica
+    return true;
+}
+
+/* ============================================ */
+// BLOQUE: crear_album — Crear album de artista
+/* ============================================ */
+
+message_handler(crear_album)
+{
+    json_object *response = json_object_new_object();
+    char **msg = arg;
+
+    bool success = VibeCast_CrearAlbum(response, 0, NULL, msg);
+    VibeCast_SendJSON(id, HTTP_OK, response, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    json_object_put(response);
+}
+
+static interfaz(CrearAlbum)
 {
     // Validar que el artista exista
     if (!usuario->artista)
@@ -72,10 +208,60 @@ interfaz(CrearAlbum)
     album->fechaCreacion = asprintf(fechaActual);
 
     insertValueInLista(albumes, album);
+
     return true;
 }
 
-interfaz(AgregarCancionAlbum)
+static new_cmpfn(cmpAlbumConNombre)
+{
+    const Album *a = val_1;
+    const char *n = val_2;
+    return strcmp(a->nombre, n);
+}
+
+/* ================================================== */
+// BLOQUE: eliminar_album — Eliminar album de artista
+/* ================================================== */
+
+message_handler(eliminar_album)
+{
+    json_object *response = json_object_new_object();
+    char **msg = arg;
+
+    bool success = VibeCast_EliminarAlbum(response, 0, NULL, msg);
+    VibeCast_SendJSON(id, HTTP_OK, response, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    json_object_put(response);
+}
+
+static interfaz(EliminarAlbum)
+{
+    // Aplicar logica
+    return true;
+}
+
+/* ===================================================== */
+// BLOQUE: actualizar_album — Actualiza album de artista
+/* ===================================================== */
+
+message_handler(actualizar_album)
+{
+    json_object *response = json_object_new_object();
+    char **msg = arg;
+
+    bool success = VibeCast_ActualizarAlbum(response, 0, NULL, msg);
+    VibeCast_SendJSON(id, HTTP_OK, response, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    json_object_put(response);
+}
+
+static interfaz(ActualizarAlbum)
 {
     if (!usuario->artista)
     {
@@ -108,167 +294,36 @@ interfaz(AgregarCancionAlbum)
     cancion->duracion = duracion;
 
     insertValueInLista(album->canciones, cancion);
+
     return true;
 }
 
-new_operfn(getAlbumJSON)
-{
-    Album *album = val;
-    json_object *jobj = json_object_new_object();
-
-    json_object_object_add(jobj, "id", json_object_new_int(album->id));
-    json_object_object_add(jobj, "name", json_object_new_string(album->nombre));
-    json_object_object_add(jobj, "year", json_object_new_string(album->fechaCreacion));
-
-    json_object *songsArray = json_object_new_array();
-
-    forEachInLista(
-        album->canciones,
-        getSongJSON,
-        songsArray);
-
-    json_object_object_add(jobj, "songs", songsArray);
-
-    json_object_array_add(arg, jobj);
-    return FOREACH_CONTINUE;
-}
-
-message_handler(get_artist_data)
-{
-    // Validar que el artista está creado
-    if (!usuario->artista)
-    {
-        VibeCast_SendText(id, HTTP_OK, "", "El usuario no es artista", STATE_FAILURE);
-        return;
-    }
-
-    json_object *response = json_object_new_object();
-    json_object *albumsArray = json_object_new_array();
-
-    forEachInLista(
-        usuario->artista->albumes,
-        getAlbumJSON,
-        albumsArray);
-
-    json_object_object_add(response, "albums", albumsArray);
-
-    VibeCast_SendJSON(
-        id,
-        HTTP_OK,
-        response,
-        "Álbumes cargados",
-        STATE_SUCCESS);
-
-    puts(json_object_to_json_string(response));
-
-    // Liberar memoria
-    json_object_put(response);
-}
-
-/*
-{
-  "albums": [
-    {
-      "id": 1,
-      "name": "Mi álbum",
-      "year": "2025",
-      "songs": [
-        {
-          "id": 101,
-          "title": "Canción 1",
-          "artist": "Nombre del artista",
-          "duration": "3:12"
-        }
-      ]
-    },
-    // más álbumes...
-  ]
-}
- */
-
-message_handler(obtener_info_artista)
-{
-    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
-}
-
-message_handler(crear_artista)
-{
-    init_data_json();
-    const char *nombreArtista = get_string(get_array_idx(data, 0));
-
-    const char *argv[] = {nombreArtista};
-    int argc = sizeof(argv) / sizeof(*argv);
-
-    char **msg = arg;
-    bool success = VibeCast_CrearArtista(usuario, argc, argv, msg);
-
-    VibeCast_SendText(
-        id,
-        HTTP_OK,
-        *msg,
-        success ? "Artista creado" : "Fallo al crear artista",
-        STATE_BOOL(success));
-
-    puts(*msg);
-    freem(*msg);
-    *msg = NULL;
-}
-
-message_handler(eliminar_artista)
-{
-    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
-}
-
-message_handler(crear_album)
-{
-    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
-}
-
-message_handler(eliminar_album)
-{
-    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
-}
-
-message_handler(actualizar_album)
-{
-    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
-}
+/* ================================================= */
+// BLOQUE: crear_cancion — Crear cancion en un album
+/* ================================================= */
 
 message_handler(crear_cancion)
 {
-    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
+    json_object *response = json_object_new_object();
+    char **msg = arg;
+
+    bool success = VibeCast_CrearCancion(response, 0, NULL, msg);
+    VibeCast_SendJSON(id, HTTP_OK, response, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    json_object_put(response);
 }
 
-message_handler(eliminar_cancion)
+static interfaz(CrearCancion)
 {
-    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
-}
+    datetime_buf_t fechaActual;
+    getDateTime(fechaActual, now());
 
-message_handler(actualizar_cancion)
-{
-    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
-}
-
-/* ======================================= */
-
-#include <ui/interfaces.h>
-#include <db/dbmgr.h>
-
-select_handler(obteneridCancion)
-{
-    sscanf(argv[0], "%d", cast(int *, arg)); // Asigna el ID de la canción al puntero proporcionado
-    return 0;
-}
-
-interfaz(CrearCancion)
-{
-    // Album *album; // NO SE COMO MANDAR ESTO COMO MACRO
-    // Bien, tengo una idea, se podría implementar así:
     const char *nombreAlbum = argv[0];
-
     const char *nombre = argv[1];
     const char *genero = argv[2];
-    // int duracion = itoa(duracion, argv[2], 10);
     int duracion = atoi(argv[3]);
     const char *url = argv[4];
 
@@ -290,15 +345,7 @@ interfaz(CrearCancion)
     // Instancio la estructura Cancion
     cancion = newCancion();
 
-    // Cancion **cancion = arg;
-    // *cancion = newCancion();
-    // La variable ya está definida arriba
-
     // Configurar propiedades de la canción
-
-    datetime_buf_t fechaActual;
-    getDateTime(fechaActual, now());
-
     cancion->album = album;
     cancion->nombre = asprintf(nombre);
     cancion->genero = asprintf(genero);
@@ -311,31 +358,49 @@ interfaz(CrearCancion)
     insertValueInLista(album->canciones, cancion);
 
     // Registrar en base de datos
-    char *datos = asprintf(
-        stringify("%d", "%s", "%s", "%s", "%s"),
-        album->id, cancion->nombre, cancion->genero,
-        cancion->fechaPublicacion, cancion->duracion, cancion->url);
+    char *datos = asprintf(stringify("%d", "%s", "%s", "%s", "%s"), album->id, cancion->nombre, cancion->genero, cancion->fechaPublicacion, cancion->duracion, cancion->url);
 
-    nuevo_registro(
-        "Canciones",
-        "id_album, nombre, genero, fecha_publicacion, duracion, url",
-        datos, NULL);
+    nuevo_registro("Canciones", "id_album, nombre, genero, fecha_publicacion, duracion, url", datos, NULL);
 
     // Obtener ID asignado por la base de datos
-    obtener_registros(
-        "Canciones ORDER BY id DESC LIMIT 1",
-        "id",
-        NULL,
-        obteneridCancion,
-        &cancion->id,
-        NULL);
+    obtener_registros("Canciones ORDER BY id DESC LIMIT 1", "id", NULL, obteneridCancion, &cancion->id, NULL);
 
     return true;
 }
 
+static new_cmpfn(cmpCancionConNombre)
+{
+    const Cancion *c = val_1;
+    const char *n = val_2;
+    return strcmp(c->nombre, n);
+}
+
+static select_handler(obteneridCancion)
+{
+    sscanf(argv[0], "%d", cast(int *, arg)); // Asigna el ID de la canción al puntero proporcionado
+    return 0;
+}
+
+/* ====================================================== */
+// BLOQUE: eliminar_cancion — Elimina cancion en un album
+/* ====================================================== */
+
+message_handler(eliminar_cancion)
+{
+    json_object *response = json_object_new_object();
+    char **msg = arg;
+
+    bool success = VibeCast_EliminarCancion(response, 0, NULL, msg);
+    VibeCast_SendJSON(id, HTTP_OK, response, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    json_object_put(response);
+}
+
 interfaz(EliminarCancion)
 {
-    // int id = itoa(id, argv[0], 10); // Convertir el argumento a entero
     int id = atoi(argv[0]); // Creo que es esta función
     // Buscar la canción en la lista global
     Cancion *cancion = searchValueInLista(canciones, &id, cmpCancionConId);
@@ -383,7 +448,25 @@ interfaz(EliminarCancion)
     return true;
 }
 
-interfaz(ActualizarCancion)
+/* ====================================================== */
+// BLOQUE: actualizar_cancion — Elimina cancion en un album
+/* ====================================================== */
+
+message_handler(actualizar_cancion)
+{
+    json_object *response = json_object_new_object();
+    char **msg = arg;
+
+    bool success = VibeCast_ActualizarCancion(response, 0, NULL, msg);
+    VibeCast_SendJSON(id, HTTP_OK, response, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    json_object_put(response);
+}
+
+static interfaz(ActualizarCancion)
 {
     // Asumiré que me envía el nombre del álbum y el id de la canción
     const char *nombreAlbum = argv[0];
@@ -409,17 +492,3 @@ interfaz(ActualizarCancion)
 
     return true;
 }
-
-// APLCAR LOGICA NECESARIA
-//  void crearAlbumDB(Artista *artista, const char *nombre)
-//  {
-//      const char *fecha_creacion = obtenerFecha();
-//      char *datos = asprintf(
-//          stringify("%s"),
-//          artista->usuario->id, artista->nombre, fecha_creacion);
-
-//     nuevo_registro(
-//         "Albumes",
-//         "id_artista, nombre, fecha_creacion",
-//         datos, NULL);
-// }

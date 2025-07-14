@@ -51,13 +51,11 @@ window.views.historial = {
                     <div class="song-title">${item.title}</div>
                     <div class="play-date">
                         <i class="far fa-clock"></i>
-                        ${item.playedAt} · 
-                        ${item.plays} ${item.plays === 1 ? "reproducción" : "reproducciones"}
+                        ${item.playedAt}
                     </div>
                 </div>
                 <div class="history-actions">
-                    <span>${item.duration}</span>
-                    <i class="fas fa-play play-btn" title="Reproducir"></i>
+                    <span>${formatTime(song.duration)}</span>
                     <i class="fas fa-plus-circle add-to-playlist" title="Añadir a playlist"></i>
                 </div>
             `;

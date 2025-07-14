@@ -20,9 +20,9 @@ static interfaz(AgregarAPlaylist);
 
 static interfaz(EliminarDePlaylist);
 
-/* ================================================================ */
+/* ===================================================================== */
 // BLOQUE: obtener_playlists — Cargar playlists en la sección de biblioteca
-/* ================================================================ */
+/* ===================================================================== */
 
 message_handler(obtener_playlists)
 {
