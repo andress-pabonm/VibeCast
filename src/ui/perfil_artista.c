@@ -11,12 +11,16 @@ static interfaz(CrearArtista);
 static new_cmpfn(cmpArtistaConNombre);
 
 static interfaz(EliminarArtista);
+static new_operfn(checkAlbums);
+static new_operfn(checkSongs);
+static new_operfn(deleteAlbum);
+static new_operfn(deleteSong);
 
 static interfaz(CrearAlbum);
 static new_cmpfn(cmpAlbumConNombre);
 
 static interfaz(EliminarAlbum);
-// static new_cmpfn(cmpAlbumConId);
+static new_cmpfn(cmpAlbumConId);
 
 static interfaz(ActualizarAlbum);
 
@@ -221,7 +225,6 @@ static new_operfn(deleteSong)
     return FOREACH_CONTINUE;
 }
 
-
 /* ============================================ */
 // BLOQUE: crear_album — Crear album de artista
 /* ============================================ */
@@ -391,8 +394,8 @@ static interfaz(ActualizarAlbum)
         send_message("No se actualizó el nombre del álbum porque es el mismo.");
         return false;
     }
-    
-    if(searchValueInLista(albumes, nombreAlbumnew, cmpAlbumConNombre))
+
+    if (searchValueInLista(albumes, nombreAlbumnew, cmpAlbumConNombre))
     {
         send_message("Error: Ya existe un álbum con el nombre '%s'.", nombreAlbumnew);
         return false;
@@ -629,7 +632,6 @@ message_handler(actualizar_cancion)
     bool success = VibeCast_ActualizarCancion(NULL, argc, argv, msg);
     VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
 
-
     freem(*msg);
     *msg = NULL;
 
@@ -662,8 +664,8 @@ static interfaz(ActualizarCancion)
         return false;
     }
 
-    //Actualizar el nombre, genero, duración y url
-    
+    // Actualizar el nombre, genero, duración y url
+
     return true;
 }
 

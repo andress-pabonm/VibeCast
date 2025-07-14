@@ -266,26 +266,19 @@ window.views.perfil = {
         e.preventDefault();
 
         const newName = document.getElementById("edit-name").value.trim();
-        const newUsername = document
-          .getElementById("edit-username")
-          .value.trim();
+        const newUsername = document.getElementById("edit-username").value.trim();
         const newCountry = document.getElementById("edit-country").value.trim();
         const newEmail = document.getElementById("edit-email").value.trim();
 
-        if (!newUsername.startsWith("@")) {
-          alert("El nombre de usuario debe comenzar con @");
+        const res = safeCall(() => window.actualizar_info_usuario(newName, newCountry, newUsername, newEmail));
+
+        console.log(res.message);
+
+        if (res.status !== "ok") {
           return;
         }
 
-        Object.assign(userData, {
-          name: newName,
-          username: newUsername,
-          country: newCountry,
-          email: newEmail,
-        });
-
-        setProfileFields(userData);
-        alert("Perfil actualizado correctamente");
+        window.location.reload();
       });
     }
 
@@ -294,26 +287,13 @@ window.views.perfil = {
       form.addEventListener("submit", (e) => {
         e.preventDefault();
 
-        const pass1 = document.getElementById("new-password").value;
-        const pass2 = document.getElementById("confirm-new-password").value;
+        const pass1 = document.getElementById("current-password").value;
+        const pass2 = document.getElementById("new-password").value;
+        const pass3 = document.getElementById("confirm-new-password").value;
 
-        const valid =
-          pass1 === pass2 &&
-          pass1.length >= 8 &&
-          /[A-Z]/.test(pass1) &&
-          /[a-z]/.test(pass1) &&
-          /\d/.test(pass1) &&
-          /[^A-Za-z0-9]/.test(pass1);
+        const res = safeCall(() => window.actualizar_password(pass1, pass2, pass3));
 
-        if (!valid) {
-          alert(
-            "La contraseña debe tener al menos 8 caracteres, incluyendo mayúscula, minúscula, número y símbolo."
-          );
-          return;
-        }
-
-        alert("Contraseña cambiada correctamente");
-        form.reset();
+        console.log(res.message);
       });
     }
 
@@ -457,25 +437,6 @@ window.views.perfil = {
       section.classList.remove("hidden");
 
       let artistAlbums = user.albums || [];
-
-      // Si no tiene álbumes, crear uno por defecto
-      if (artistAlbums.length === 0) {
-        artistAlbums.push({
-          id: Date.now(),
-          name: "Mi primer álbum",
-          year: new Date().getFullYear().toString(),
-          genre: "General",
-          songs: [
-            {
-              id: Date.now() + 1,
-              title: "Mi primera canción",
-              artist: user.name,
-              duration: "3:45",
-            },
-          ],
-        });
-        user.albums = artistAlbums;
-      }
 
       renderAlbums(artistAlbums);
       setupAlbumEvents();

@@ -44,8 +44,15 @@ message_handler(crear_cuenta)
 {
     init_data_json();
 
-    int argc;
-    const char *argv[] = {""};
+    const char *email = get_string(get_array_idx(data, 0));
+    const char *username = get_string(get_array_idx(data, 1));
+    const char *password = get_string(get_array_idx(data, 2));
+    const char *confirmPassowrd = get_string(get_array_idx(data, 3));
+    const char *nickname = get_string(get_array_idx(data, 4));
+    const char *pais = get_string(get_array_idx(data, 5));
+
+    int argc = 6;
+    const char *argv[] = {nickname, pais, username, email, password, confirmPassowrd};
     char **msg = arg;
 
     bool success = VibeCast_CrearCuenta(NULL, argc, argv, msg);
@@ -147,6 +154,7 @@ message_handler(eliminar_cuenta)
 
 static interfaz(EliminarCuenta)
 {
+    return true;
 }
 
 /* ================================================================ */
@@ -338,8 +346,12 @@ message_handler(actualizar_password)
 {
     init_data_json();
 
-    int argc;
-    const char *argv[] = {""};
+    const char *currentPassword = get_string(get_array_idx(data, 0));
+    const char *newPassword = get_string(get_array_idx(data, 1));
+    const char *confirmPassword = get_string(get_array_idx(data, 2));
+
+    int argc = 3;
+    const char *argv[] = {currentPassword, newPassword, confirmPassword};
     char **msg = arg;
 
     bool success = VibeCast_ActualizarPassword(NULL, argc, argv, msg);
@@ -414,8 +426,11 @@ message_handler(activar_premium)
 {
     init_data_json();
 
-    int argc;
-    const char *argv[] = {""};
+    const char *duracion = get_string(get_array_idx(data, 0));
+
+    int argc = 1;
+    const char *argv[] = {duracion};
+
     char **msg = arg;
 
     bool success = VibeCast_ActivarPremium(NULL, argc, argv, msg);
