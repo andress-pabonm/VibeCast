@@ -8,7 +8,6 @@ static interfaz(ObtenerInfoArtista);
 static new_operfn(getAlbumJSON);
 
 static interfaz(CrearArtista);
-static new_cmpfn(cmpArtistaConNombre);
 
 static interfaz(EliminarArtista);
 static new_operfn(checkAlbums);

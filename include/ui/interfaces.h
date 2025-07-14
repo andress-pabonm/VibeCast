@@ -44,4 +44,6 @@ new_operfn(getSongJSON);
 
 new_operfn(rehacerHistorial);
 
+new_cmpfn(cmpArtistaConNombre);
+
 #endif // VIBECAST_INTERFACES_H

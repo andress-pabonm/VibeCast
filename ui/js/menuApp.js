@@ -50,11 +50,7 @@ window.views.inicio = {
         const res = await window.obtener_canciones();
         console.log("canciones():", res);
 
-        if (
-          res.status === "ok" &&
-          res.type === "array" &&
-          Array.isArray(res.data)
-        ) {
+        if (res.status === "ok" && res.type === "array" && Array.isArray(res.data)) {
           res.data.forEach((song) => {
             const songElement = createSongElement(song);
             songsContainer.appendChild(songElement);
@@ -92,17 +88,14 @@ window.views.inicio = {
           document.body.appendChild(modal);
 
           const playlistList = modal.querySelector(".playlist-list");
-          res.data.forEach(playlist => {
+          res.data.playlists.forEach(playlist => {
             const li = document.createElement("li");
             li.textContent = playlist.name;
             li.addEventListener("click", async () => {
               try {
-                const addRes = await window.agregar_cancion_playlist({
-                  playlist_id: playlist.id,
-                  song_id: song.id
-                });
+                const res = await window.agregar_a_playlist(playlist.id, song.id);
 
-                if (addRes.status === "ok") {
+                if (res.status === "ok") {
                   alert(`Canción añadida a ${playlist.name}`);
                   modal.remove();
                 } else {
@@ -128,9 +121,7 @@ window.views.inicio = {
     }
 
     async function loadRecommendations() {
-      const recommendationsContainer = document.getElementById(
-        "recommendations-container"
-      );
+      const recommendationsContainer = document.getElementById("recommendations-container");
       if (!recommendationsContainer) return;
 
       try {
@@ -157,9 +148,6 @@ window.views.inicio = {
       }
     }
 
-    /**
-     * Crea un elemento DOM para una canción.
-     */
     function createSongElement(song) {
       const div = document.createElement("div");
       div.className = "song-item";
@@ -265,9 +253,6 @@ window.views.inicio = {
       return div;
     }
 
-    /**
-     * Configura eventos para manejar clics en canciones.
-     */
     function setupSongClickEvents() {
       document.addEventListener("click", async (e) => {
         const item = e.target.closest(".song-item");
@@ -297,6 +282,13 @@ window.views.inicio = {
         }
       });
     }
+
+
+
+
+
+
+
 
     return function () {
       loadSongs();
