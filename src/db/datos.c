@@ -65,8 +65,9 @@ static select_handler(cargarOtrosDatosPorUsuario);
 #define USUARIO_NICKNAME 4
 #define USUARIO_PAIS 5
 #define USUARIO_PLAN 6
-#define USUARIO_TIEMPO_ESCUCHADO 7
-#define USUARIO_CANTIDAD_ANUNCIOS 8
+#define USUARIO_CADUCIDAD_PREMIUM 7
+#define USUARIO_TIEMPO_ESCUCHADO 8
+#define USUARIO_CANTIDAD_ANUNCIOS 9
 
 select_handler(cargarUsuarios)
 {
@@ -81,6 +82,7 @@ select_handler(cargarUsuarios)
     usuario->nickname = asprintf(argv[USUARIO_NICKNAME]);
     usuario->pais = asprintf(argv[USUARIO_PAIS]);
     sscanf(argv[USUARIO_PLAN], "%d", &usuario->plan);
+    sscanf(argv[USUARIO_CADUCIDAD_PREMIUM], "%d", &usuario->caducidadPremium);
     sscanf(argv[USUARIO_TIEMPO_ESCUCHADO], "%d", &usuario->historial.tiempoEscuchado);
     sscanf(argv[USUARIO_CANTIDAD_ANUNCIOS], "%d", &usuario->historial.cantidadAnuncios);
 
