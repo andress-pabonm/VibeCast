@@ -106,6 +106,68 @@
     color: var(--azul);
 }
 
+/* ========== MODAL DE PLAYLISTS ========== */
+.playlist-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.playlist-modal .modal-content {
+    background-color: var(--gris-oscuro);
+    border-radius: 10px;
+    width: 400px;
+    max-width: 90%;
+    padding: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.playlist-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--gris-medio);
+}
+
+.playlist-modal .close-modal {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--detalle);
+}
+
+.playlist-modal .close-modal:hover {
+    transition: var(--transition-normal);
+    color: var(--error);
+}
+
+.playlist-modal .playlist-list {
+    list-style: none;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.playlist-modal .playlist-list li {
+    padding: 0.75rem;
+    margin: 0.25rem 0;
+    background-color: var(--gris-medio);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: var(--transition-normal);
+}
+
+.playlist-modal .playlist-list li:hover {
+    background-color: var(--morado-oscuro);
+}
+
 /* ========== LISTA DE AMIGOS ========== */
 .friends {
     scrollbar-width: thin;
@@ -155,4 +217,51 @@
 .friend-recommendations {
     scrollbar-width: thin;
     scrollbar-color: var(--morado) var(--gris-oscuro);
+}
+
+/* ========== MENÚ DE RECOMENDACIONES ========== */
+.recommendation-menu {
+    position: absolute;
+    background-color: var(--gris-oscuro);
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    padding: 0.5rem 0;
+    min-width: 200px;
+}
+
+.recommendation-menu .menu-options {
+    display: flex;
+    flex-direction: column;
+}
+
+.recommendation-menu .menu-option {
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: var(--transition-normal);
+}
+
+.recommendation-menu .menu-option:hover {
+    background-color: var(--morado-oscuro);
+}
+
+.recommendation-menu .menu-option i {
+    width: 20px;
+    text-align: center;
+}
+
+/* Estilo para el icono de menú */
+.menu-icon {
+    cursor: pointer;
+    padding: 0.5rem;
+    margin-left: 0.75rem;
+    border-radius: 50%;
+    transition: var(--transition-normal);
+}
+
+.menu-icon:hover {
+    background-color: var(--morado-oscuro);
 }

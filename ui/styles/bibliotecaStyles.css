@@ -304,8 +304,13 @@
     color: var(--azul) !important;
 }
 
-.remove-song {
-    color: #e63946 !important;
+.song-actions .delete-btn {
+    color: var(--error);
+}
+
+.song-actions .delete-btn:hover {
+    color: #ff0a54;
+    transition: var(--transition-fast);
 }
 
 /* ========== MODALES ========== */

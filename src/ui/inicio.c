@@ -4,6 +4,12 @@
 // DEFINICIÓN DE ESTRUCTURAS INTERNAS
 /* ================================================================ */
 
+typedef struct
+{
+    Pila tmpHistorial;
+    Lista songs_array;
+} getReprSong_arg_t;
+
 typedef struct PopularidadArtista
 {
     Artista *artista; // Artista
@@ -11,14 +17,14 @@ typedef struct PopularidadArtista
 } PopularidadArtista;
 
 /* ================================================================ */
-// DECLARACIONES DE FUNCIONES INTERNAS
+// DECLARACIÓN DE FUNCIONES INTERNAS
 /* ================================================================ */
 
 static interfaz(ObtenerCanciones);
 
 static interfaz(ObtenerRecomendaciones);
-static Lista cancionesRecomendadas();
-static new_operfn(obtenerHistorialAmigos);
+static new_operfn(getFriendReprSongs);
+static new_operfn(getReprSong);
 
 static interfaz(GenerarReporte);
 
@@ -73,12 +79,9 @@ message_handler(obtener_recomendaciones)
 static interfaz(ObtenerRecomendaciones)
 {
     Lista recomendaciones = newLista(NULL);
-    forEachInLista(usuario->amigos, obtenerHistorialAmigos, recomendaciones);
+    forEachInLista(usuario->amigos, getFriendReprSongs, recomendaciones);
 
-    destroyLista(
-        recomendaciones,
-        getSongJSON,
-        arg);
+    destroyLista(recomendaciones, getSongJSON, arg);
 
     if (json_object_array_length(arg))
         send_message("Recomendaciones cargadas.");
@@ -88,31 +91,36 @@ static interfaz(ObtenerRecomendaciones)
     return true;
 }
 
-static new_operfn(obtenerHistorialAmigos)
+static new_operfn(getFriendReprSongs)
 {
     Usuario *amigo = val;
 
-    Pila historial = amigo->historial.reproducciones;
-    Pila tmpHistorial = newPila();
+    getReprSong_arg_t wrapper_arg = {
+        .tmpHistorial = newPila(),
+        .songs_array = arg,
+    };
 
-    Reproduccion *repr = deleteValueInPila(historial);
-    Cancion *cancion;
+    destroyPila(amigo->historial.reproducciones, getReprSong, &wrapper_arg);
+    amigo->historial.reproducciones = newPila();
+    destroyPila(wrapper_arg.tmpHistorial, rehacerHistorial, amigo->historial.reproducciones);
 
-    while (repr)
+    return FOREACH_CONTINUE;
+}
+
+static new_operfn(getReprSong)
+{
+    getReprSong_arg_t *wrapper_arg = arg;
+    Reproduccion *repr = val;
+
+    insertValueInPila(wrapper_arg->tmpHistorial, repr);
+
+    Cancion *cancion = searchValueInLista(wrapper_arg->songs_array, &repr->cancion->id, cmpCancionConId);
+
+    if (!cancion)
     {
-        cancion = searchValueInLista(arg, &repr->cancion->id, cmpCancionConId);
-
-        if (!cancion)
-        {
-            cancion = searchValueInLista(canciones, &repr->cancion->id, cmpCancionConId);
-            insertValueInLista(arg, cancion);
-        }
-
-        insertValueInPila(tmpHistorial, repr);
-        repr = deleteValueInPila(historial);
+        cancion = searchValueInLista(canciones, &repr->cancion->id, cmpCancionConId);
+        insertValueInLista(wrapper_arg->songs_array, cancion);
     }
-
-    destroyPila(tmpHistorial, rehacerHistorial, historial);
 
     return FOREACH_CONTINUE;
 }

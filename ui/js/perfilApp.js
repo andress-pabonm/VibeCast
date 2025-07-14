@@ -533,7 +533,12 @@ window.views.perfil = {
         el.className = "song-item";
         el.innerHTML = `
       <div class="song-info"><strong>${song.title}</strong><p>${song.artist}</p></div>
-      <div class="song-actions"><span>${formatTime(song.duration)}</span><i class="fas fa-play play-btn" title="Reproducir"></i></div>
+      <div class="song-actions">
+        <span>${formatTime(song.duration)}</span>
+        <i class="fas fa-play play-btn" title="Reproducir"></i>
+        <i class="fas fa-plus"></i>
+        <i class="fas fa-plus-circle add-to-playlist" title="Añadir a playlist"></i>
+      </div>
     `;
         albumSongsContainer.appendChild(el);
       });

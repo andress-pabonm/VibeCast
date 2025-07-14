@@ -44,12 +44,9 @@ static new_cmpfn(cmpArtistas)
 // ========================== Declaraciones =========================
 
 static select_handler(cargarArtistaPorUsuario);
-static select_handler(cargarAlbumesPorArtista);
-static select_handler(cargarCancionesPorAlbum);
 
 static select_handler(cargarAmigosPorUsuario);
 
-static select_handler(cargarPlaylistsPorUsuario);
 static select_handler(cargarCancionesPorPlaylist);
 
 static select_handler(cargarHistorialPorUsuario);
@@ -68,8 +65,9 @@ static select_handler(cargarOtrosDatosPorUsuario);
 #define USUARIO_NICKNAME 4
 #define USUARIO_PAIS 5
 #define USUARIO_PLAN 6
-#define USUARIO_TIEMPO_ESCUCHADO 7
-#define USUARIO_CANTIDAD_ANUNCIOS 8
+#define USUARIO_CADUCIDAD_PREMIUM 7
+#define USUARIO_TIEMPO_ESCUCHADO 8
+#define USUARIO_CANTIDAD_ANUNCIOS 9
 
 select_handler(cargarUsuarios)
 {
@@ -84,6 +82,7 @@ select_handler(cargarUsuarios)
     usuario->nickname = asprintf(argv[USUARIO_NICKNAME]);
     usuario->pais = asprintf(argv[USUARIO_PAIS]);
     sscanf(argv[USUARIO_PLAN], "%d", &usuario->plan);
+    sscanf(argv[USUARIO_CADUCIDAD_PREMIUM], "%d", &usuario->caducidadPremium);
     sscanf(argv[USUARIO_TIEMPO_ESCUCHADO], "%d", &usuario->historial.tiempoEscuchado);
     sscanf(argv[USUARIO_CANTIDAD_ANUNCIOS], "%d", &usuario->historial.cantidadAnuncios);
 
@@ -123,7 +122,7 @@ static select_handler(cargarArtistaPorUsuario)
 #define ALBUM_NOMBRE 1
 #define ALBUM_FECHA_CREACION 2
 
-static select_handler(cargarAlbumesPorArtista)
+select_handler(cargarAlbumesPorArtista)
 {
     Album *album = newAlbum();
     if (!album)
@@ -152,7 +151,7 @@ static select_handler(cargarAlbumesPorArtista)
 #define CANCION_POPULARIDAD 7
 #define CANCION_REPRODUCCIONES 8
 
-static select_handler(cargarCancionesPorAlbum)
+select_handler(cargarCancionesPorAlbum)
 {
     Cancion *cancion = newCancion();
     if (!cancion)
@@ -190,7 +189,7 @@ static select_handler(cargarAmigosPorUsuario)
 #define PLAYLIST_ID 0
 #define PLAYLIST_NOMBRE 1
 
-static select_handler(cargarPlaylistsPorUsuario)
+select_handler(cargarPlaylistsPorUsuario)
 {
     Playlist *playlist = newPlaylist();
     if (!playlist)
@@ -373,6 +372,7 @@ bool VibeCast_FreeData()
     destroyABB(artistas, NULL, NULL);
     destroyLista(canciones, NULL, NULL);
     destroyCola(anuncios, destroyAnuncios, NULL);
+    VibeCast_CloseDB();
 
     return true;
 }

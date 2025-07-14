@@ -14,21 +14,23 @@ typedef struct NodoColaRepr
 {
     void *dato;            // Puntero genérico: Cancion o Anuncio
     ElementoColaTipo tipo; // Etiqueta del tipo de dato
-} *NodoColaRepr;
+} NodoColaRepr;
 
 /* ================================================================ */
 // DECLARACIÓN DE FUNCIONES INTERNAS
 /* ================================================================ */
 
 static interfaz(Encolar);
+static bool encolarNodo(void *dato, ElementoColaTipo tipo);
+
 static interfaz(Decolar);
+static bool agregarAHistorial(void *dato, ElementoColaTipo tipo);
+
 static interfaz(VaciarCola);
 
-static interfaz(AgregarCancionACola);
-static void agregarCancionACola(Cancion *cancion);
-static void agregarACola(void *dato, ElementoColaTipo tipo);
-
-static interfaz(VaciarColaReproduccion);
+static NodoColaRepr *newNodoColaRepr();
+static void destroyNodoColaRepr(NodoColaRepr *nodo);
+static new_operfn(destroyNodosColaRepr);
 
 /* ================================================================ */
 // VARIABLE GLOBAL DE COLA DE REPRODUCCIÓN
@@ -45,76 +47,71 @@ message_handler(encolar)
     init_data_json();
     const char *id_cancion = get_string(get_array_idx(data, 0));
 
+    int argc = 1;
     const char *argv[] = {id_cancion};
     char **msg = arg;
-    bool ok = VibeCast_AgregarCancionACola(NULL, 1, argv, msg);
 
-    VibeCast_SendNull(id, ok ? HTTP_CREATED : HTTP_BAD_REQUEST, *msg, STATE_BOOL(ok));
+    bool success = VibeCast_Encolar(NULL, argc, argv, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
 
+    puts(*msg);
     freem(*msg);
     *msg = NULL;
 
     end_data_json();
-
-    puts("Que rico el sexo lesbico la plenaaaa\nCancion encolada\n");
 }
 
-static interfaz(AgregarCancionACola)
+static interfaz(Encolar)
 {
-    int id = atoi(argv[0]);
+    static int cant_canciones = 0;
+    int id_cancion = atoi(argv[0]);
 
-    Cancion *c = searchValueInLista(canciones, &id, cmpCancionConId);
-    if (!c)
+    Cancion *cancion = searchValueInLista(canciones, &id_cancion, cmpCancionConId);
+    if (!cancion)
     {
-        send_message("La canción con ID %d no existe.", id);
+        send_message("No se ha encontrado la canción.");
         return false;
     }
 
-    NodoColaRepr nodo = alloc(struct NodoColaRepr, NULL);
-    nodo->dato = c;
-    nodo->tipo = TIPO_CANCION;
+    if (!encolarNodo(cancion, TIPO_CANCION))
+    {
+        send_message("No fue posible encolar la canción.");
+        return false;
+    }
 
-    if (!cola_repr)
-        cola_repr = newCola();
-    insertValueInCola(cola_repr, nodo);
+    cant_canciones = (cant_canciones + 1) % 3;
+    send_message("Canción '%s' agregada a la cola.", cancion->nombre);
 
-    send_message("Canción '%s' agregada a la cola.", c->nombre);
+    if (!cant_canciones && usuario->plan == PLAN_FREEMIUM)
+    {
+        Anuncio *anuncio = deleteValueInCola(anuncios);
+
+        if (!anuncio)
+            puts("No hay anuncios disponibles.");
+        else if (!encolarNodo(anuncio, TIPO_ANUNCIO))
+            puts("No fue posible encolar un anuncio.");
+    }
 
     return true;
 }
 
-static void agregarCancionACola(Cancion *cancion)
+static bool encolarNodo(void *dato, ElementoColaTipo tipo)
 {
-    static int cant_canciones = 0;
+    if (!dato)
+        return false;
 
-    agregarACola(cancion, TIPO_CANCION);
-    cant_canciones++;
-
-    if (cant_canciones == 3)
-    {
-        if (usuario->plan == PLAN_FREEMIUM)
-        {
-            Anuncio *anuncio = deleteValueInCola(anuncios);
-            agregarACola(anuncio, TIPO_ANUNCIO);
-        }
-
-        cant_canciones = 0;
-    }
-}
-
-static void agregarACola(void *dato, ElementoColaTipo tipo)
-{
-    NodoColaRepr nodo = alloc(struct NodoColaRepr, NULL);
+    NodoColaRepr *nodo = newNodoColaRepr();
     if (!nodo)
-        return;
+        return false;
 
     nodo->dato = dato;
     nodo->tipo = tipo;
 
     if (!cola_repr)
         cola_repr = newCola();
-
     insertValueInCola(cola_repr, nodo);
+
+    return true;
 }
 
 /* ================================================================ */
@@ -123,48 +120,123 @@ static void agregarACola(void *dato, ElementoColaTipo tipo)
 
 message_handler(decolar)
 {
+    json_object *jobj = json_object_new_object();
+    char **msg = arg;
+
+    bool success = VibeCast_Decolar(jobj, 0, NULL, msg);
+    VibeCast_SendJSON(id, HTTP_OK, jobj, *msg, STATE_BOOL(success));
+
+    puts(*msg);
+    freem(*msg);
+    *msg = NULL;
+
+    json_object_put(jobj);
+}
+
+static interfaz(Decolar)
+{
     if (!cola_repr)
         cola_repr = newCola();
-
-    NodoColaRepr nodo = deleteValueInCola(cola_repr);
+    NodoColaRepr *nodo = deleteValueInCola(cola_repr);
 
     if (!nodo)
     {
-        VibeCast_SendNull(id, HTTP_OK, "No hay más canciones en la cola.", STATE_SUCCESS);
-        return;
+        send_message("La cola está vacia.");
+        return false;
     }
 
-    json_object *jobj = new_json_object();
+    void *dato = nodo->dato;
+    ElementoColaTipo tipo = nodo->tipo;
+    destroyNodoColaRepr(nodo);
 
-    Cancion *c = NULL;
-    Anuncio *a = NULL;
+    if (!dato)
+    {
+        send_message("Elemento nulo en la cola.");
+        return false;
+    }
+
+    json_object *title;
+    json_object *artist;
+    json_object *url;
 
     switch (nodo->tipo)
     {
     case TIPO_CANCION:
-        c = nodo->dato;
-        json_object_object_add(jobj, "title", json_object_new_string(c->nombre));
-        json_object_object_add(jobj, "artist", json_object_new_string(c->album->artista->nombre));
-        json_object_object_add(jobj, "url", json_object_new_string(c->url));
+        Cancion *cancion = dato;
+
+        title = json_object_new_string(cancion->nombre);
+        artist = json_object_new_string(cancion->album->artista->nombre);
+        url = json_object_new_string(cancion->url);
+
+        send_message("Reproduciendo canción '%s'.", cancion->nombre);
         break;
 
     case TIPO_ANUNCIO:
-        a = nodo->dato;
-        json_object_object_add(jobj, "title", json_object_new_string("Anuncio publicitario"));
-        json_object_object_add(jobj, "artist", json_object_new_string(a->anunciante->nickname));
-        json_object_object_add(jobj, "url", json_object_new_string(a->url));
+        Anuncio *anuncio = nodo->dato;
+
+        title = json_object_new_string("Anuncio publicitario");
+        artist = json_object_new_string(anuncio->anunciante->nickname);
+        url = json_object_new_string(anuncio->url);
+
+        send_message("Anuncio publicitario.");
         break;
 
     default:
-        break;
+        send_message("Elemento desconocido en la cola.");
+        return false;
     }
 
-    agregarAHistorial(usuario, c, a);
+    json_object_object_add(arg, "title", title);
+    json_object_object_add(arg, "artist", artist);
+    json_object_object_add(arg, "url", url);
 
-    freem(nodo);
+    if (!agregarAHistorial(dato, tipo))
+        puts("No fue posible agregar al historial.");
 
-    VibeCast_SendJSON(id, HTTP_OK, jobj, "Siguiente canción", STATE_SUCCESS);
-    json_object_put(jobj);
+    return true;
+}
+
+static bool agregarAHistorial(void *dato, ElementoColaTipo tipo)
+{
+    if (!dato)
+        return false;
+
+    datetime_buf_t buf;
+    getDateTime(buf, now());
+
+    switch (tipo)
+    {
+    case TIPO_CANCION:
+        Reproduccion *repr = newReproduccion();
+        if (!repr)
+            return false;
+
+        char *values = asprintf(stringify("%d", "%d", "%s"), usuario->id, cast(Cancion *, dato)->id, buf);
+        bool ok = nuevo_registro("Reproducciones", "id_usuario, id_cancion, fecha_escuchado", values, NULL);
+        freem(values);
+
+        if (!ok)
+            return false;
+
+        repr->cancion = dato;
+        repr->fechaEscuchado = asprintf(buf);
+
+        return insertValueInPila(usuario->historial.reproducciones, repr);
+
+    case TIPO_ANUNCIO:
+        usuario->historial.cantidadAnuncios++;
+
+        values = asprintf("cantidad_anuncios = %d", usuario->historial.cantidadAnuncios);
+        char *condition = asprintf("id = %d", usuario->id);
+        ok = actualizar_registros("Usuarios", values, condition, NULL);
+        freem(values);
+        freem(condition);
+
+        return ok;
+
+    default:
+        return false;
+    }
 }
 
 /* ================================================================ */
@@ -173,15 +245,42 @@ message_handler(decolar)
 
 message_handler(vaciar_cola)
 {
-    VibeCast_VaciarColaReproduccion(NULL, 0, NULL, NULL);
-    VibeCast_SendNull(id, HTTP_OK, "Cola vaciada", STATE_SUCCESS);
+    char **msg = arg;
+
+    bool success = VibeCast_VaciarCola(NULL, 0, NULL, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    puts(*msg);
+
+    freem(*msg);
+    *msg = NULL;
 }
 
-static interfaz(VaciarColaReproduccion)
+static interfaz(VaciarCola)
 {
-    destroyCola(cola_repr, NULL, NULL);
+    destroyCola(cola_repr, destroyNodosColaRepr, NULL);
     cola_repr = NULL;
-    send_message("Cola de reproducción vaciada.");
 
+    send_message("Cola de reproducción vaciada.");
     return true;
+}
+
+/* ================================================================ */
+// BLOQUE: Funciones auxiliares para NodoColaRepr
+/* ================================================================ */
+
+static NodoColaRepr *newNodoColaRepr()
+{
+    return alloc(NodoColaRepr, NULL);
+}
+
+static void destroyNodoColaRepr(NodoColaRepr *nodo)
+{
+    freem(nodo);
+}
+
+static new_operfn(destroyNodosColaRepr)
+{
+    destroyNodoColaRepr(val);
+    return FOREACH_CONTINUE;
 }

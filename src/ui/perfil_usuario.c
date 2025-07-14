@@ -4,7 +4,304 @@
 #define PCRE2_CODE_UNIT_WIDTH 8
 #include <pcre2.h>
 
-/* ======== PCRE2: Validadores internos ======== */
+/* ================================================================ */
+// DEFINICIÓN DE ESTRUCTURAS INTERNAS
+/* ================================================================ */
+
+static interfaz(CrearCuenta);
+
+static interfaz(EliminarCuenta);
+
+static interfaz(ObtenerInfoUsuario);
+
+static interfaz(ActualizarInfoUsuario);
+
+static interfaz(ActualizarPassword);
+
+static interfaz(ActivarPremium);
+
+static pcre2_code *get_email_re();
+static pcre2_code *get_password_re();
+
+/* ================================================================ */
+// BLOQUE: crear_cuenta -
+/* ================================================================ */
+
+message_handler(crear_cuenta)
+{
+    init_data_json();
+
+    int argc;
+    const char *argv[] = {""};
+    char **msg = arg;
+
+    bool success = VibeCast_CrearCuenta(NULL, argc, argv, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    end_data_json();
+}
+
+static interfaz(CrearCuenta)
+{
+    const char *email = argv[0];
+    const char *username = argv[1];
+    const char *password = argv[2];
+    const char *confirmPassword = argv[3];
+    const char *nickname = argv[4];
+    const char *pais = argv[5];
+
+    if (!email || !username || !password || !confirmPassword || !nickname || !pais)
+    {
+        send_message("Todos los campos son obligatorios");
+        return false;
+    }
+
+    if (!validar_email(email))
+    {
+        send_message("Correo no válido");
+        return false;
+    }
+
+    bool emailRepetido = false;
+    search_email_arg_t wrapper_arg = {&emailRepetido, email};
+    forEachInABB_InOrder(usuarios, check_email_repetido, &wrapper_arg);
+    if (emailRepetido)
+    {
+        send_message("El email ya está registrado");
+        return false;
+    }
+
+    if (searchValueInABB(usuarios, username, cmpUsuarioConUsername))
+    {
+        send_message("El username ya existe");
+        return false;
+    }
+
+    if (!validar_password(password))
+    {
+        send_message("La contraseña no es válida");
+        return false;
+    }
+
+    if (strcmp(password, confirmPassword))
+    {
+        send_message("Las contraseñas no coinciden");
+        return false;
+    }
+
+    char *datos = asprintf(stringify("%s", "%s", "%s", "%s", "%s"), username, email, password, nickname, pais);
+    nuevo_registro("Usuarios", "username, email, password, nickname, pais", datos, NULL);
+
+    char *cond = asprintf(stringify(username = "%s"), username);
+    obtener_registros("Usuarios", "*", cond, cargarUsuarios, NULL, NULL);
+    freem(cond);
+
+    // Reportar éxito
+    send_message("Cuenta creada exitosamente");
+
+    return true;
+}
+
+/* ================================================================ */
+// BLOQUE: eliminar_cuenta -
+/* ================================================================ */
+
+message_handler(eliminar_cuenta)
+{
+    char **msg = arg;
+
+    bool success = VibeCast_EliminarCuenta(NULL, 0, NULL, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+}
+
+static interfaz(EliminarCuenta)
+{
+
+}
+
+/* ================================================================ */
+// BLOQUE: obtener_info_usuario -
+/* ================================================================ */
+
+message_handler(obtener_info_usuario)
+{
+    json_object *jobj = json_object_new_object();
+    char **msg = arg;
+
+    bool success = VibeCast_ObtenerInfoUsuario(jobj, 0, NULL, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    json_object_put(jobj);
+}
+
+static interfaz(ObtenerInfoUsuario)
+{
+
+}
+
+/* ================================================================ */
+// BLOQUE: actualizar_info_usuario -
+/* ================================================================ */
+
+message_handler(actualizar_info_usuario)
+{
+    init_data_json();
+
+    int argc;
+    const char *argv[] = {""};
+    char **msg = arg;
+
+    bool success = VibeCast_ActualizarInfoUsuario(NULL, argc, argv, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    end_data_json();
+}
+
+static interfaz(ActualizarInfoUsuario)
+{
+
+}
+
+/* ================================================================ */
+// BLOQUE: actualizar_password -
+/* ================================================================ */
+
+message_handler(actualizar_password)
+{
+    init_data_json();
+
+    int argc;
+    const char *argv[] = {""};
+    char **msg = arg;
+
+    bool success = VibeCast_ActualizarPassword(NULL, argc, argv, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    end_data_json();
+}
+
+interfaz(ActualizarPassword)
+{
+    const char *currentPassword = argv[0];
+    const char *newPassword = argv[1];
+    const char *confirmPassword = argv[2];
+
+    // Validar que no sean campos nulos o vacios
+    if (!currentPassword || !*currentPassword ||
+        !newPassword || !*newPassword ||
+        !confirmPassword || !*confirmPassword)
+    {
+        send_message("Los campos no pueden estar vacios.");
+        return false;
+    }
+
+    // Validar que el campo de la contraseña actual coincida
+    if (strcmp(usuario->password, currentPassword))
+    {
+        send_message("La contraseña actual es incorrecta.");
+        return false;
+    }
+
+    // Validar que el valor haya cambiado
+    if (!strcmp(currentPassword, newPassword))
+    {
+        send_message("La nueva contraseña debe ser diferente.");
+        return false;
+    }
+
+    // Validar el patrón de la nueva contraseña
+    if (!validar_password(newPassword))
+    {
+        send_message("La contraseña no es valida");
+        return false;
+    }
+
+    // Validar que la nueva contraseña y su confirmación coincidan
+    if (strcmp(newPassword, confirmPassword))
+    {
+        send_message("Las contraseñas no coinciden.");
+        return false;
+    }
+
+    // Liberar la memoria del antiguo valor
+    freem(usuario->password);
+
+    // Actualizar al nuevo valor
+    usuario->password = asprintf(newPassword);
+
+    // Reportar éxito
+    send_message("Contraseña actualizada exitosamente.");
+
+    return true;
+}
+
+/* ================================================================ */
+// BLOQUE: activar_premium -
+/* ================================================================ */
+
+message_handler(activar_premium)
+{
+    init_data_json();
+
+    int argc;
+    const char *argv[] = {""};
+    char **msg = arg;
+
+    bool success = VibeCast_ActivarPremium(NULL, argc, argv, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    end_data_json();
+}
+
+interfaz(activarPremium)
+{
+    time_t base = time(NULL);
+
+    if (base == -1)
+    {
+        send_message("Error al obtener la fecha actual\n");
+        return false;
+    }
+
+    if (usuario->plan != PLAN_PREMIUM)
+    {
+        usuario->plan = PLAN_PREMIUM;
+        send_message("¡Plan Premium activado!");
+    }
+    else
+    {
+        base = usuario->caducidadPremium;
+        send_message("¡Plan Premium renovado!");
+    }
+
+    usuario->caducidadPremium = base + 30 * 24 * 60 * 60; // Tiempo en segundos
+    // La fecha es imprime como dia de la semana, mes, dia del mes, hora, minuto, segundo y año
+    send_message("Caduca el: %s", ctime(&usuario->caducidadPremium));
+
+    return true;
+}
+
+/* ================================================================ */
+// DEFINICIÓN DE FUNCIONES AUXILIARES
+/* ================================================================ */
 
 static pcre2_code *get_email_re()
 {
@@ -89,67 +386,6 @@ static new_operfn(check_email_repetido)
 /* ========== Mensajes generales ========== */
 
 /* ========== Funciones de interfaz ========== */
-
-static interfaz(CrearCuenta)
-{
-    const char *email = argv[0];
-    const char *username = argv[1];
-    const char *password = argv[2];
-    const char *confirmPassword = argv[3];
-    const char *nickname = argv[4];
-    const char *pais = argv[5];
-
-    if (!email || !username || !password || !confirmPassword || !nickname || !pais)
-    {
-        send_message("Todos los campos son obligatorios");
-        return false;
-    }
-
-    if (!validar_email(email))
-    {
-        send_message("Correo no válido");
-        return false;
-    }
-
-    bool emailRepetido = false;
-    search_email_arg_t wrapper_arg = {&emailRepetido, email};
-    forEachInABB_InOrder(usuarios, check_email_repetido, &wrapper_arg);
-    if (emailRepetido)
-    {
-        send_message("El email ya está registrado");
-        return false;
-    }
-
-    if (searchValueInABB(usuarios, username, cmpUsuarioConUsername))
-    {
-        send_message("El username ya existe");
-        return false;
-    }
-
-    if (!validar_password(password))
-    {
-        send_message("La contraseña no es válida");
-        return false;
-    }
-
-    if (strcmp(password, confirmPassword))
-    {
-        send_message("Las contraseñas no coinciden");
-        return false;
-    }
-
-    char *datos = asprintf(stringify("%s", "%s", "%s", "%s", "%s"), username, email, password, nickname, pais);
-    nuevo_registro("Usuarios", "username, email, password, nickname, pais", datos, NULL);
-
-    char *cond = asprintf(stringify(username = "%s"), username);
-    obtener_registros("Usuarios", "*", cond, cargarUsuarios, NULL, NULL);
-    freem(cond);
-
-    // Reportar éxito
-    send_message("Cuenta creada exitosamente");
-
-    return true;
-}
 
 json_object *usuario_to_json(Usuario *u)
 {
@@ -288,61 +524,6 @@ interfaz(ActualizarPais)
     return true;
 }
 
-interfaz(ActualizarPassword)
-{
-    const char *currentPassword = argv[0];
-    const char *newPassword = argv[1];
-    const char *confirmPassword = argv[2];
-
-    // Validar que no sean campos nulos o vacios
-    if (!currentPassword || !*currentPassword ||
-        !newPassword || !*newPassword ||
-        !confirmPassword || !*confirmPassword)
-    {
-        send_message("Los campos no pueden estar vacios.");
-        return false;
-    }
-
-    // Validar que el campo de la contraseña actual coincida
-    if (strcmp(usuario->password, currentPassword))
-    {
-        send_message("La contraseña actual es incorrecta.");
-        return false;
-    }
-
-    // Validar que el valor haya cambiado
-    if (!strcmp(currentPassword, newPassword))
-    {
-        send_message("La nueva contraseña debe ser diferente.");
-        return false;
-    }
-
-    // Validar el patrón de la nueva contraseña
-    if (!validar_password(newPassword))
-    {
-        send_message("La contraseña no es valida");
-        return false;
-    }
-
-    // Validar que la nueva contraseña y su confirmación coincidan
-    if (strcmp(newPassword, confirmPassword))
-    {
-        send_message("Las contraseñas no coinciden.");
-        return false;
-    }
-
-    // Liberar la memoria del antiguo valor
-    freem(usuario->password);
-
-    // Actualizar al nuevo valor
-    usuario->password = asprintf(newPassword);
-
-    // Reportar éxito
-    send_message("Contraseña actualizada exitosamente.");
-
-    return true;
-}
-
 message_handler(crear_cuenta)
 {
     init_data_json();
@@ -450,36 +631,6 @@ message_handler(activar_premium)
 }
 
 /* ==== */
-
-#include <ui/interfaces.h>
-
-interfaz(activarPremium)
-{
-    time_t base = time(NULL);
-
-    if (base == -1)
-    {
-        send_message("Error al obtener la fecha actual\n");
-        return false;
-    }
-
-    if (usuario->plan != PLAN_PREMIUM)
-    {
-        usuario->plan = PLAN_PREMIUM;
-        send_message("¡Plan Premium activado!");
-    }
-    else
-    {
-        base = usuario->caducidadPremium;
-        send_message("¡Plan Premium renovado!");
-    }
-
-    usuario->caducidadPremium = base + 30 * 24 * 60 * 60; // Tiempo en segundos
-    // La fecha es imprime como dia de la semana, mes, dia del mes, hora, minuto, segundo y año
-    send_message("Caduca el: %s", ctime(&usuario->caducidadPremium));
-
-    return true;
-}
 
 message_handler(activarPremium)
 {

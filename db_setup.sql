@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS Usuarios (
     nickname TEXT NOT NULL,
     pais TEXT NOT NULL,
     plan INTEGER NOT NULL DEFAULT 0,
+    caducidad_premium INTEGER NOT NULL DEFAULT 0,
     tiempo_escuchado INTEGER NOT NULL DEFAULT 0,
     cantidad_anuncios INTEGER NOT NULL DEFAULT 0
 );

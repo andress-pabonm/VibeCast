@@ -166,14 +166,18 @@ window.views.biblioteca = {
             <div class="song-actions">
                 <span>${formatTime(song.duration)}</span>
                 <i class="fas fa-play play-btn" title="Reproducir"></i>
+                <i class="fas fa-plus cola-btn" title="Agrega a cola"></i>
+                <i class="fas fa-trash delete-btn"></i>
             </div>
         `;
-        songElement
-          .querySelector(".play-btn")
-          .addEventListener("click", (e) => {
-            e.stopPropagation();
-            MusicPlayer.playSong(song);
-          });
+        songElement.querySelector(".play-btn").addEventListener("click", (e) => {
+          MusicPlayer.addSongsToQueue(song, true);
+        });
+
+        songElement.querySelector(".cola-btn").addEventListener("click", (e) => {
+          MusicPlayer.addSongsToQueue(song, false);
+        });
+
         playlistSongsContainer.appendChild(songElement);
       });
 

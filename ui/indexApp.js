@@ -1,38 +1,35 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const res = await window.sesion_activa();
-    console.log("is_logged_in():", res);
-
-    if (res.status !== "ok" || res.type !== "boolean" || res.data !== true) {
-      window.location.replace("../Login/index.html");
-    }
-  } catch (err) {
-    console.error("Error al verificar sesión:", err);
-    // window.localStorage.replace("pages/login.html");
-    return;
+  const res = await window.sesion_activa();
+  if (res.data === false) {
+    window.location.replace("pages/login.html");
   }
+  console.log(res.message);
 
   const views = window.views || {};
-  const sidebarNav = getElement(document, ".sidebar nav");
-  const mainContent = getElement(document, ".main-content");
+  const sidebarNav = getElement(".sidebar nav");
+  const mainContent = getElement(".main-content");
 
-  console.log("views: ", views);
+  // console.log("views: ", views);
 
   // Crear los botones del menú
-  Object.entries(views).forEach(([viewName, view]) => {
-    const btn = document.createElement("button");
+  const btns = Object.fromEntries(
+    Object.entries(views).map(([viewName, view]) => {
+      const btn = document.createElement("button");
 
-    btn.id = `btn-${viewName}`;
-    btn.innerHTML = view.title || viewName;
-    btn.classList.add("menu-btn");
+      btn.id = `btn-${viewName}`;
+      btn.innerHTML = view.title || viewName;
+      btn.classList.add("menu-btn");
 
-    btn.addEventListener("click", () => {
-      // Cambiar el hash en la URL
-      location.hash = `#${viewName}`;
-    });
+      btn.addEventListener("click", () => {
+        // Cambiar el hash en la URL
+        window.location.hash = `#${viewName}`;
+      });
 
-    sidebarNav.appendChild(btn);
-  });
+      sidebarNav.appendChild(btn);
+
+      return [viewName, btn];
+    })
+  );
 
   // Función para cargar una vista
   function showView(viewName) {
@@ -43,11 +40,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Marcar botón activo
-    getElements(sidebarNav, "button").forEach((b) =>
-      b.classList.remove("active")
-    );
-    const btn = getElement(sidebarNav, `#btn-${viewName}`);
-    if (btn) btn.classList.add("active");
+    Object.values(btns).forEach((b) => b.classList.remove("active"));
+    btns[viewName].classList.add("active");
 
     // Cargar contenido HTML
     mainContent.innerHTML = view.html;

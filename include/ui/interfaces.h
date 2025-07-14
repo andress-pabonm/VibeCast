@@ -38,35 +38,10 @@ extern Cola cola_repr;
     if (msg)              \
     *msg = asprintf(__VA_ARGS__)
 
-new_operfn(getSongJSON);
-
-// === HISTORIAL ===
-interfaz(AgregarAHistorial);
-interfaz(MostrarHistorial);
-interfaz(VaciarHistorial);
-
-// === Premium ====
-
-Lista recomendarCanciones();
-
-// === COLA DE REPRODUCCIÓN ===
-interfaz(AgregarCancionACola);
-interfaz(VaciarColaReproduccion);
-interfaz(activarPremium);
-interfaz(desactivarPremium);
-interfaz(esUsuarioPremium);
-interfaz(renovarPremium);
-
-// === Playlists ===
-interfaz(crearPlaylist);
-interfaz(agregarCancionPlaylist);
-interfaz(eliminarCancionPlaylist);
-interfaz(eliminarPlaylist);
-interfaz(mostrarCancionesPlaylist);
+/* ==== Funciones públicas ==== */
 
 new_operfn(getSongJSON);
 
-bool agregarAHistorial(Usuario *usuario, Cancion *cancion, Anuncio *anuncio);
 new_operfn(rehacerHistorial);
 
 #endif // VIBECAST_INTERFACES_H

@@ -29,6 +29,9 @@ bool VibeCast_FreeData();
 /* Funciones para cargar datos */
 
 select_handler(cargarUsuarios);
+select_handler(cargarAlbumesPorArtista);
+select_handler(cargarCancionesPorAlbum);
+select_handler(cargarPlaylistsPorUsuario);
 
 /* Comparadores */
 
