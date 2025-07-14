@@ -26,6 +26,11 @@ static select_handler(obteneridCancion);
 static interfaz(EliminarCancion);
 
 static interfaz(ActualizarCancion);
+select_handler(obteneridCancion)
+{
+    sscanf(argv[0], "%d", cast(int *, arg)); // Asigna el ID de la canción al puntero proporcionado
+    return 0;
+}
 
 /* ======================================================== */
 // BLOQUE: obtener_info_artista — Cargar artistas en perfil
