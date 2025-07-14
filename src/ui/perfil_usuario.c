@@ -4,7 +4,145 @@
 #define PCRE2_CODE_UNIT_WIDTH 8
 #include <pcre2.h>
 
-/* ======== PCRE2: Validadores internos ======== */
+/* ================================================================ */
+// DEFINICIÓN DE ESTRUCTURAS INTERNAS
+/* ================================================================ */
+
+static interfaz(CrearCuenta);
+
+static interfaz(EliminarCuenta);
+
+static interfaz(ObtenerInfoUsuario);
+
+static interfaz(ActualizarInfoUsuario);
+
+static interfaz(ActualizarPassword);
+
+static interfaz(ActivarPremium);
+
+static pcre2_code *get_email_re();
+static pcre2_code *get_password_re();
+
+/* ================================================================ */
+// BLOQUE: crear_cuenta -
+/* ================================================================ */
+
+message_handler(crear_cuenta)
+{
+    init_data_json();
+
+    int argc;
+    const char *argv[] = {""};
+    char **msg = arg;
+
+    bool success = VibeCast_CrearCuenta(NULL, argc, argv, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    end_data_json();
+}
+
+/* ================================================================ */
+// BLOQUE: eliminar_cuenta -
+/* ================================================================ */
+
+message_handler(eliminar_cuenta)
+{
+    char **msg = arg;
+
+    bool success = VibeCast_EliminarCuenta(NULL, 0, NULL, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+}
+
+/* ================================================================ */
+// BLOQUE: obtener_info_usuario -
+/* ================================================================ */
+
+message_handler(obtener_info_usuario)
+{
+    json_object *jobj = json_object_new_object();
+    char **msg = arg;
+
+    bool success = VibeCast_ObtenerInfoUsuario(jobj, 0, NULL, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    json_object_put(jobj);
+}
+
+/* ================================================================ */
+// BLOQUE: actualizar_info_usuario -
+/* ================================================================ */
+
+message_handler(actualizar_info_usuario)
+{
+    init_data_json();
+
+    int argc;
+    const char *argv[] = {""};
+    char **msg = arg;
+
+    bool success = VibeCast_ActualizarInfoUsuario(NULL, argc, argv, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    end_data_json();
+}
+
+/* ================================================================ */
+// BLOQUE: actualizar_password -
+/* ================================================================ */
+
+message_handler(actualizar_password)
+{
+    init_data_json();
+
+    int argc;
+    const char *argv[] = {""};
+    char **msg = arg;
+
+    bool success = VibeCast_ActualizarPassword(NULL, argc, argv, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    end_data_json();
+}
+
+/* ================================================================ */
+// BLOQUE: activar_premium -
+/* ================================================================ */
+
+message_handler(activar_premium)
+{
+    init_data_json();
+
+    int argc;
+    const char *argv[] = {""};
+    char **msg = arg;
+
+    bool success = VibeCast_ActivarPremium(NULL, argc, argv, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
+    freem(*msg);
+    *msg = NULL;
+
+    end_data_json();
+}
+
+/* ================================================================ */
+// DEFINICIÓN DE FUNCIONES AUXILIARES
+/* ================================================================ */
 
 static pcre2_code *get_email_re()
 {
