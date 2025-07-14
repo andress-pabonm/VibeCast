@@ -82,11 +82,28 @@ message_handler(vaciar_historial)
 
 static interfaz(VaciarHistorial)
 {
-    destroyPila(usuario->historial.reproducciones, destroyReproducciones, NULL);
+    char *condition = asprintf("id_usuario = %d", usuario->id);
+    bool ok = eliminar_registros("Reproducciones", condition, NULL);
+    freem(condition);
 
+    if (!ok)
+    {
+        send_message("No fue posible vaciar el historial.");
+        return false;
+    }
+
+    destroyPila(usuario->historial.reproducciones, destroyReproducciones, NULL);
     usuario->historial.reproducciones = newPila();
-    usuario->historial.tiempoEscuchado = 0;
-    usuario->historial.cantidadAnuncios = 0;
+
+    condition = asprintf("id = %d", usuario->id);
+    ok = actualizar_registros("Usuarios", "tiempo_escuchado = 0, cantidad_anuncios = 0", condition, NULL);
+    freem(condition);
+
+    if (ok)
+    {
+        usuario->historial.tiempoEscuchado = 0;
+        usuario->historial.cantidadAnuncios = 0;
+    }
 
     return true;
 }

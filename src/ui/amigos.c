@@ -4,12 +4,13 @@
 // DECLARACIONES DE FUNCIONES INTERNAS
 /* ================================================================ */
 
+static interfaz(ObtenerAmigos);
 static new_operfn(getAmigoJSON);
 
 static interfaz(AgregarAmigo);
 
 static interfaz(EliminarAmigo);
-static new_operfn(obtenerHistorialDeUsuario);
+static new_cmpfn(cmpUsuarioConId);
 
 /* ================================================================ */
 // BLOQUE: obtener_amigos — Obtener la lista de amigos
@@ -17,20 +18,27 @@ static new_operfn(obtenerHistorialDeUsuario);
 
 message_handler(obtener_amigos)
 {
-    json_object *array = json_object_new_array();
+    json_object *friends_array = json_object_new_array();
+    char **msg = arg;
 
-    forEachInLista(usuario->amigos, getAmigoJSON, array);
+    bool success = VibeCast_ObtenerAmigos(friends_array, 0, NULL, msg);
+    VibeCast_SendArray(id, HTTP_OK, friends_array, *msg, STATE_BOOL(success));
 
-    size_t len = json_object_array_length(array);
+    freem(*msg);
+    *msg = NULL;
+    json_object_put(friends_array);
+}
 
-    VibeCast_SendArray(
-        id,
-        (len > 0) ? HTTP_OK : HTTP_NO_CONTENT,
-        array,
-        "Amigos cargados",
-        STATE_SUCCESS);
+static interfaz(ObtenerAmigos)
+{
+    forEachInLista(usuario->amigos, getAmigoJSON, arg);
 
-    json_object_put(array);
+    if (json_object_array_length(arg))
+        send_message("Amigos cargados.");
+    else
+        send_message("Tu lista de amigos está vacia.");
+
+    return true;
 }
 
 static new_operfn(getAmigoJSON)
@@ -39,6 +47,7 @@ static new_operfn(getAmigoJSON)
 
     // Convertir a formato JSON
     json_object *jobj = json_object_new_object();
+
     json_object_object_add(jobj, "id", json_object_new_int(amigo->id));
     json_object_object_add(jobj, "nombre", json_object_new_string(amigo->nickname));
 
@@ -63,7 +72,7 @@ message_handler(agregar_amigo)
     char **msg = arg;
 
     bool success = VibeCast_AgregarAmigo(NULL, argc, argv, msg);
-    VibeCast_SendNull(id, HTTP_OK, msg ? *msg : NULL, STATE_BOOL(success));
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
 
     freem(*msg);
     *msg = NULL;
@@ -82,7 +91,6 @@ static interfaz(AgregarAmigo)
     }
 
     Lista amigos = usuario->amigos;
-
     Usuario *amigo = searchValueInLista(amigos, username, cmpUsuarioConUsername);
 
     if (amigo)
@@ -121,11 +129,10 @@ message_handler(eliminar_amigo)
 {
     init_data_json();
 
-    const char *username = get_string(get_array_idx(data, 0));
+    const char *id_usuario = get_string(get_array_idx(data, 0));
 
     int argc = 1;
-    const char **argv = cast(const char *[], username);
-
+    const char *argv[] = {id_usuario};
     char **msg = arg;
 
     bool success = VibeCast_EliminarAmigo(NULL, argc, argv, msg);
@@ -139,15 +146,14 @@ message_handler(eliminar_amigo)
 
 static interfaz(EliminarAmigo)
 {
-    const char *username = argv[0];
+    int id = atoi(argv[0]);
 
     Lista amigos = usuario->amigos;
-
-    Usuario *amigo = deleteValueInLista(amigos, username, cmpUsuarioConUsername);
+    Usuario *amigo = deleteValueInLista(amigos, &id, cmpUsuarioConId);
 
     if (!amigo)
     {
-        send_message("El usuario '%s' no está en tu lista de amigos.", username);
+        send_message("No se encontró al usuario en tu lista de amigos.");
         return false;
     }
 
@@ -160,7 +166,15 @@ static interfaz(EliminarAmigo)
     }
     freem(condition);
 
-    send_message("El usuario '%s' ha sido eliminado de tu lista de amigos.", username);
+    send_message("Amigo eliminado.");
 
     return true;
+}
+
+static new_cmpfn(cmpUsuarioConId)
+{
+    const Usuario *u = val_1;
+    const int *id = val_2;
+
+    return u->id - *id;
 }

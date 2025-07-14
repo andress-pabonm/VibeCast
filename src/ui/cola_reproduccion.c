@@ -212,8 +212,11 @@ static bool agregarAHistorial(void *dato, ElementoColaTipo tipo)
             return false;
 
         char *values = asprintf(stringify("%d", "%d", "%s"), usuario->id, cast(Cancion *, dato)->id, buf);
-        nuevo_registro("Reproducciones", "id_usuario, id_cancion, fecha_escuchado", values, NULL);
+        bool ok = nuevo_registro("Reproducciones", "id_usuario, id_cancion, fecha_escuchado", values, NULL);
         freem(values);
+
+        if (!ok)
+            return false;
 
         repr->cancion = dato;
         repr->fechaEscuchado = asprintf(buf);
@@ -225,11 +228,11 @@ static bool agregarAHistorial(void *dato, ElementoColaTipo tipo)
 
         values = asprintf("cantidad_anuncios = %d", usuario->historial.cantidadAnuncios);
         char *condition = asprintf("id = %d", usuario->id);
-        actualizar_registros("Usuarios", values, condition, NULL);
+        ok = actualizar_registros("Usuarios", values, condition, NULL);
         freem(values);
         freem(condition);
 
-        return true;
+        return ok;
 
     default:
         return false;
@@ -248,6 +251,7 @@ message_handler(vaciar_cola)
     VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
 
     puts(*msg);
+
     freem(*msg);
     *msg = NULL;
 }

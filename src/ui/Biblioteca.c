@@ -49,7 +49,11 @@ static interfaz(ObtenerPlaylists)
     json_object_object_add(arg, "playlists", playlists_array);
     json_object_object_add(arg, "playlistSongs", songs_array);
 
-    send_message("Playlists cargadas.");
+    if (json_object_array_length(playlists_array))
+        send_message("Playlists cargadas.");
+    else
+        send_message("Tu lista de playlists está vacia.");
+
     return true;
 }
 
@@ -136,12 +140,20 @@ static interfaz(CrearPlaylist)
     }
 
     char *values = asprintf(stringify("%d", "%s"), usuario->id, nombrePlaylist);
-    nuevo_registro("Playlists", "id_usuario, nombre", values, NULL);
+    bool ok = nuevo_registro("Playlists", "id_usuario, nombre", values, NULL);
     freem(values);
 
-    obtener_registros("Playlists ORDER BY id DESC LIMIT 1", "id, nombre", NULL, cargarPlaylistsPorUsuario, usuario->playlists, NULL);
+    if (!ok)
+    {
+        send_message("No fue posible crear la playlist.");
+        return false;
+    }
 
-    send_message("Playlist creada.");
+    if (obtener_registros("Playlists ORDER BY id DESC LIMIT 1", "id, nombre", NULL, cargarPlaylistsPorUsuario, usuario->playlists, NULL))
+        send_message("Playlist creada.");
+    else
+        send_message("Playlist creada pero no cargada. Reinicie la aplicación.");
+
     return true;
 }
 
@@ -188,8 +200,17 @@ static interfaz(EliminarPlaylist)
     }
 
     char *condition = asprintf("id = %d", id);
-    eliminar_registros("Playlists", condition, NULL);
+    bool ok = eliminar_registros("Playlists", condition, NULL);
+    freem(condition);
 
+    if (!ok)
+    {
+        insertValueInLista(usuario->playlists, playlist);
+        send_message("No fue posible eliminar la playlist.");
+        return false;
+    }
+
+    destroyPlaylist(playlist);
     send_message("Playlist eliminada.");
     return true;
 }
@@ -241,16 +262,22 @@ static interfaz(ActualizarPlaylist)
         return false;
     }
 
-    freem(playlist->nombre);
-    playlist->nombre = asprintf(nombrePlaylist);
-
     char *values = asprintf(stringify(nombre = "%s"), nombrePlaylist);
     char *condition = asprintf("id = %d", id);
-    actualizar_registros("Playlists", values, condition, NULL);
+    bool ok = actualizar_registros("Playlists", values, condition, NULL);
     freem(values);
     freem(condition);
 
-    send_message("Nombre de playlist actualizado.");
+    if (!ok)
+    {
+        send_message("No fue posible actualizar la información de la playlist.");
+        return false;
+    }
+
+    freem(playlist->nombre);
+    playlist->nombre = asprintf(nombrePlaylist);
+
+    send_message("La información de la playlist ha sido actualizado.");
     return true;
 }
 
@@ -301,11 +328,17 @@ static interfaz(AgregarAPlaylist)
         return false;
     }
 
-    insertValueInLista(playlist->canciones, cancion);
-
     char *values = asprintf("%d, %d", id_playlist, id_cancion);
-    nuevo_registro("Playlist_Canciones", "id_playlist, id_cancion", values, NULL);
+    bool ok = nuevo_registro("Playlist_Canciones", "id_playlist, id_cancion", values, NULL);
     freem(values);
+
+    if (!ok)
+    {
+        send_message("No fue posible agregar la canción a la playlist.");
+        return false;
+    }
+
+    insertValueInLista(playlist->canciones, cancion);
 
     send_message("Canción agregada a playlist.");
     return true;
@@ -352,8 +385,15 @@ static interfaz(EliminarDePlaylist)
     }
 
     char *condition = asprintf("id_playlist = %d AND id_cancion = %d", id_playlist, id_cancion);
-    eliminar_registros("Playlist_Canciones", condition, NULL);
+    bool ok = eliminar_registros("Playlist_Canciones", condition, NULL);
     freem(condition);
+
+    if (!ok)
+    {
+        insertValueInLista(playlist, cancion);
+        send_message("No fue posible eliminar la canción de la playlist.");
+        return false;
+    }
 
     send_message("Canción eliminada de playlist.");
     return true;
