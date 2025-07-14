@@ -27,11 +27,6 @@ static select_handler(obteneridCancion);
 static interfaz(EliminarCancion);
 
 static interfaz(ActualizarCancion);
-select_handler(obteneridCancion)
-{
-    sscanf(argv[0], "%d", cast(int *, arg)); // Asigna el ID de la canción al puntero proporcionado
-    return 0;
-}
 
 /* ======================================================== */
 // BLOQUE: obtener_info_artista — Cargar artista en perfil
@@ -353,10 +348,11 @@ message_handler(actualizar_album)
 {
     init_data_json();
 
-    const char *nombreAlbum = get_string(get_array_idx(data, 0));
+    const char *nombreAlbumant = get_string(get_array_idx(data, 0));
+    const char *nombreAlbumnew = get_string(get_array_idx(data, 1));
 
-    int argc = 1;
-    const char *argv[] = {nombreAlbum};
+    int argc = 2;
+    const char *argv[] = {nombreAlbumant, nombreAlbumnew};
     char **msg = arg;
 
     bool success = VibeCast_ActualizarAlbum(NULL, argc, argv, msg);
@@ -370,6 +366,54 @@ message_handler(actualizar_album)
 
 static interfaz(ActualizarAlbum)
 {
+    const char *nombreAlbumant = argv[0];
+    const char *nombreAlbumnew = argv[1];
+
+    // Validar que el artista exista
+    if (!usuario->artista)
+    {
+        send_message("Error: El usuario no es un artista.");
+        return false;
+    }
+
+    Lista albumes = usuario->artista->albumes;
+    Album *album = searchValueInLista(albumes, nombreAlbumant, cmpAlbumConNombre);
+
+    // Validar que exista el álbum
+    if (!album)
+    {
+        send_message("Error: El álbum '%s' no existe.", nombreAlbumant);
+        return false;
+    }
+
+    if (!strcmp(album->nombre, nombreAlbumnew))
+    {
+        send_message("No se actualizó el nombre del álbum porque es el mismo.");
+        return false;
+    }
+    
+    if(searchValueInLista(albumes, nombreAlbumnew, cmpAlbumConNombre))
+    {
+        send_message("Error: Ya existe un álbum con el nombre '%s'.", nombreAlbumnew);
+        return false;
+    }
+
+    // Actualizar el nombre del álbum
+    char *values = asprintf(stringify(nombre = "%s"), nombreAlbumnew);
+    char *condition = asprintf("id = %d", album->id);
+    bool ok = actualizar_registros("Albumes", values, condition, NULL);
+    freem(values);
+    freem(condition);
+    if (!ok)
+    {
+        send_message("No fue posible actualizar el álbum.");
+        return false;
+    }
+
+    freem(album->nombre);
+    album->nombre = asprintf(nombreAlbumnew);
+
+    send_message("Álbum actualizado.");
     return true;
 }
 
@@ -569,16 +613,27 @@ static new_cmpfn(cmpAlbumConId)
 
 message_handler(actualizar_cancion)
 {
-    json_object *response = json_object_new_object();
+    init_data_json();
+    const char *nombreAlbum = get_string(get_array_idx(data, 0));
+    const char *id_cancion = get_string(get_array_idx(data, 1));
+    const char *nuevoNombre = get_string(get_array_idx(data, 2));
+    const char *nuevoGenero = get_string(get_array_idx(data, 3));
+    const char *nuevaDuracion = get_string(get_array_idx(data, 4));
+    const char *nuevaUrl = get_string(get_array_idx(data, 5));
+    int argc = 6;
+
+    const char *argv[] = {nombreAlbum, id_cancion, nuevoNombre, nuevoGenero, nuevaDuracion, nuevaUrl};
+
     char **msg = arg;
 
-    bool success = VibeCast_ActualizarCancion(response, 0, NULL, msg);
-    VibeCast_SendJSON(id, HTTP_OK, response, *msg, STATE_BOOL(success));
+    bool success = VibeCast_ActualizarCancion(NULL, argc, argv, msg);
+    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+
 
     freem(*msg);
     *msg = NULL;
 
-    json_object_put(response);
+    end_data_json();
 }
 
 static interfaz(ActualizarCancion)
@@ -586,6 +641,10 @@ static interfaz(ActualizarCancion)
     // Asumiré que me envía el nombre del álbum y el id de la canción
     const char *nombreAlbum = argv[0];
     int id_cancion = atoi(argv[1]);
+    const char *nuevoNombre = argv[2];
+    const char *nuevoGenero = argv[3];
+    int nuevaDuracion = atoi(argv[4]);
+    const char *nuevaUrl = argv[5];
 
     // Busco el álbum
     Album *album = searchValueInLista(usuario->artista->albumes, nombreAlbum, cmpAlbumConNombre);
@@ -603,7 +662,81 @@ static interfaz(ActualizarCancion)
         return false;
     }
 
-    /* Aquí se actualizarían los datos de la canción */
+    //Actualizar el nombre, genero, duración y url
+    
+    return true;
+}
 
+static custom_interface(ActualizarNombreCancion, Cancion *cancion, const char *nuevoNombre)
+{
+    if (!cancion || !nuevoNombre || !*nuevoNombre)
+    {
+        send_message("Datos inválidos para actualizar la canción.");
+        return false;
+    }
+
+    // Verificar si el nuevo nombre ya existe en el álbum
+    if (searchValueInLista(cancion->album->canciones, nuevoNombre, cmpCancionConNombre))
+    {
+        send_message("Ya existe una canción con ese nombre en el álbum.");
+        return false;
+    }
+
+    freem(cancion->nombre);
+    cancion->nombre = asprintf(nuevoNombre);
+
+    // Aquí se podría agregar código para actualizar la base de datos si es necesario
+
+    send_message("Canción actualizada correctamente.");
+    return true;
+}
+
+static custom_interface(ActualizarGeneroCancion, Cancion *cancion, const char *nuevoGenero)
+{
+    if (!cancion || !nuevoGenero || !*nuevoGenero)
+    {
+        send_message("Datos inválidos para actualizar el género de la canción.");
+        return false;
+    }
+
+    freem(cancion->genero);
+    cancion->genero = asprintf(nuevoGenero);
+
+    // Aquí se podría agregar código para actualizar la base de datos si es necesario
+
+    send_message("Género de la canción actualizado correctamente.");
+    return true;
+}
+
+static custom_interface(ActualizarDuracionCancion, Cancion *cancion, int nuevaDuracion)
+{
+    if (!cancion || nuevaDuracion <= 0)
+    {
+        send_message("Datos inválidos para actualizar la duración de la canción.");
+        return false;
+    }
+
+    cancion->duracion = nuevaDuracion;
+
+    // Aquí se podría agregar código para actualizar la base de datos si es necesario
+
+    send_message("Duración de la canción actualizada correctamente.");
+    return true;
+}
+
+static custom_interface(ActualizarUrlCancion, Cancion *cancion, const char *nuevaUrl)
+{
+    if (!cancion || !nuevaUrl || !*nuevaUrl)
+    {
+        send_message("Datos inválidos para actualizar la URL de la canción.");
+        return false;
+    }
+
+    freem(cancion->url);
+    cancion->url = asprintf(nuevaUrl);
+
+    // Aquí se podría agregar código para actualizar la base de datos si es necesario
+
+    send_message("URL de la canción actualizada correctamente.");
     return true;
 }
