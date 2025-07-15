@@ -19,6 +19,7 @@ const MusicPlayer = (function () {
     togglePlayerVisibility(false);
 
     player = new YT.Player("player", {
+      // videoId: "",
       playerVars: { controls: 0, fs: 0 },
       events: {
         onReady: onPlayerReady,
@@ -221,9 +222,9 @@ const MusicPlayer = (function () {
     const res = await safeCall(() => window.encolar(song.id));
     if (res?.status !== "ok") return;
 
-    if (reset) playSong();
+    if (reset) await playSong();
     else if (isPaused) player.playVideo();
-    else if (!isPlaying) playSong;
+    else if (!isPlaying) await playSong;
   }
 
   async function emptyQueue() {
@@ -238,9 +239,7 @@ const MusicPlayer = (function () {
   }
 
   function showQueueAlert() {
-    alert(
-      "En una cola de reproducción no se puede retroceder\nLas canciones solo avanzan en orden de llegada"
-    );
+    alert("En una cola de reproducción no se puede retroceder\nLas canciones solo avanzan en orden de llegada");
   }
 
   return {

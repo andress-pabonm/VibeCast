@@ -45,7 +45,7 @@ window.views.biblioteca = {
               </button>
               <h2 id="currentPlaylistTitle"></h2>
               <button class="action-btn" id="addToQueueBtn">
-                  <i class="fas fa-plus-circle"></i> Añadir a cola
+                  <i class="fas fa-plus-circle"></i>Añadir todo a la cola
               </button>
           </div>
         <div class="song-list" id="playlistSongsContainer">
@@ -122,11 +122,6 @@ window.views.biblioteca = {
           showPlaylistSongs(playlist.id, playlist.name)
         );
 
-        // Evento para mostrar las canciones al hacer clic en la card
-        playlistCard.addEventListener("click", () =>
-          showPlaylistSongs(playlist.id, playlist.name)
-        );
-
         // Evento para mostrar opciones al hacer clic en los tres puntos
         const optionsBtn = playlistCard.querySelector(".playlist-options");
         optionsBtn.addEventListener("click", (e) => {
@@ -158,6 +153,7 @@ window.views.biblioteca = {
       songs.forEach((song) => {
         const songElement = document.createElement("div");
         songElement.className = "song-item";
+        songElement.dataset.id = song.id;
         songElement.innerHTML = `
             <div class="song-info">
                 <strong>${song.title}</strong>
@@ -167,15 +163,13 @@ window.views.biblioteca = {
                 <span>${formatTime(song.duration)}</span>
                 <i class="fas fa-play play-btn" title="Reproducir"></i>
                 <i class="fas fa-plus cola-btn" title="Agrega a cola"></i>
-                <i class="fas fa-trash delete-btn"></i>
+                <i class="fas fa-trash delete-btn" title="Eliminar de playlist"></i>
             </div>
         `;
-        songElement.querySelector(".play-btn").addEventListener("click", (e) => {
-          MusicPlayer.addSongsToQueue(song, true);
-        });
 
-        songElement.querySelector(".cola-btn").addEventListener("click", (e) => {
-          MusicPlayer.addSongsToQueue(song, false);
+        songElement.querySelector(".fa-trash").addEventListener("click", async () => {
+          await window.eliminar_de_playlist(playlistId, song.id);
+          window.location.reload();
         });
 
         playlistSongsContainer.appendChild(songElement);
@@ -250,7 +244,7 @@ window.views.biblioteca = {
       deletePlaylistBtn.addEventListener("click", async () => {
         try {
           if (currentPlaylistId && confirm("¿Estás seguro de eliminar esta playlist?")) {
-            const res = window.eliminar_playlist(currentPlaylistId);
+            const res = await window.eliminar_playlist(currentPlaylistId);
 
             if (res.status !== "ok") {
               throw new Error(res.message);
@@ -269,19 +263,42 @@ window.views.biblioteca = {
         }
       });
 
-      // Añadir toda la playlist a la cola
-      addToQueueBtn.addEventListener("click", () => {
+      //Añadir toda la playlist a la cola
+      addToQueueBtn.addEventListener("click", async () => {
         if (currentPlaylistId) {
           const songs = currentPlaylistSongs[currentPlaylistId] || [];
           if (songs.length > 0) {
-            MusicPlayer.addSongsToQueue(songs);
-            alert(`Se añadieron ${songs.length} canciones a la cola`);
+            await MusicPlayer.addSongsToQueue(songs);
+            window.location.reload(); //PARCHIADISIMOOOOOOO
           }
+        }
+      });
+    }
+
+    function setupSongClickEvents() {
+      document.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const item = e.target.closest(".song-item");
+        if (!item) return;
+
+        const song = {
+          id: parseInt(item.dataset.id),
+          title: item.dataset.title,
+          artist: item.dataset.artist,
+        };
+
+        if (e.target.classList.contains("fa-play")) {
+          console.log("▶ Encolando y reproduciendo:", song.title);
+          await MusicPlayer.addSongToQueue(song, true);
+        } else if (e.target.classList.contains("fa-plus")) {
+          console.log("➕ Encolando (sin reproducir):", song.title);
+          await MusicPlayer.addSongToQueue(song, false);
         }
       });
     }
 
     loadPlaylists();
     setupEventListeners();
+    setupSongClickEvents();
   },
 };

@@ -1,5 +1,5 @@
 INSERT INTO Usuarios (username, email, password, nickname, pais, plan, tiempo_escuchado, cantidad_anuncios) VALUES
-("alice123", "alice@mail.com", "pass1", "Alice", "Ecuador", 1, 3600, 5),
+("alice123", "alice@mail.com", "pass1", "Alice", "Ecuador", 1, 3600, 0),
 ("bob321", "bob@mail.com", "pass2", "Bob", "Ecuador", 0, 1800, 2),
 ("carla_music", "carla@mail.com", "pass3", "Carla", "Colombia", 1, 5400, 0),
 ("yoasobi", "yoasobi@mail.com", "pass4", "Jessica", "Japón", 0, 0, 0),

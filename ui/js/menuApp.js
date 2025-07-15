@@ -32,9 +32,15 @@ window.views.inicio = {
 
     <!-- Estadisticas del usuario -->
     <section class="card-section friends">
-      <h2 class="section-title">
-        <i class="fas fa-chart-line"></i>Estadisticas
-      </h2>
+      <div id="stats-header">
+        <h2 class="section-title">
+          <i class="fas fa-chart-line"></i>Estadisticas
+        </h2>
+
+        <button class="generate-stats-btn">
+          <i class="fas fa-chart-pie"></i>Generar
+        </button>
+      </div>
       <div class="friends-list" id="friends-container">
         <!-- Estadisticas se cargarán dinámicamente -->
       </div>
@@ -76,7 +82,7 @@ window.views.inicio = {
             <div class="modal-content">
               <div class="modal-header">
                 <h3>Añadir a playlist</h3>
-                <span class="close-modal">&times;</span>
+                <p class="close-modal">&times;</p>
               </div>
               <div class="modal-body">
                 <p>Añadir "${song.title}" a:</p>
@@ -161,7 +167,7 @@ window.views.inicio = {
             <p>${song.artist}</p>
         </div>
         <div class="song-actions">
-            <span>${formatTime(song.duration)}</span>
+            <p>${formatTime(song.duration)}</p>
             <i class="fas fa-play"></i>
             <i class="fas fa-plus"></i>
             <i class="fas fa-plus-circle add-to-playlist" title="Añadir a playlist"></i>
@@ -239,7 +245,7 @@ window.views.inicio = {
           <p>${song.artist}</p>
         </div>
         <div class="song-actions">
-          <span>${formatTime(song.duration)}</span>
+          <p>${formatTime(song.duration)}</p>
           <i class="fas fa-ellipsis-v menu-icon"></i>
         </div>
       `;
@@ -255,6 +261,7 @@ window.views.inicio = {
 
     function setupSongClickEvents() {
       document.addEventListener("click", async (e) => {
+        e.stopPropagation();
         const item = e.target.closest(".song-item");
         if (!item) return;
 
@@ -266,18 +273,11 @@ window.views.inicio = {
 
         if (e.target.classList.contains("fa-play")) {
           console.log("▶ Encolando y reproduciendo:", song.title);
-
-          MusicPlayer.addSongToQueue(song, true);
-        }
-
-        if (e.target.classList.contains("fa-plus")) {
+          await MusicPlayer.addSongToQueue(song, true);
+        } else if (e.target.classList.contains("fa-plus")) {
           console.log("➕ Encolando (sin reproducir):", song.title);
-
-          MusicPlayer.addSongToQueue(song, false);
-        }
-
-        if (e.target.classList.contains("add-to-playlist")) {
-          e.stopPropagation();
+          await MusicPlayer.addSongToQueue(song, false);
+        } else if (e.target.classList.contains("add-to-playlist")) {
           showPlaylistsModal(song);
         }
       });
@@ -288,15 +288,10 @@ window.views.inicio = {
       if (!statsContainer) return;
 
       // Limpiar el contenedor
-      statsContainer.innerHTML = `
-        <button class="generate-stats-btn">
-          <i class="fas fa-chart-pie"></i> Generar Reporte
-        </button>
-        <div class="stats-results"></div>
-      `;
+      statsContainer.innerHTML = `<div class="stats-results"></div>`;
 
       // Configurar el evento del botón
-      const generateBtn = statsContainer.querySelector(".generate-stats-btn");
+      const generateBtn = document.querySelector(".generate-stats-btn");
       generateBtn.addEventListener("click", async () => {
         try {
           generateBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Generando...`;
@@ -314,7 +309,7 @@ window.views.inicio = {
           console.error("Error al generar reporte:", err);
           alert("Error al generar el reporte");
         } finally {
-          generateBtn.innerHTML = `<i class="fas fa-chart-pie"></i> Generar Reporte`;
+          generateBtn.innerHTML = `<i class="fas fa-chart-pie"></i>Generar`;
           generateBtn.disabled = false;
         }
       });
@@ -324,36 +319,36 @@ window.views.inicio = {
       const statsResults = container.querySelector(".stats-results");
       statsResults.innerHTML = `
         <div class="stats-section">
-          <h3><i class="fas fa-music"></i> Top Canciones</h3>
+          <h3><i class="fas fa-music"></i>Top Canciones</h3>
           <ul class="stats-list">
             ${data.topCanciones.map(song => `
               <li>
-                <span class="stats-name">${song.nombreCancion}</span>
-                <span class="stats-value">${song.reproducciones} reproducciones</span>
+                <p class="stats-name">${song.nombreCancion}</p>
+                <p class="stats-value">${song.reproducciones} reproducciones</p>
               </li>
             `).join('')}
           </ul>
         </div>
 
         <div class="stats-section">
-          <h3><i class="fas fa-user"></i> Top Artistas</h3>
+          <h3><i class="fas fa-user"></i>Top Artistas</h3>
           <ul class="stats-list">
             ${data.topArtistas.map(artist => `
               <li>
-                <span class="stats-name">${artist.nombreArtista}</span>
-                <span class="stats-value">${artist.reproducciones} reproducciones</span>
+                <p class="stats-name">${artist.nombreArtista}</p>
+                <p class="stats-value">${artist.reproducciones} reproducciones</p>
               </li>
             `).join('')}
           </ul>
         </div>
 
         <div class="stats-section">
-          <h3><i class="fas fa-clock"></i> Tiempo Escuchado</h3>
+          <h3><i class="fas fa-clock"></i>Tiempo Escuchado</h3>
           <div class="stats-value-large">${formatTime(data.tiempoEscuchado)}</div>
         </div>
 
         <div class="stats-section">
-          <h3><i class="fas fa-ad"></i> Anuncios Escuchados</h3>
+          <h3><i class="fas fa-ad"></i>Anuncios Escuchados</h3>
           <div class="stats-value-large">${data.cantidadAnuncios}</div>
         </div>
       `;
