@@ -380,7 +380,7 @@
 
 .album-options i {
     color: var(--blanco);
-    font-size: 0.9rem;
+    font-size: 2rem;
 }
 
 .album-card {
@@ -731,4 +731,56 @@
 
 #createAlbumBtn:hover {
     transform: translateY(-2px);
+}
+
+/* ========== MODAL NUEVA CANCIÓN ========== */
+#newSongModal .modal-content {
+    max-width: 500px;
+}
+
+#newSongModal .form-group {
+    margin-bottom: 1rem;
+}
+
+#newSongModal label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--detalle);
+}
+
+#newSongModal input {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--gris-medio);
+    border: 2px solid var(--morado);
+    border-radius: 5px;
+    color: var(--blanco);
+    font-family: 'Poppins', sans-serif;
+}
+
+#newSongModal input:focus {
+    border-color: var(--azul);
+    outline: none;
+}
+
+#newSongModal button[type="submit"] {
+    width: 100%;
+    padding: 0.75rem;
+    background: linear-gradient(45deg, var(--morado), var(--azul-oscuro));
+    color: var(--blanco);
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+#newSongModal button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(141, 45, 226, 0.4);
 }

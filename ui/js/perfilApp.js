@@ -4,14 +4,13 @@ window.views.perfil = {
   title: `<i class="fas fa-user"></i>Perfil`,
   html: `
     <header class="profile-header">
-        <!-- En la sección de información del perfil -->
+        <!-- Sección de información del perfil -->
         <div class="profile-info">
             <div class="profile-details">
                 <h1 id="profile-name"></h1>
                 <p id="profile-username"></p>
                 <p id="profile-country"><i class="fas fa-globe"></i></p>
                 <p id="profile-email"><i class="fas fa-envelope"></i></p>
-
                 <button id="becomeArtistBtn" class="action-btn">
                     <i class="fas fa-microphone"></i> Convertirse en artista
                 </button>
@@ -25,9 +24,7 @@ window.views.perfil = {
     <div class="profile-content">
         <!-- Sección de información básica -->
         <section class="profile-section">
-            <h2 class="section-title">
-                <i class="fas fa-user-edit"></i>Tu información
-            </h2>
+            <h2 class="section-title"><i class="fas fa-user-edit"></i>Tu información</h2>
             <form id="profileForm" class="profile-form">
                 <div class="form-group">
                     <label for="edit-name">Nombre</label>
@@ -51,9 +48,7 @@ window.views.perfil = {
 
         <!-- Sección de cambio de contraseña -->
         <section class="profile-section">
-            <h2 class="section-title">
-                <i class="fas fa-lock"></i> Cambiar contraseña
-            </h2>
+            <h2 class="section-title"><i class="fas fa-lock"></i> Cambiar contraseña</h2>
             <form id="passwordForm" class="password-form">
                 <div class="form-group">
                     <label for="current-password">Contraseña actual</label>
@@ -82,25 +77,17 @@ window.views.perfil = {
 
         <!-- Sección de suscripción -->
         <section class="profile-section">
-            <h2 class="section-title">
-                <i class="fas fa-crown"></i>Tu suscripción
-            </h2>
-            <div class="subscription-info" id="subscriptionInfo">
-                <!-- Información de suscripción se cargará dinámicamente -->
-            </div>
+            <h2 class="section-title"><i class="fas fa-crown"></i>Tu suscripción</h2>
+            <div class="subscription-info" id="subscriptionInfo"></div>
             <button class="upgrade-btn" id="upgradeBtn">
                 <i class="fas fa-arrow-up"></i>Actualizar plan
             </button>
         </section>
 
-        <!-- Sección de artista (solo visible si es artista) -->
+        <!-- Sección de artista -->
         <section class="artist-section hidden" id="artistSection">
-            <h2 class="section-title">
-                <i class="fas fa-compact-disc"></i> Tus discos
-            </h2>
-            <div class="albums-grid" id="albumsContainer">
-                <!-- Álbumes se cargarán dinámicamente -->
-            </div>
+            <h2 class="section-title"><i class="fas fa-compact-disc"></i> Tus discos</h2>
+            <div class="albums-grid" id="albumsContainer"></div>
             <button class="new-album-btn" id="newAlbumBtn">
                 <i class="fas fa-plus"></i> Nuevo disco
             </button>
@@ -113,41 +100,12 @@ window.views.perfil = {
                     <i class="fas fa-arrow-left"></i>
                 </button>
                 <h2 id="currentAlbumTitle"></h2>
-                <button class="action-btn" id="addAlbumToQueueBtn">
-                    <i class="fas fa-plus-circle"></i> Añadir a cola
+                <button class="action-btn" id="addCancion">
+                    <i class="fas fa-music"></i> Nueva canción
                 </button>
             </div>
-            <div class="song-list" id="albumSongsContainer">
-                <!-- Canciones del álbum se cargarán dinámicamente -->
-            </div>
+            <div class="song-list" id="albumSongsContainer"></div>
         </section>
-
-        <!-- Modal para editar álbum -->
-        <div class="modal hidden" id="editAlbumModal">
-            <div class="modal-content">
-                <span class="close-modal">&times;</span>
-                <h3>Editar álbum</h3>
-                <div class="form-group">
-                    <label for="edit-album-name">Nombre del álbum</label>
-                    <input type="text" id="edit-album-name" placeholder="Nombre del álbum" required />
-                </div>
-                <div class="modal-buttons">
-                    <button id="saveAlbumBtn">Guardar cambios</button>
-                    <button id="deleteAlbumBtn">Eliminar álbum</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de planes -->
-    <div class="modal hidden" id="plansModal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h3>Elige tu plan</h3>
-            <div class="plans-container" id="plansContainer">
-                <!-- Planes se cargarán dinámicamente -->
-            </div>
-        </div>
     </div>
 
     <!-- Modal para nuevo disco -->
@@ -163,53 +121,67 @@ window.views.perfil = {
         </div>
     </div>
 
+    <!-- Modal para editar álbum -->
+    <div class="modal hidden" id="editAlbumModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Editar álbum</h3>
+            <div class="form-group">
+                <label for="edit-album-name">Nombre del álbum</label>
+                <input type="text" id="edit-album-name" placeholder="Nombre del álbum" required />
+            </div>
+            <div class="modal-buttons">
+                <button id="saveAlbumBtn">Guardar cambios</button>
+                <button id="deleteAlbumBtn">Eliminar álbum</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de planes -->
+    <div class="modal hidden" id="plansModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Elige tu plan</h3>
+            <div class="plans-container" id="plansContainer"></div>
+        </div>
+    </div>
+
+    <!-- Modal para nueva canción -->
+    <div class="modal hidden" id="newSongModal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3>Agregar nueva canción</h3>
+        <form id="newSongForm">
+          <div class="form-group">
+            <label for="song-name">Nombre de la canción</label>
+            <input type="text" id="song-name" placeholder="Nombre de la canción" required />
+          </div>
+          <div class="form-group">
+            <label for="song-genre">Género</label>
+            <input type="text" id="song-genre" placeholder="Género musical" required />
+          </div>
+          <div class="form-group">
+            <label for="song-duration">Duración (segundos)</label>
+            <input type="number" id="song-duration" placeholder="Duración en segundos" required min="1" />
+          </div>
+          <div class="form-group">
+            <label for="song-url">URL de la canción</label>
+            <input type="url" id="song-url" placeholder="url de youtube" required />
+          </div>
+          <button type="submit" class="save-btn">
+            <i class="fas fa-save"></i> Guardar canción
+          </button>
+        </form>
+      </div>
+    </div>
   `,
   init: (function () {
-    async function loadArtistData(userData) {
-      try {
-        const artistRes = await window.obtener_info_artista(userData.id);
-        if (artistRes.status === "ok" && artistRes.type === "json") {
-          userData.albums = artistRes.data.albums || [];
-          setupArtistView(userData);
-        }
-      } catch (err) {
-        console.error("Error al cargar datos de artista:", err);
-      }
-    }
-
-    function initializeProfile(userData) {
-      setProfileFields(userData);
-      setSubscriptionInfo(userData);
-      setupProfileForm(userData);
-      setupPasswordForm();
-      setupLogout();
-      setupPasswordToggle();
-      setupBecomeArtistButton(userData);
-
-      document.getElementById("upgradeBtn").addEventListener("click", () => {
-        loadPlans(userData);
-        document.getElementById("plansModal").classList.remove("hidden");
-      });
-
-      document.getElementById("newAlbumBtn")?.addEventListener("click", () => {
-        document.getElementById("newAlbumModal").classList.remove("hidden");
-      });
-
-      document.querySelectorAll(".close-modal").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          ["plansModal", "newAlbumModal", "editAlbumModal"].forEach((id) =>
-            document.getElementById(id).classList.add("hidden")
-          );
-        });
-      });
-
-      ["plansModal", "newAlbumModal", "editAlbumModal"].forEach((id) => {
-        document.getElementById(id).addEventListener("click", (e) => {
-          if (e.target.id === id) {
-            e.target.classList.add("hidden");
-          }
-        });
-      });
+    // 1. HEADER SECTION FUNCTIONS
+    function setProfileFields(user) {
+      document.getElementById("profile-name").textContent = user.name;
+      document.getElementById("profile-username").textContent = user.username;
+      document.getElementById("profile-country").innerHTML = `<i class="fas fa-globe"></i> ${user.country}`;
+      document.getElementById("profile-email").innerHTML = `<i class="fas fa-envelope"></i> ${user.email}`;
     }
 
     function setupBecomeArtistButton(userData) {
@@ -225,37 +197,41 @@ window.views.perfil = {
             if (!name) return;
 
             const res = await window.crear_artista(name);
-            if (res.status === "ok") {
-              alert("¡Ahora eres un artista! Se ha creado tu primer álbum y canción.");
-              location.reload();
-            } else {
-              alert("Error al convertirte en artista: " + (res.message || "Error desconocido"));
+
+            if (res.status !== "ok") {
+              throw new Error(res.message);
             }
-          } catch (err) {
-            console.error("Error:", err);
-            alert("Error al procesar la solicitud");
+
+            alert(res.message);
+
+            window.location.reload();
+          } catch (error) {
+            alert(error.message);
           }
         });
       }
     }
 
-    function setProfileFields(user) {
-      document.getElementById("profile-name").textContent = user.name;
-      document.getElementById("profile-username").textContent = user.username;
-      document.getElementById(
-        "profile-country"
-      ).innerHTML = `<i class="fas fa-globe"></i> ${user.country}`;
-      document.getElementById(
-        "profile-email"
-      ).innerHTML = `<i class="fas fa-envelope"></i> ${user.email}`;
-
-      document.getElementById("edit-name").value = user.name;
-      document.getElementById("edit-username").value = user.username;
-      document.getElementById("edit-country").value = user.country;
-      document.getElementById("edit-email").value = user.email;
+    async function setupLogout() {
+      document.getElementById("logoutBtn").addEventListener("click", async () => {
+        try {
+          const res = await window.cerrar_sesion();
+          if (res.status === "ok") {
+            location.replace("pages/login.html");
+          }
+        } catch (err) {
+          console.error("Error al cerrar sesión:", err);
+        }
+      });
     }
 
+    // 2. PROFILE INFO SECTION FUNCTIONS
     function setupProfileForm(userData) {
+      document.getElementById("edit-name").value = userData.name;
+      document.getElementById("edit-username").value = userData.username;
+      document.getElementById("edit-country").value = userData.country;
+      document.getElementById("edit-email").value = userData.email;
+
       const form = document.getElementById("profileForm");
       form.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -267,16 +243,12 @@ window.views.perfil = {
 
         const res = safeCall(() => window.actualizar_info_usuario(newName, newCountry, newUsername, newEmail));
 
-        console.log(res.message);
-
-        if (res.status !== "ok") {
-          return;
-        }
-
+        if (res.status !== "ok") return;
         window.location.reload();
       });
     }
 
+    // 3. PASSWORD SECTION FUNCTIONS
     function setupPasswordForm() {
       const form = document.getElementById("passwordForm");
       form.addEventListener("submit", (e) => {
@@ -287,7 +259,6 @@ window.views.perfil = {
         const pass3 = document.getElementById("confirm-new-password").value;
 
         const res = safeCall(() => window.actualizar_password(pass1, pass2, pass3));
-
         console.log(res.message);
       });
     }
@@ -303,57 +274,7 @@ window.views.perfil = {
       });
     }
 
-    async function setupLogout() {
-      document
-        .getElementById("logoutBtn")
-        .addEventListener("click", async () => {
-          try {
-            const res = await window.cerrar_sesion();
-            if (res.status === "ok") {
-              location.replace("pages/login.html");
-            }
-          } catch (err) {
-            console.error("Error al cerrar sesión:", err);
-          }
-        });
-    }
-
-    function setSubscriptionInfo(user) {
-      const info = document.getElementById("subscriptionInfo");
-      const isPremium = ["premium", "annual"].includes(user.subscription.type);
-      const plan = user.subscription.type;
-      const planInfo =
-        subscriptionPlans.find((p) => p.id === plan) || subscriptionPlans[0];
-
-      let renewal = "";
-      if (isPremium) {
-        renewal = user.subscription.autoRenewal
-          ? '<i class="fas fa-sync-alt"></i> Renovación automática'
-          : "";
-      }
-
-      info.innerHTML = `
-    <div class="subscription-status ${plan}">
-      <i class="fas ${isPremium ? "fa-crown" : "fa-music"}"></i>
-      <span>Plan ${planInfo.name}</span>
-    </div>
-    <div class="expiration-date">${renewal}</div>
-    <div class="subscription-features">
-      <h4>${isPremium ? "Beneficios:" : "Actualiza para obtener:"}</h4>
-      <ul>
-        ${planInfo.features
-          .map((f) => `<li><i class="fas fa-check"></i> ${f}</li>`)
-          .join("")}
-      </ul>
-    </div>
-  `;
-
-      const upgradeBtn = document.getElementById("upgradeBtn");
-      upgradeBtn.innerHTML = isPremium
-        ? `<i class="fas fa-sync-alt"></i> Renovar plan`
-        : `<i class="fas fa-arrow-up"></i> Actualizar a Premium`;
-    }
-
+    // 4. SUBSCRIPTION SECTION FUNCTIONS
     const subscriptionPlans = [
       {
         id: "free",
@@ -378,6 +299,39 @@ window.views.perfil = {
       },
     ];
 
+    function setSubscriptionInfo(user) {
+      const info = document.getElementById("subscriptionInfo");
+      const isPremium = ["premium", "annual"].includes(user.subscription.type);
+      const plan = user.subscription.type;
+      const planInfo = subscriptionPlans.find((p) => p.id === plan) || subscriptionPlans[0];
+
+      let renewal = "";
+      if (isPremium) {
+        renewal = user.subscription.autoRenewal
+          ? '<i class="fas fa-sync-alt"></i> Renovación automática'
+          : "";
+      }
+
+      info.innerHTML = `
+        <div class="subscription-status ${plan}">
+          <i class="fas ${isPremium ? "fa-crown" : "fa-music"}"></i>
+          <span>Plan ${planInfo.name}</span>
+        </div>
+        <div class="expiration-date">${renewal}</div>
+        <div class="subscription-features">
+          <h4>${isPremium ? "Beneficios:" : "Actualiza para obtener:"}</h4>
+          <ul>
+            ${planInfo.features.map((f) => `<li><i class="fas fa-check"></i> ${f}</li>`).join("")}
+          </ul>
+        </div>
+      `;
+
+      const upgradeBtn = document.getElementById("upgradeBtn");
+      upgradeBtn.innerHTML = isPremium
+        ? `<i class="fas fa-sync-alt"></i> Renovar plan`
+        : `<i class="fas fa-arrow-up"></i> Actualizar a Premium`;
+    }
+
     function loadPlans(userData) {
       const container = document.getElementById("plansContainer");
       container.innerHTML = "";
@@ -390,23 +344,19 @@ window.views.perfil = {
         const card = document.createElement("div");
         card.className = `plan-card ${plan.id}`;
         card.innerHTML = `
-      <h3 class="plan-name">${plan.name}</h3>
-      <div class="plan-price">$${plan.price.toFixed(2)}</div>
-      <div class="plan-period">${plan.period}</div>
-      <ul class="plan-features">
-        ${plan.features
-            .map((f) => `<li><i class="fas fa-check"></i> ${f}</li>`)
-            .join("")}
-      </ul>
-      <button class="select-plan-btn ${disabled}" data-plan="${plan.id
-          }">${btnText}</button>
-    `;
+          <h3 class="plan-name">${plan.name}</h3>
+          <div class="plan-price">$${plan.price.toFixed(2)}</div>
+          <div class="plan-period">${plan.period}</div>
+          <ul class="plan-features">
+            ${plan.features.map((f) => `<li><i class="fas fa-check"></i> ${f}</li>`).join("")}
+          </ul>
+          <button class="select-plan-btn ${disabled}" data-plan="${plan.id}">${btnText}</button>
+        `;
         container.appendChild(card);
       });
 
       container.addEventListener("click", (e) => {
-        if (!e.target.classList.contains("select-plan-btn")) return;
-        if (e.target.classList.contains("current")) return;
+        if (!e.target.classList.contains("select-plan-btn") || e.target.classList.contains("current")) return;
 
         const selected = e.target.getAttribute("data-plan");
         if (confirm(`¿Cambiar al plan ${selected}?`)) {
@@ -416,9 +366,7 @@ window.views.perfil = {
           selected === "annual"
             ? expiration.setFullYear(expiration.getFullYear() + 1)
             : expiration.setMonth(expiration.getMonth() + 1);
-          userData.subscription.expiration = expiration
-            .toISOString()
-            .split("T")[0];
+          userData.subscription.expiration = expiration.toISOString().split("T")[0];
 
           setSubscriptionInfo(userData);
           document.getElementById("plansModal").classList.add("hidden");
@@ -427,13 +375,26 @@ window.views.perfil = {
       });
     }
 
+    // 5. ARTIST SECTION FUNCTIONS
+    let currentAlbumId = null;
+    let currentAlbumName = null;
+
+    async function loadArtistData(userData) {
+      try {
+        const res = await window.obtener_info_artista();
+        if (res.status === "ok" && res.type === "json") {
+          userData.albums = res.data.albums || [];
+          setupArtistView(userData);
+        }
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+
     function setupArtistView(user) {
       const section = document.getElementById("artistSection");
       section.classList.remove("hidden");
-
-      let artistAlbums = user.albums || [];
-
-      renderAlbums(artistAlbums);
+      renderAlbums(user.albums || []);
       setupAlbumEvents();
     }
 
@@ -454,13 +415,11 @@ window.views.perfil = {
           </div>
         `;
 
-        el.querySelector(".album-options").addEventListener("click", async (e) => {
+        el.querySelector(".album-options").addEventListener("click", (e) => {
           e.stopPropagation();
           currentAlbumId = album.id;
           currentAlbumName = album.name;
-          const nameElement = document.getElementById("edit-album-name");
-          nameElement.value = album.name;
-
+          document.getElementById("edit-album-name").value = album.name;
           document.getElementById("editAlbumModal").classList.remove("hidden");
         });
 
@@ -485,14 +444,13 @@ window.views.perfil = {
         const el = document.createElement("div");
         el.className = "song-item";
         el.innerHTML = `
-      <div class="song-info"><strong>${song.title}</strong><p>${song.artist}</p></div>
-      <div class="song-actions">
-        <span>${formatTime(song.duration)}</span>
-        <i class="fas fa-play play-btn" title="Reproducir"></i>
-        <i class="fas fa-plus"></i>
-        <i class="fas fa-plus-circle add-to-playlist" title="Añadir a playlist"></i>
-      </div>
-    `;
+          <div class="song-info"><strong>${song.title}</strong><p>${song.artist}</p></div>
+          <div class="song-actions">
+            <span>${formatTime(song.duration)}</span>
+            <i class="fas fa-play play-btn" title="Reproducir"></i>
+            <i class="fas fa-plus"></i>
+          </div>
+        `;
         albumSongsContainer.appendChild(el);
       });
 
@@ -501,86 +459,127 @@ window.views.perfil = {
     }
 
     function setupAlbumEvents() {
-      const backToAlbums = document.getElementById("backToAlbums");
-      const createAlbumBtn = document.getElementById("createAlbumBtn");
-      const saveAlbumBtn = document.getElementById("saveAlbumBtn");
-      const deleteAlbumBtn = document.getElementById("deleteAlbumBtn");
-      const addAlbumToQueueBtn = document.getElementById("addAlbumToQueueBtn");
-
-      backToAlbums?.addEventListener("click", () => {
+      // Back to albums
+      document.getElementById("backToAlbums").addEventListener("click", () => {
         document.getElementById("albumSongsSection").classList.add("hidden");
         document.getElementById("artistSection").classList.remove("hidden");
       });
 
-      createAlbumBtn?.addEventListener("click", async () => {
-        const name = document.getElementById("album-name").value.trim();
+      // New album
+      document.getElementById("newAlbumBtn").addEventListener("click", () => {
+        document.getElementById("newAlbumModal").classList.remove("hidden");
+      });
 
+      // Create album
+      document.getElementById("createAlbumBtn").addEventListener("click", async () => {
+        const name = document.getElementById("album-name").value.trim();
         if (!name) {
           alert("Completa todos los campos");
           return;
         }
 
         try {
-          const res = await window.crear_album(currentAlbumName, name);
-
-          if (res.status !== "ok") {
+          const res = await window.crear_album(name);
+          if (res.status !== "ok")
             throw new Error(res.message);
-          }
 
           alert(res.message);
-
-          loadArtistData();
-
+          document.getElementById("newAlbumModal").classList.add("hidden");
+          window.location.reload();
         } catch (error) {
           alert(error.message);
         }
-
-        document.getElementById("newAlbumModal").classList.add("hidden");
-
-        window.location.reload();
       });
 
-      saveAlbumBtn?.addEventListener("click", async () => {
+      // Save album
+      document.getElementById("saveAlbumBtn").addEventListener("click", async () => {
         const name = document.getElementById("edit-album-name").value.trim();
-
         if (!name) {
           alert("Completa todos los campos");
           return;
         }
 
-        document.getElementById("editAlbumModal").classList.add("hidden");
-
         try {
           const res = await window.actualizar_album(currentAlbumName, name);
-
-          if (res.status !== "ok") {
+          if (res.status !== "ok")
             throw new Error(res.message);
-          }
 
           alert(res.message);
-
           document.getElementById("editAlbumModal").classList.add("hidden");
-
           window.location.reload();
         } catch (error) {
           console.warn(error.message);
         }
       });
 
-      deleteAlbumBtn?.addEventListener("click", () => {
+      // Delete album
+      document.getElementById("deleteAlbumBtn").addEventListener("click", async () => {
         if (confirm("¿Eliminar este álbum?")) {
-          // Aquí deberías llamar a una función del backend para eliminar el álbum
-          alert("Funcionalidad de eliminación de álbum no implementada aún");
-          document.getElementById("editAlbumModal").classList.add("hidden");
+          try {
+            const res = await window.eliminar_album(currentAlbumName);
+
+            if (res.status !== "ok") {
+              throw new Error(res.message);
+            }
+
+            alert(res.message);
+
+            window.location.reload();
+          } catch (error) {
+            alert(error.message);
+          } finally {
+            document.getElementById("editAlbumModal").classList.add("hidden");
+          }
         }
       });
 
-      addAlbumToQueueBtn?.addEventListener("click", () => {
-        // Aquí deberías implementar la lógica para añadir el álbum a la cola de reproducción
-        alert("Funcionalidad de añadir álbum a cola no implementada aún");
+      // NEW SONG MODAL HANDLING (added as requested)
+      document.getElementById("newSongForm")?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const songData = {
+          title: document.getElementById("song-name").value.trim(),
+          genre: document.getElementById("song-genre").value.trim(),
+          duration: parseInt(document.getElementById("song-duration").value),
+          url: document.getElementById("song-url").value.trim(),
+          albumId: currentAlbumId
+        };
+
+        try {
+          const res = await window.agregar_cancion(songData);
+          if (res.status !== "ok") throw new Error(res.message || "Error al agregar canción");
+
+          alert("Canción agregada exitosamente");
+          document.getElementById("newSongModal").classList.add("hidden");
+          const albumRes = await window.obtener_album(currentAlbumId);
+          if (albumRes.status === "ok") {
+            showAlbumSongs(currentAlbumId, albumRes.data.name, albumRes.data.songs);
+          }
+        } catch (error) {
+          console.error("Error al agregar canción:", error);
+          alert(error.message);
+        }
+      });
+
+      // Close modals
+      document.querySelectorAll(".close-modal").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          ["plansModal", "newAlbumModal", "editAlbumModal", "newSongModal"].forEach((id) => {
+            document.getElementById(id).classList.add("hidden");
+          });
+        });
+      });
+
+      ["plansModal", "newAlbumModal", "editAlbumModal", "newSongModal"].forEach((id) => {
+        document.getElementById(id).addEventListener("click", (e) => {
+          if (e.target.id === id) {
+            e.target.classList.add("hidden");
+          }
+        });
       });
     }
 
+    // MAIN INITIALIZATION
     return function () {
       window.obtener_info_usuario()
         .then((res) => {
@@ -590,10 +589,26 @@ window.views.perfil = {
 
           const userData = res.data;
 
-          // Inicializa la vista base del perfil
-          initializeProfile(userData);
+          // 1. Header section
+          setProfileFields(userData);
+          setupBecomeArtistButton(userData);
+          setupLogout();
 
-          // Si el usuario es artista, cargar datos de álbumes
+          // 2. Profile info section
+          setupProfileForm(userData);
+
+          // 3. Password section
+          setupPasswordForm();
+          setupPasswordToggle();
+
+          // 4. Subscription section
+          setSubscriptionInfo(userData);
+          document.getElementById("upgradeBtn").addEventListener("click", () => {
+            loadPlans(userData);
+            document.getElementById("plansModal").classList.remove("hidden");
+          });
+
+          // 5. Artist section (if applicable)
           if (userData.isArtist) {
             loadArtistData(userData);
           }

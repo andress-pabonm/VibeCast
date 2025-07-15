@@ -297,13 +297,20 @@ static new_cmpfn(cmpAlbumConNombre)
 
 message_handler(eliminar_album)
 {
+    init_data_json();
+
+    const char *nombreAlbum = get_string(get_array_idx(data, 0));
+    int argc = 1;
+    const char *argv[] = {nombreAlbum};
     char **msg = arg;
 
-    bool success = VibeCast_EliminarAlbum(NULL, 0, NULL, msg);
+    bool success = VibeCast_EliminarAlbum(NULL, argc, argv, msg);
     VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
 
     freem(*msg);
     *msg = NULL;
+
+    end_data_json();
 }
 
 static interfaz(EliminarAlbum)
@@ -313,32 +320,31 @@ static interfaz(EliminarAlbum)
     // Validar que el artista exista
     if (!usuario->artista)
     {
-        send_message("Error: El usuario no es un artista\n");
+        send_message("El usuario no es un artista\n");
         return false;
     }
 
     Lista albumes = usuario->artista->albumes;
-    Album *album = searchValueInLista(albumes, nombreAlbum, cmpAlbumConNombre);
+    Album *album = deleteValueInLista(albumes, nombreAlbum, cmpAlbumConNombre);
 
     // Validar que exista el álbum
     if (!album)
     {
-        send_message("Error: El álbum '%s' no existe\n", nombreAlbum);
+        send_message("El álbum '%s' no existe\n", nombreAlbum);
         return false;
     }
 
     if (getListaLength(album->canciones) > 0)
     {
+        insertValueInLista(albumes, album);
         send_message("No es posible eliminar el álbum porque contiene canciones populares.");
         return false;
     }
 
-    // Eliminar el álbum de la lista
-    deleteValueInLista(albumes, album, cmpAlbumConNombre);
-
     destroyAlbum(album);
 
-    send_message("Álbum eliminado.");
+    send_message("Álbum eliminado");
+
     return true;
 }
 
