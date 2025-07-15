@@ -96,6 +96,7 @@ struct Playlist
 
 struct Anuncio
 {
+	int id;					   // Identificador único de anuncio
 	const Usuario *anunciante; // Usuario que publica el anuncio
 	char *url;				   // URL del anuncio
 };

@@ -254,8 +254,9 @@ static select_handler(cargarReproduccionesPorHistorial)
     return 0;
 }
 
-#define ANUNCIO_ANUNCIANTE 0
-#define ANUNCIO_URL 1
+#define ANUNCIO_ID 0
+#define ANUNCIO_ANUNCIANTE 1
+#define ANUNCIO_URL 2
 
 static select_handler(cargarAnuncios)
 {
@@ -263,6 +264,7 @@ static select_handler(cargarAnuncios)
     if (!anuncio)
         return 1;
 
+    sscanf(argv[ANUNCIO_ID], "%d", &anuncio->id);
     anuncio->url = asprintf(argv[ANUNCIO_URL]);
     anuncio->anunciante = searchValueInABB(usuarios, argv[ANUNCIO_ANUNCIANTE], cmpUsuarioConUsername);
 
@@ -360,7 +362,7 @@ bool VibeCast_LoadData(char **errmsg)
     if (!obtener_registros("Usuarios", "id, username", NULL, cargarOtrosDatosPorUsuario, NULL, errmsg))
         return false;
 
-    if (!obtener_registros("Anuncios JOIN Usuarios ON Usuarios.id = Anuncios.id_usuario", "Usuarios.username, Anuncios.url", NULL, cargarAnuncios, NULL, errmsg))
+    if (!obtener_registros("Anuncios JOIN Usuarios ON Usuarios.id = Anuncios.id_usuario", "Anuncios.id, Usuarios.username, Anuncios.url", NULL, cargarAnuncios, NULL, errmsg))
         return false;
 
     return true;
