@@ -131,10 +131,6 @@ window.views.perfil = {
                     <label for="edit-album-name">Nombre del álbum</label>
                     <input type="text" id="edit-album-name" placeholder="Nombre del álbum" required />
                 </div>
-                <div class="form-group">
-                    <label for="edit-album-year">Año de lanzamiento</label>
-                    <input type="text" id="edit-album-year" placeholder="Año" required />
-                </div>
                 <div class="modal-buttons">
                     <button id="saveAlbumBtn">Guardar cambios</button>
                     <button id="deleteAlbumBtn">Eliminar álbum</button>
@@ -162,10 +158,6 @@ window.views.perfil = {
             <div class="form-group">
                 <label for="album-name">Nombre del disco</label>
                 <input type="text" id="album-name" placeholder="Nombre del disco" required />
-            </div>
-            <div class="form-group">
-                <label for="album-year">Año de lanzamiento</label>
-                <input type="text" id="album-year" placeholder="Año" required />
             </div>
             <button id="createAlbumBtn">Crear disco</button>
         </div>
@@ -229,7 +221,10 @@ window.views.perfil = {
       } else {
         becomeArtistBtn.addEventListener("click", async () => {
           try {
-            const res = await window.crear_artista();
+            const name = prompt("Pon tu nombre de artista: ").trim();
+            if (!name) return;
+
+            const res = await window.crear_artista(name);
             if (res.status === "ok") {
               alert("¡Ahora eres un artista! Se ha creado tu primer álbum y canción.");
               location.reload();
@@ -450,23 +445,22 @@ window.views.perfil = {
         const el = document.createElement("div");
         el.className = "album-card";
         el.innerHTML = `
-      <div class="album-options" data-id="${album.id
-          }"><i class="fas fa-ellipsis-h"></i></div>
-      <div class="album-image"><i class="fas fa-compact-disc"></i></div>
-      <div class="album-info">
-        <h3 class="album-name">${album.name}</h3>
-        <div class="album-details"><span>${album.year}</span><span>${album.genre
-          }</span></div>
-        <div class="album-details"><span>${album.songs.length} canción${album.songs.length !== 1 ? "es" : ""
-          }</span></div>
-      </div>
-    `;
+          <div class="album-options" data-id="${album.id}"><i class="fas fa-ellipsis-h"></i></div>
+          <div class="album-image"><i class="fas fa-compact-disc"></i></div>
+          <div class="album-info">
+            <h3 class="album-name">${album.name}</h3>
+            <div class="album-details"><span>${album.year}</span></div>
+            <div class="album-details"><span>${album.songs.length} canción${album.songs.length !== 1 ? "es" : ""}</span></div>
+          </div>
+        `;
 
-        el.querySelector(".album-options").addEventListener("click", (e) => {
+        el.querySelector(".album-options").addEventListener("click", async (e) => {
           e.stopPropagation();
           currentAlbumId = album.id;
-          document.getElementById("edit-album-name").value = album.name;
-          document.getElementById("edit-album-year").value = album.year;
+          currentAlbumName = album.name;
+          const nameElement = document.getElementById("edit-album-name");
+          nameElement.value = album.name;
+
           document.getElementById("editAlbumModal").classList.remove("hidden");
         });
 
@@ -480,9 +474,7 @@ window.views.perfil = {
 
     function showAlbumSongs(id, name, songs) {
       const albumSongsSection = document.getElementById("albumSongsSection");
-      const albumSongsContainer = document.getElementById(
-        "albumSongsContainer"
-      );
+      const albumSongsContainer = document.getElementById("albumSongsContainer");
       const currentAlbumTitle = document.getElementById("currentAlbumTitle");
 
       currentAlbumId = id;
@@ -520,40 +512,59 @@ window.views.perfil = {
         document.getElementById("artistSection").classList.remove("hidden");
       });
 
-      createAlbumBtn?.addEventListener("click", () => {
+      createAlbumBtn?.addEventListener("click", async () => {
         const name = document.getElementById("album-name").value.trim();
-        const year = document.getElementById("album-year").value.trim();
 
-        if (!name || !year) {
+        if (!name) {
           alert("Completa todos los campos");
           return;
         }
 
-        const newAlbum = {
-          id: Date.now(),
-          name,
-          year,
-          genre: "General",
-          songs: [],
-        };
+        try {
+          const res = await window.crear_album(currentAlbumName, name);
 
-        // Aquí deberías llamar a una función del backend para crear el álbum
-        alert("Funcionalidad de creación de álbum no implementada aún");
+          if (res.status !== "ok") {
+            throw new Error(res.message);
+          }
+
+          alert(res.message);
+
+          loadArtistData();
+
+        } catch (error) {
+          alert(error.message);
+        }
+
         document.getElementById("newAlbumModal").classList.add("hidden");
+
+        window.location.reload();
       });
 
-      saveAlbumBtn?.addEventListener("click", () => {
+      saveAlbumBtn?.addEventListener("click", async () => {
         const name = document.getElementById("edit-album-name").value.trim();
-        const year = document.getElementById("edit-album-year").value.trim();
 
-        if (!name || !year) {
+        if (!name) {
           alert("Completa todos los campos");
           return;
         }
 
-        // Aquí deberías llamar a una función del backend para actualizar el álbum
-        alert("Funcionalidad de edición de álbum no implementada aún");
         document.getElementById("editAlbumModal").classList.add("hidden");
+
+        try {
+          const res = await window.actualizar_album(currentAlbumName, name);
+
+          if (res.status !== "ok") {
+            throw new Error(res.message);
+          }
+
+          alert(res.message);
+
+          document.getElementById("editAlbumModal").classList.add("hidden");
+
+          window.location.reload();
+        } catch (error) {
+          console.warn(error.message);
+        }
       });
 
       deleteAlbumBtn?.addEventListener("click", () => {
@@ -573,7 +584,7 @@ window.views.perfil = {
     return function () {
       window.obtener_info_usuario()
         .then((res) => {
-          if (!res || res.status !== "ok" || res.type !== "json" || !res.data) {
+          if (res.status !== "ok") {
             throw new Error(res?.message || "No se pudo cargar el perfil");
           }
 
