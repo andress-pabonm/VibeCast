@@ -176,57 +176,19 @@ message_handler(eliminar_artista)
 
 static interfaz(EliminarArtista)
 {
-    bool deleteable = true;
-    forEachInLista(usuario->artista->albumes, checkAlbums, &deleteable);
-
-    if (!deleteable)
+    if (getListaLength(usuario->artista->albumes))
     {
-        send_message("No es posible eliminar el perfil de artista porque alguna canción está añadida a alguna playlist.");
+        send_message("Primero elimina todos tus álbumes.");
         return false;
     }
 
-    destroyLista(usuario->artista->albumes, deleteAlbum, NULL);
+    char *condition = asprintf("id_usuario = %d", usuario->id);
+    eliminar_registros("Artistas", condition, NULL);
+    destroyArtista(usuario->artista);
+    usuario->artista = NULL;
 
+    send_message("Artista eliminado.");
     return true;
-}
-
-static new_operfn(checkAlbums)
-{
-    bool *deleteable = arg;
-    Album *album = val;
-    forEachInLista(album->canciones, checkSongs, deleteable);
-
-    return *deleteable ? FOREACH_CONTINUE : FOREACH_BREAK;
-}
-
-static new_operfn(checkSongs)
-{
-    bool *deleteable = arg;
-    Cancion *cancion = val;
-    *deleteable = (!cancion->popularidad);
-
-    return *deleteable ? FOREACH_CONTINUE : FOREACH_BREAK;
-}
-
-static new_operfn(deleteAlbum)
-{
-    Album *album = val;
-    destroyLista(album->canciones, deleteSong, NULL);
-
-    return FOREACH_CONTINUE;
-}
-
-static new_operfn(deleteSong)
-{
-    Cancion *cancion = val;
-
-    char *condition = asprintf("id = %d", cancion->id);
-    bool ok = eliminar_registros("Canciones", condition, NULL);
-    freem(condition);
-
-    destroyCancion(cancion);
-
-    return FOREACH_CONTINUE;
 }
 
 /* ============================================ */
