@@ -52,7 +52,7 @@ message_handler(crear_cuenta)
     const char *pais = get_string(get_array_idx(data, 5));
 
     int argc = 6;
-    const char *argv[] = {nickname, pais, username, email, password, confirmPassowrd};
+    const char *argv[] = {email, username, password, confirmPassowrd, nickname, pais};
     char **msg = arg;
 
     bool success = VibeCast_CrearCuenta(NULL, argc, argv, msg);

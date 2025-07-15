@@ -162,11 +162,11 @@ window.views.perfil = {
           </div>
           <div class="form-group">
             <label for="song-duration">Duración (segundos)</label>
-            <input type="number" id="song-duration" placeholder="Duración en segundos" required min="1" />
+            <input type="text" id="song-duration" placeholder="Duración en segundos" required min="1" />
           </div>
           <div class="form-group">
             <label for="song-url">URL de la canción</label>
-            <input type="url" id="song-url" placeholder="url de youtube" required />
+            <input type="text" id="song-url" placeholder="url de youtube" required />
           </div>
           <button type="submit" class="save-btn">
             <i class="fas fa-save"></i> Guardar canción
@@ -437,6 +437,7 @@ window.views.perfil = {
       const currentAlbumTitle = document.getElementById("currentAlbumTitle");
 
       currentAlbumId = id;
+      currentAlbumName = name;
       currentAlbumTitle.textContent = name;
       albumSongsContainer.innerHTML = "";
 
@@ -533,30 +534,26 @@ window.views.perfil = {
         }
       });
 
+      document.getElementById("addCancion").addEventListener("click", () => {
+        document.getElementById("newSongModal").classList.remove("hidden");
+      });
+
       // NEW SONG MODAL HANDLING (added as requested)
       document.getElementById("newSongForm")?.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const songData = {
-          title: document.getElementById("song-name").value.trim(),
-          genre: document.getElementById("song-genre").value.trim(),
-          duration: parseInt(document.getElementById("song-duration").value),
-          url: document.getElementById("song-url").value.trim(),
-          albumId: currentAlbumId
-        };
+        const title = document.getElementById("song-name").value.trim();
+        const genre = document.getElementById("song-genre").value.trim();
+        const duration = parseInt(document.getElementById("song-duration").value);
+        const url = document.getElementById("song-url").value.trim();
 
         try {
-          const res = await window.agregar_cancion(songData);
-          if (res.status !== "ok") throw new Error(res.message || "Error al agregar canción");
+          const res = await window.crear_cancion(currentAlbumName, title, genre, duration, url);
+          if (res.status !== "ok") throw new Error(res.message);
 
-          alert("Canción agregada exitosamente");
+          alert(res.message);
           document.getElementById("newSongModal").classList.add("hidden");
-          const albumRes = await window.obtener_album(currentAlbumId);
-          if (albumRes.status === "ok") {
-            showAlbumSongs(currentAlbumId, albumRes.data.name, albumRes.data.songs);
-          }
         } catch (error) {
-          console.error("Error al agregar canción:", error);
           alert(error.message);
         }
       });

@@ -26,6 +26,7 @@ static interfaz(ActualizarAlbum);
 static interfaz(CrearCancion);
 static new_cmpfn(cmpCancionConNombre);
 static select_handler(obteneridCancion);
+static select_handler(obtenerAlbumId);
 
 static interfaz(EliminarCancion);
 
@@ -503,6 +504,12 @@ static interfaz(CrearCancion)
             send_message("No fue posible guardar la información del álbum en la base de datos.");
             return false;
         }
+
+        char *condition = asprintf(stringify(id_artista = "%s" AND nombre = "%s"), usuario->id, album->nombre);
+
+        obtener_registros("Albumes", "id", condition, obtenerAlbumId, &album->id, NULL);
+
+        freem(condition);
     }
 
     char *values = asprintf(
@@ -525,6 +532,13 @@ static interfaz(CrearCancion)
     obtener_registros("Canciones ORDER BY id DESC LIMIT 1", "*", NULL, cargarCancionesPorAlbum, album, NULL);
 
     return true;
+}
+
+static select_handler(obtenerAlbumId)
+{
+    sscanf(argv[0], "%d", cast(int *, arg));
+
+    return 0;
 }
 
 static new_cmpfn(cmpCancionConNombre)

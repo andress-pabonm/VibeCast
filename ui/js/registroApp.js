@@ -48,12 +48,8 @@ async function handleRegister(nickname, pais, username, email, password, confirm
 
   try {
     const res = await window.crear_cuenta(email, username, password, confirmPassword, nickname, pais);
-    console.log("crear_cuenta():", res);
 
-    const success =
-      res.status === "ok" && res.type === "boolean" && res.data === true;
-
-    if (success) {
+    if (res.status === "ok") {
       showSuccess(res.message || "¡Cuenta creada exitosamente!");
       setTimeout(() => {
         window.location.replace("../pages/login.html");
