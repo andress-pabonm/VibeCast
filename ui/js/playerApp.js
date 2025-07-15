@@ -16,10 +16,10 @@ const MusicPlayer = (function () {
   let updateInterval;
 
   function init() {
-    togglePlayerVisibility(false);
+    //togglePlayerVisibility(false);
 
     player = new YT.Player("player", {
-      // videoId: "",
+      videoId: "qQMOtxZ6k7c",
       playerVars: { controls: 0, fs: 0 },
       events: {
         onReady: onPlayerReady,
@@ -37,10 +37,11 @@ const MusicPlayer = (function () {
     setupPlayerControls();
     event.target.setVolume(100);
     updateVolumeDisplay(100);
-    playSong();
+    //playSong();
   }
 
   function onPlayerStateChange(event) {
+    return;
     const playBtn = $$("playPauseBtn");
 
     switch (event.data) {

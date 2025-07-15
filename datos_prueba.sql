@@ -9,7 +9,13 @@ INSERT INTO Usuarios (username, email, password, nickname, pais, plan, tiempo_es
 ("yuki_san", "alexM@mail.com", "pass8", "Yuki", "Japón", 0, 550, 4),
 ("sneax777", "ronnyp@mail.com", "pass9", "Sneax", "Estados Unidos", 1, 3000, 1),
 ("jimbo10k", "jimbogod@mail.com", "pass10", "Jimbo", "Canadá", 0, 200, 2),
-("yol", "paulq@mail.com", "pass11", "PolElPulpo", "España", 1, 4000, 3);
+("yol", "paulq@mail.com", "pass11", "PolElPulpo", "España", 1, 4000, 3),
+("arigameplays", "arigame@mail.com", "pass12", "Ari", "Mexico", 1, 800,0),
+("alexp", "alexponce@mail.com", "pass13", "Alex Ponce", "Ecuador", 1, 1400, 0),
+("jpablo", "juan123@mail.com", "pass14", "JPablo01", "El Salvador", 0, 2600, 8),
+("reik","reik25@mail.com", "pass15", "Reik", "Mexico", 1, 3000, 0),
+("chachin29","elbrocoli@mail.com","pass16", "Brocoli123", "Paraguay", 0,3400,10);
+
 
 INSERT INTO Amigos (id_usuario_1, id_usuario_2) VALUES
 (1, 2),
@@ -29,7 +35,23 @@ INSERT INTO Amigos (id_usuario_1, id_usuario_2) VALUES
 (9, 1),
 (10, 2),
 (10, 4),
-(11, 3);
+(11, 3),
+(11,6),
+(11,10),
+(12,1),
+(12,7),
+(12,6),
+(12,9),
+(12,11),
+(13,3),
+(14,5),
+(14,9),
+(14,13),
+(15,6),
+(15,10),
+(16, 1),
+(16, 9),
+(16, 13);
 
 INSERT INTO Artistas (id_usuario, nombre) VALUES
 (2, "Bob Oficial"),
@@ -38,29 +60,34 @@ INSERT INTO Artistas (id_usuario, nombre) VALUES
 (6, "Chayanne"),
 (7, "PaCondoo"),
 (8, "SneaxMusic"),
-(10, "JJimbo");
+(10, "JJimbo"),
+(12, "Ari Bela"),
+(13, "Alex Ponce"),
+(15, "Reik");
 
 INSERT INTO Albumes (id_artista, nombre, fecha_creacion) VALUES
-(2, "Primera Ola", "2013-10-23"), /* 2 canciones */
+(2, "Primera Ola", "2013-10-23"), /* 3 canciones */
 (3, "Sueños", "2009-11-14"), /* 3 canciones */
-(4, "Idol", "2016-09-29"), /* 3 canciones */
-(4, "Alter Ego", "2019-03-21"), /* 4 canciones */
+(4, "Idol", "2016-09-29"), /* 4 canciones */
+(4, "Alter Ego", "2016-12-15"), /* 5 canciones */
 (6, "Alegria", "2009-10-02"), /* 2 canciones */
 (7, "Vibras", "2015-10-15"), /* 4 canciones */
-(7, "Abismo", "2022-02-14"), /* 2 canciones */
+(7, "Abismo", "2021-09-16"), /* 3 canciones */
 (7, "Guias al sol", "2014-03-16"), /* 2 canciones */
 (8, "Eclipse", "2013-03-01"), /* 2 canciones */
 (8, "Primavera", "2015-10-23"), /* 3 canciones */
-(8, "Conexión", "2019-04-03"), /* 2 canciones */
-(10, "Latinaje", "2011-09-16"), /* 3 canciones */
-(10, "Eterna", "2013-07-03"); /* 4 canciones */
-
+(8, "Conexión", "2019-04-03"), /* 3 canciones */
+(10, "Latinaje", "2011-09-16"), /* 4 canciones */
+(10, "Eterna", "2013-07-03"), /* 4 canciones */
+(12, "Ariatopía", "2025-04-22"), /*3 canciones */
+(13, "Ser Humano", "2022-02-14"), /*3 canciones */
+(15, "Secuencia", "2015-08-11"); /*3 canciones */
 
 INSERT INTO Canciones (id_album, nombre, genero, fecha_publicacion, duracion, url, popularidad, reproducciones) VALUES
 (3, "Idol", "Pop", "2023-04-12", 225, "PgBvV9ofjmA", 1564, 2000),
 (13, "Temperatura", "Reggaeton", "2013-07-03", 237, "J7nc5xQCWUc", 234, 1056),
 (13, "Caviar", "Reggaeton", "2017-03-11", 289, "tvj5Fpok9bY", 764, 652),
-(7, "Viernes 13", "Balada", "2022-02-14", 214, "Cwevy_TS8xM", 432, 800),
+(15, "Viernes 13", "Balada", "2022-02-14", 214, "Cwevy_TS8xM", 432, 800),
 (4, "On My Way", "Electronica", "2019-03-21", 216, "dhYOPzcsbGM", 697, 1097),
 (6, "Los Malaventurados No Lloran", "Rock", "2020-11-16", 216, "wvR7EtLuJfg", 542, 711),
 (12, "Me Va a Costar", "Pop", "2023-12-06", 228, "myAQeeM12Dg", 831, 792),
@@ -90,9 +117,24 @@ INSERT INTO Canciones (id_album, nombre, genero, fecha_publicacion, duracion, ur
 (6, "Ella Baila Sola", "Corrido", "2023-04-26", 165, "jr6VS-KqaP0", 720, 925),
 (13, "Sonríele", "Regaeton", "2025-07-09", 190, "XtBXxnmPYwU", 180, 209),
 (6, "Bugambilia", "Rock", "2023-10-15", 189, "a1ozTSkE27U", 678, 901),
-(11, "Mucho Para Mí", "Hip-Hop", "2021-12-23", 310, "ymJ1svwvpLQ", 680, 910),
+(11, "Mucho Para Mí", "Hip Hop", "2021-12-23", 310, "ymJ1svwvpLQ", 680, 910),
 (5, "Humanos a Marte", "Pop", "2014-06-23", 220, "zpWVMosq1oM", 391, 430),
-(5, "Dejaría Todo", "Pop", "2009-10-02", 286, "A98ASkT5EXY", 325, 456);
+(5, "Dejaría Todo", "Pop", "2009-10-02", 286, "A98ASkT5EXY", 325, 456),
+(15, "Fórmula", "Pop", "2023-03-2023", 184, "vYbc8vYR-KU", 139, 253),
+(11, "Champain & Vacay", "Hip Hop", "2025-07.12", 184, "fLLIxc4cyoY", 105,319),
+(14, "Pilates", "Trap", "2025-04-22", 166, "aHYvmY3nV5U", 208, 429),
+(14, "Online", "Corrido", "2025-05-20", 212, "F-S5O7PBVjs", 98,164),
+(4, "By my side", "Electronica", "2018-09-29", 178 ,"7CGbq5Yt71k", 564, 984),
+(15, "Como Ella Ya No Hay", "Pop", "2025-05-22", 220, "MS4u60087cI",198,438),
+(1, "Lobo o Cordero". "Rock", "2017-09-12", 192, "WuuseQIAjPs", 567, 871),
+(12, "Khé?", "Pop", "2024-12-05", 216, "kQgTqxAnpuw", 345, 456),
+(14, "Gameboy", "Pop", "2025-06-09", 144, "VCn8o6m27JQ", 302, 398),
+(3, "King", "Pop", "2020-08-02", 146, "qQMOtxZ6k7c", 345, 879),
+(16, "Ya Me Enteré", "Pop", "2016-04-15", 205, "R_7K9AwpgCU", 657, 875),
+(16, "Sabes", "Pop", "2015-08-11", 221, "tNTbzidfsNQ", 543, 639),
+(16, "Me Duele Amarte", "Pop", "2015-08-12", 193, "N6Ibv_XisqU", 489, 631),
+(7, "A Travez De Las Eras", "Balada", "2021-09-16", 181, "SaxfoYr6PAo", 673, 297),
+(7, "Todo Esta Ciudad", "Pop","2021-10-29", 317, "7E9-c2Z6adU", 276, 389);
 
 INSERT INTO Playlists (id_usuario, nombre) VALUES
 (1, "Favoritas de Alice"),
