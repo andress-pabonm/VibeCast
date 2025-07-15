@@ -12,8 +12,8 @@ typedef struct
 
 typedef struct PopularidadArtista
 {
-    Artista *artista; // Artista
-    int popularidad;  // Cantidad de veces que se ha escuchado al artista
+    const Artista *artista; // Artista
+    int popularidad;        // Cantidad de veces que se ha escuchado al artista
 } PopularidadArtista;
 
 /* ================================================================ */
@@ -171,10 +171,10 @@ static interfaz(GenerarReporte)
     json_object_object_add(arg, "topCanciones", top_songs);
 
     json_object *top_artists = json_object_new_array();
-    VibeCast_GenerarTop5Canciones(top_artists, msg);
+    VibeCast_GenerarTop3Artistas(top_artists, msg);
     json_object_object_add(arg, "topArtistas", top_artists);
 
-    VibeCast_GenerarTiempoTotalReproduccion(NULL, msg);
+    VibeCast_TiempoTotalReproduccion(NULL, msg);
     json_object_object_add(arg, "tiempoEscuchado", json_object_new_int(usuario->historial.tiempoEscuchado));
 
     VibeCast_CantidadAnuncios(NULL, msg);
@@ -201,7 +201,7 @@ static custom_interface(GenerarTop5Canciones)
 
     qsort(reproducciones, longitud, sizeof(Cancion *), cmpRepr); // Buffer, tamaño del buffer, tamaño de cada elemento, funcion de comparacion
 
-    FILE *archivo = newFile("top5_canciones.txt", NULL);
+    FILE *archivo = newFile("Top 5 canciones.txt", NULL);
 
     fprintf(archivo, "Top 5 Canciones más reproducidas:\n\n");
 
@@ -269,7 +269,7 @@ static custom_interface(GenerarTop3Artistas)
 
     qsort(pArtistas, longitud, sizeof(PopularidadArtista *), cmpArtistasPorPopularidad); // Buffer, tamaño del buffer, tamaño de cada elemento, funcion de comparacion
 
-    FILE *archivo = newFile("top3_artistas.txt", NULL);
+    FILE *archivo = newFile("Top 3 artistas.txt", NULL);
 
     fprintf(archivo, "Top 3 artistas mas preferidos:\n");
 
@@ -348,7 +348,7 @@ static new_cmpfn(cmpArtistasPorPopularidad)
 static custom_interface(TiempoTotalReproduccion)
 {
     // Crea un nuevo archivo de salida, si falla se detiene
-    FILE *archivo = newFile("Tiempo_total_reproduccion.txt", NULL);
+    FILE *archivo = newFile("Tiempo total de reproduccion.txt", NULL);
 
     fprintf(archivo, "Tiempo total de reproduccion:\n\n");
 
@@ -359,9 +359,9 @@ static custom_interface(TiempoTotalReproduccion)
     return true;
 }
 
-interfaz(GenerarCantidadAnunciosEscuchados)
+static custom_interface(CantidadAnuncios)
 {
-    FILE *archivo = newFile("Anuncios_escuchados.txt", NULL);
+    FILE *archivo = newFile("Anuncios escuchados.txt", NULL);
 
     fprintf(archivo, "Cantidad de anuncios escuchados solo FREE:\n\n");
 

@@ -146,7 +146,7 @@ static interfaz(CrearArtista)
     return true;
 }
 
-static new_cmpfn(cmpArtistaConNombre)
+new_cmpfn(cmpArtistaConNombre)
 {
     const Artista *a = val_1;
     const char *n = val_2;

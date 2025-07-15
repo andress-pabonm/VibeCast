@@ -283,17 +283,87 @@ window.views.inicio = {
       });
     }
 
+    async function loadStatistics() {
+      const statsContainer = document.getElementById("friends-container"); // Este es el contenedor de estadísticas
+      if (!statsContainer) return;
 
+      // Limpiar el contenedor
+      statsContainer.innerHTML = `
+        <button class="generate-stats-btn">
+          <i class="fas fa-chart-pie"></i> Generar Reporte
+        </button>
+        <div class="stats-results"></div>
+      `;
 
+      // Configurar el evento del botón
+      const generateBtn = statsContainer.querySelector(".generate-stats-btn");
+      generateBtn.addEventListener("click", async () => {
+        try {
+          generateBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Generando...`;
+          generateBtn.disabled = true;
 
+          const res = await window.generar_reporte();
+          console.log("Reporte generado:", res);
 
+          if (res.status === "ok" && res.data) {
+            displayStatistics(res.data, statsContainer);
+          } else {
+            alert("Error al generar el reporte: " + (res.message || "Error desconocido"));
+          }
+        } catch (err) {
+          console.error("Error al generar reporte:", err);
+          alert("Error al generar el reporte");
+        } finally {
+          generateBtn.innerHTML = `<i class="fas fa-chart-pie"></i> Generar Reporte`;
+          generateBtn.disabled = false;
+        }
+      });
+    }
 
+    function displayStatistics(data, container) {
+      const statsResults = container.querySelector(".stats-results");
+      statsResults.innerHTML = `
+        <div class="stats-section">
+          <h3><i class="fas fa-music"></i> Top Canciones</h3>
+          <ul class="stats-list">
+            ${data.topCanciones.map(song => `
+              <li>
+                <span class="stats-name">${song.nombreCancion}</span>
+                <span class="stats-value">${song.reproducciones} reproducciones</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
 
+        <div class="stats-section">
+          <h3><i class="fas fa-user"></i> Top Artistas</h3>
+          <ul class="stats-list">
+            ${data.topArtistas.map(artist => `
+              <li>
+                <span class="stats-name">${artist.nombreArtista}</span>
+                <span class="stats-value">${artist.reproducciones} reproducciones</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+
+        <div class="stats-section">
+          <h3><i class="fas fa-clock"></i> Tiempo Escuchado</h3>
+          <div class="stats-value-large">${formatTime(data.tiempoEscuchado)}</div>
+        </div>
+
+        <div class="stats-section">
+          <h3><i class="fas fa-ad"></i> Anuncios Escuchados</h3>
+          <div class="stats-value-large">${data.cantidadAnuncios}</div>
+        </div>
+      `;
+    }
 
     return function () {
       loadSongs();
       loadRecommendations();
       setupSongClickEvents();
+      loadStatistics();
     };
   })(),
 };
