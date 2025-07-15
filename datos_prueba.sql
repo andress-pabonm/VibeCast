@@ -126,7 +126,7 @@ INSERT INTO Canciones (id_album, nombre, genero, fecha_publicacion, duracion, ur
 (14, "Online", "Corrido", "2025-05-20", 212, "F-S5O7PBVjs", 98,164),
 (4, "By my side", "Electronica", "2018-09-29", 178 ,"7CGbq5Yt71k", 564, 984),
 (15, "Como Ella Ya No Hay", "Pop", "2025-05-22", 220, "MS4u60087cI",198,438),
-(1, "Lobo o Cordero". "Rock", "2017-09-12", 192, "WuuseQIAjPs", 567, 871),
+(1, "Lobo o Cordero", "Rock", "2017-09-12", 192, "WuuseQIAjPs", 567, 871),
 (12, "Khé?", "Pop", "2024-12-05", 216, "kQgTqxAnpuw", 345, 456),
 (14, "Gameboy", "Pop", "2025-06-09", 144, "VCn8o6m27JQ", 302, 398),
 (3, "King", "Pop", "2020-08-02", 146, "qQMOtxZ6k7c", 345, 879),
