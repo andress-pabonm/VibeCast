@@ -227,7 +227,14 @@ static bool agregarAHistorial(void *dato, ElementoColaTipo tipo)
         values = asprintf("reprducciones = %d", cancion->reproducciones);
         char *condition = asprintf("id = %d", cancion->id);
         actualizar_registros("Canciones", values, condition, NULL);
+        freem(values);
+        freem(condition);
 
+        usuario->historial.tiempoEscuchado += cancion->duracion;
+
+        values = asprintf("tiempo_escuchado = %d", usuario->historial.tiempoEscuchado);
+        char *condition = asprintf("id = %d", usuario->id);
+        actualizar_registros("Usuarios", values, condition, NULL);
         freem(values);
         freem(condition);
 
@@ -239,9 +246,14 @@ static bool agregarAHistorial(void *dato, ElementoColaTipo tipo)
         values = asprintf("cantidad_anuncios = %d", usuario->historial.cantidadAnuncios);
         condition = asprintf("id = %d", usuario->id);
         ok = actualizar_registros("Usuarios", values, condition, NULL);
-
         freem(values);
         freem(condition);
+
+        Anuncio *anuncio = dato;
+        condition = asprintf("id = %d", anuncio->id);
+        eliminar_registros("Anuncios", condition, NULL);
+        freem(anuncio);
+        destroyAnuncio(anuncio);
 
         return ok;
 
