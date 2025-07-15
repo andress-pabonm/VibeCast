@@ -485,31 +485,16 @@ static interfaz(CrearCancion)
         if (getListaLength(albumes) == 1)
         {
             char *values = asprintf(stringify("%d", "%s"), usuario->id, usuario->artista->nombre);
-            bool ok = nuevo_registro("Artistas", "id_usuario, nombre", values, NULL);
+            nuevo_registro("Artistas", "id_usuario, nombre", values, NULL);
             freem(values);
-
-            if (!ok)
-            {
-                send_message("No fue posible guardar la información del artista en la base de datos.");
-                return false;
-            }
         }
 
         char *values = asprintf(stringify("%d", "%s", "%s"), usuario->id, album->nombre, album->fechaCreacion);
         bool ok = nuevo_registro("Albumes", "id_artista, nombre, fecha_creacion", values, NULL);
         freem(values);
 
-        if (!ok)
-        {
-            send_message("No fue posible guardar la información del álbum en la base de datos.");
-            return false;
-        }
-
-        char *condition = asprintf(stringify(id_artista = "%s" AND nombre = "%s"), usuario->id, album->nombre);
-
-        obtener_registros("Albumes", "id", condition, obtenerAlbumId, &album->id, NULL);
-
-        freem(condition);
+        if (ok)
+            obtener_registros("Albumes ORDER BY id DESC LIMIT 1", "id", NULL, obtenerAlbumId, &album->id, NULL);
     }
 
     char *values = asprintf(
@@ -520,7 +505,7 @@ static interfaz(CrearCancion)
         fechaActual,
         duracion,
         url);
-    bool ok = nuevo_registro("Canciones", "id_album, nombre, gener, fecha_publicacion, duracion, url", values, NULL);
+    bool ok = nuevo_registro("Canciones", "id_album, nombre, genero, fecha_publicacion, duracion, url", values, NULL);
     freem(values);
 
     if (!ok)
