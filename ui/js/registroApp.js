@@ -32,29 +32,14 @@ function setupRegisterForm() {
     const username = registerForm.querySelector("#username").value.trim();
     const email = registerForm.querySelector("#email").value.trim();
     const password = registerForm.querySelector("#password").value;
-    const confirmPassword =
-      registerForm.querySelector("#confirmPassword").value;
+    const confirmPassword = registerForm.querySelector("#confirmPassword").value;
 
-    await handleRegister(
-      nickname,
-      pais,
-      username,
-      email,
-      password,
-      confirmPassword
-    );
+    await handleRegister(nickname, pais, username, email, password, confirmPassword);
   });
 }
 
 // Maneja el proceso de registro de usuario.
-async function handleRegister(
-  nickname,
-  pais,
-  username,
-  email,
-  password,
-  confirmPassword
-) {
+async function handleRegister(nickname, pais, username, email, password, confirmPassword) {
   const registerBtn = document.querySelector(".register-btn");
   const originalText = registerBtn.innerHTML;
 
@@ -62,14 +47,7 @@ async function handleRegister(
   registerBtn.disabled = true;
 
   try {
-    const res = await window.crear_cuenta(
-      nickname,
-      pais,
-      username,
-      email,
-      password,
-      confirmPassword
-    );
+    const res = await window.crear_cuenta(email, username, password, confirmPassword, nickname, pais);
     console.log("crear_cuenta():", res);
 
     const success =

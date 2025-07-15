@@ -32,9 +32,15 @@ window.views.inicio = {
 
     <!-- Estadisticas del usuario -->
     <section class="card-section friends">
-      <h2 class="section-title">
-        <i class="fas fa-chart-line"></i>Estadisticas
-      </h2>
+      <div id="stats-header">
+        <h2 class="section-title">
+          <i class="fas fa-chart-line"></i>Estadisticas
+        </h2>
+
+        <button class="generate-stats-btn">
+          <i class="fas fa-chart-pie"></i>Generar
+        </button>
+      </div>
       <div class="friends-list" id="friends-container">
         <!-- Estadisticas se cargarán dinámicamente -->
       </div>
@@ -50,11 +56,7 @@ window.views.inicio = {
         const res = await window.obtener_canciones();
         console.log("canciones():", res);
 
-        if (
-          res.status === "ok" &&
-          res.type === "array" &&
-          Array.isArray(res.data)
-        ) {
+        if (res.status === "ok" && res.type === "array" && Array.isArray(res.data)) {
           res.data.forEach((song) => {
             const songElement = createSongElement(song);
             songsContainer.appendChild(songElement);
@@ -80,7 +82,7 @@ window.views.inicio = {
             <div class="modal-content">
               <div class="modal-header">
                 <h3>Añadir a playlist</h3>
-                <span class="close-modal">&times;</span>
+                <p class="close-modal">&times;</p>
               </div>
               <div class="modal-body">
                 <p>Añadir "${song.title}" a:</p>
@@ -92,17 +94,14 @@ window.views.inicio = {
           document.body.appendChild(modal);
 
           const playlistList = modal.querySelector(".playlist-list");
-          res.data.forEach(playlist => {
+          res.data.playlists.forEach(playlist => {
             const li = document.createElement("li");
             li.textContent = playlist.name;
             li.addEventListener("click", async () => {
               try {
-                const addRes = await window.agregar_cancion_playlist({
-                  playlist_id: playlist.id,
-                  song_id: song.id
-                });
+                const res = await window.agregar_a_playlist(playlist.id, song.id);
 
-                if (addRes.status === "ok") {
+                if (res.status === "ok") {
                   alert(`Canción añadida a ${playlist.name}`);
                   modal.remove();
                 } else {
@@ -128,9 +127,7 @@ window.views.inicio = {
     }
 
     async function loadRecommendations() {
-      const recommendationsContainer = document.getElementById(
-        "recommendations-container"
-      );
+      const recommendationsContainer = document.getElementById("recommendations-container");
       if (!recommendationsContainer) return;
 
       try {
@@ -157,9 +154,6 @@ window.views.inicio = {
       }
     }
 
-    /**
-     * Crea un elemento DOM para una canción.
-     */
     function createSongElement(song) {
       const div = document.createElement("div");
       div.className = "song-item";
@@ -173,7 +167,7 @@ window.views.inicio = {
             <p>${song.artist}</p>
         </div>
         <div class="song-actions">
-            <span>${formatTime(song.duration)}</span>
+            <p>${formatTime(song.duration)}</p>
             <i class="fas fa-play"></i>
             <i class="fas fa-plus"></i>
             <i class="fas fa-plus-circle add-to-playlist" title="Añadir a playlist"></i>
@@ -251,7 +245,7 @@ window.views.inicio = {
           <p>${song.artist}</p>
         </div>
         <div class="song-actions">
-          <span>${formatTime(song.duration)}</span>
+          <p>${formatTime(song.duration)}</p>
           <i class="fas fa-ellipsis-v menu-icon"></i>
         </div>
       `;
@@ -265,11 +259,9 @@ window.views.inicio = {
       return div;
     }
 
-    /**
-     * Configura eventos para manejar clics en canciones.
-     */
     function setupSongClickEvents() {
       document.addEventListener("click", async (e) => {
+        e.stopPropagation();
         const item = e.target.closest(".song-item");
         if (!item) return;
 
@@ -281,27 +273,92 @@ window.views.inicio = {
 
         if (e.target.classList.contains("fa-play")) {
           console.log("▶ Encolando y reproduciendo:", song.title);
-
-          MusicPlayer.addSongToQueue(song, true);
-        }
-
-        if (e.target.classList.contains("fa-plus")) {
+          await MusicPlayer.addSongToQueue(song, true);
+        } else if (e.target.classList.contains("fa-plus")) {
           console.log("➕ Encolando (sin reproducir):", song.title);
-
-          MusicPlayer.addSongToQueue(song, false);
-        }
-
-        if (e.target.classList.contains("add-to-playlist")) {
-          e.stopPropagation();
+          await MusicPlayer.addSongToQueue(song, false);
+        } else if (e.target.classList.contains("add-to-playlist")) {
           showPlaylistsModal(song);
         }
       });
+    }
+
+    async function loadStatistics() {
+      const statsContainer = document.getElementById("friends-container"); // Este es el contenedor de estadísticas
+      if (!statsContainer) return;
+
+      // Limpiar el contenedor
+      statsContainer.innerHTML = `<div class="stats-results"></div>`;
+
+      // Configurar el evento del botón
+      const generateBtn = document.querySelector(".generate-stats-btn");
+      generateBtn.addEventListener("click", async () => {
+        try {
+          generateBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Generando...`;
+          generateBtn.disabled = true;
+
+          const res = await window.generar_reporte();
+          console.log("Reporte generado:", res);
+
+          if (res.status === "ok" && res.data) {
+            displayStatistics(res.data, statsContainer);
+          } else {
+            alert("Error al generar el reporte: " + (res.message || "Error desconocido"));
+          }
+        } catch (err) {
+          console.error("Error al generar reporte:", err);
+          alert("Error al generar el reporte");
+        } finally {
+          generateBtn.innerHTML = `<i class="fas fa-chart-pie"></i>Generar`;
+          generateBtn.disabled = false;
+        }
+      });
+    }
+
+    function displayStatistics(data, container) {
+      const statsResults = container.querySelector(".stats-results");
+      statsResults.innerHTML = `
+        <div class="stats-section">
+          <h3><i class="fas fa-music"></i>Top Canciones</h3>
+          <ul class="stats-list">
+            ${data.topCanciones.map(song => `
+              <li>
+                <p class="stats-name">${song.nombreCancion}</p>
+                <p class="stats-value">${song.reproducciones} reproducciones</p>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+
+        <div class="stats-section">
+          <h3><i class="fas fa-user"></i>Top Artistas</h3>
+          <ul class="stats-list">
+            ${data.topArtistas.map(artist => `
+              <li>
+                <p class="stats-name">${artist.nombreArtista}</p>
+                <p class="stats-value">${artist.reproducciones} reproducciones</p>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+
+        <div class="stats-section">
+          <h3><i class="fas fa-clock"></i>Tiempo Escuchado</h3>
+          <div class="stats-value-large">${formatTime(data.tiempoEscuchado)}</div>
+        </div>
+
+        <div class="stats-section">
+          <h3><i class="fas fa-ad"></i>Anuncios Escuchados</h3>
+          <div class="stats-value-large">${data.cantidadAnuncios}</div>
+        </div>
+      `;
     }
 
     return function () {
       loadSongs();
       loadRecommendations();
       setupSongClickEvents();
+      loadStatistics();
     };
   })(),
 };

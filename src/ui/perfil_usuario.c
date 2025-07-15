@@ -8,6 +8,16 @@
 // DEFINICIÓN DE ESTRUCTURAS INTERNAS
 /* ================================================================ */
 
+typedef struct
+{
+    bool *check;
+    const char *email;
+} search_email_arg_t;
+
+/* ================================================================ */
+// DEFINICIÓN DE ESTRUCTURAS INTERNAS
+/* ================================================================ */
+
 static interfaz(CrearCuenta);
 
 static interfaz(EliminarCuenta);
@@ -15,6 +25,7 @@ static interfaz(EliminarCuenta);
 static interfaz(ObtenerInfoUsuario);
 
 static interfaz(ActualizarInfoUsuario);
+static new_operfn(check_email_repetido);
 
 static interfaz(ActualizarPassword);
 
@@ -22,6 +33,8 @@ static interfaz(ActivarPremium);
 
 static pcre2_code *get_email_re();
 static pcre2_code *get_password_re();
+static bool validar_email(const char *email);
+static bool validar_password(const char *password);
 
 /* ================================================================ */
 // BLOQUE: crear_cuenta -
@@ -31,8 +44,15 @@ message_handler(crear_cuenta)
 {
     init_data_json();
 
-    int argc;
-    const char *argv[] = {""};
+    const char *email = get_string(get_array_idx(data, 0));
+    const char *username = get_string(get_array_idx(data, 1));
+    const char *password = get_string(get_array_idx(data, 2));
+    const char *confirmPassowrd = get_string(get_array_idx(data, 3));
+    const char *nickname = get_string(get_array_idx(data, 4));
+    const char *pais = get_string(get_array_idx(data, 5));
+
+    int argc = 6;
+    const char *argv[] = {nickname, pais, username, email, password, confirmPassowrd};
     char **msg = arg;
 
     bool success = VibeCast_CrearCuenta(NULL, argc, argv, msg);
@@ -105,6 +125,18 @@ static interfaz(CrearCuenta)
     return true;
 }
 
+static new_operfn(check_email_repetido)
+{
+    search_email_arg_t *argu = arg;
+    Usuario *u = val;
+    if (*argu->check)
+        return FOREACH_BREAK;
+    if (strcmp(u->email, argu->email))
+        return FOREACH_CONTINUE;
+    *argu->check = true;
+    return FOREACH_BREAK;
+}
+
 /* ================================================================ */
 // BLOQUE: eliminar_cuenta -
 /* ================================================================ */
@@ -122,7 +154,7 @@ message_handler(eliminar_cuenta)
 
 static interfaz(EliminarCuenta)
 {
-
+    return true;
 }
 
 /* ================================================================ */
@@ -145,7 +177,31 @@ message_handler(obtener_info_usuario)
 
 static interfaz(ObtenerInfoUsuario)
 {
+    json_object_object_add(arg, "name", json_object_new_string(usuario->nickname));
+    json_object_object_add(arg, "username", json_object_new_string(usuario->username));
+    json_object_object_add(arg, "email", json_object_new_string(usuario->email));
+    json_object_object_add(arg, "country", json_object_new_string(usuario->pais));
+    json_object_object_add(arg, "isArtist", json_object_new_boolean(usuario->artista != NULL));
 
+    // Subobjeto de suscripción
+    json_object *subscription = json_object_new_object();
+
+    const char *tipo_plan = (usuario->plan == PLAN_PREMIUM) ? "premium" : "freemium";
+    json_object_object_add(subscription, "type", json_object_new_string(tipo_plan));
+    json_object_object_add(subscription, "autoRenewal", json_object_new_boolean(true)); // Asumido
+
+    // Fecha de expiración: 180 días desde hoy
+    time_t now = time(NULL);
+    now += 180 * 24 * 60 * 60;
+    struct tm *exp_date = localtime(&now);
+    char fecha_exp[11];
+    strftime(fecha_exp, sizeof(fecha_exp), "%Y-%m-%d", exp_date);
+    json_object_object_add(subscription, "expiration", json_object_new_string(fecha_exp));
+
+    json_object_object_add(arg, "subscription", subscription);
+
+    send_message("Perfil de usuario cargado.");
+    return true;
 }
 
 /* ================================================================ */
@@ -171,7 +227,115 @@ message_handler(actualizar_info_usuario)
 
 static interfaz(ActualizarInfoUsuario)
 {
+    const char *nickname = argv[0];
+    const char *pais = argv[1];
+    const char *username = argv[2];
+    const char *email = argv[3];
 
+    char *msgs[4];
+
+    return true;
+}
+
+static custom_interface(ActualizarNickname, const char *nickname)
+{
+    // Validar que el campo no sea nulo
+    if (!nickname || !*nickname)
+    {
+        send_message("El nickname no puede estar vacío");
+        return false;
+    }
+
+    // Liberar la memoria del antiguo valor
+    freem(usuario->nickname);
+
+    // Actualizar al nuevo valor
+    usuario->nickname = asprintf(nickname);
+
+    // Reportar éxito
+    send_message("Nickname actualizado exitosamente");
+
+    return true;
+}
+
+static custom_interface(ActualizarPais, const char *pais)
+{
+    // Validar que el campo no sea nulo
+    if (!pais || !*pais)
+    {
+        send_message("El país no puede estar vacío");
+        return false;
+    }
+
+    // Liberar la memoria del antiguo valor
+    freem(usuario->pais);
+
+    // Actualizar al nuevo valor
+    usuario->pais = asprintf(pais);
+
+    // Reportar éxito
+    send_message("Pais actualizado exitosamente");
+
+    return true;
+}
+
+static custom_interface(ActualizarUsername, const char *username)
+{
+    return false;
+}
+
+static custom_interface(ActualizarEmail, const char *email)
+{
+    // Validar que el email no sea nulo
+    if (!email || !*email)
+    {
+        send_message("El email no puede estar vacío");
+        return false;
+    }
+
+    // Validar que el valor haya cambiado
+    if (!strcmp(usuario->email, email))
+    {
+        send_message("El email no ha cambiado.");
+        return false;
+    }
+
+    // Validar formato de email
+    if (!validar_email(email))
+    {
+        send_message("Correo no válido");
+        return false;
+    }
+
+    // Verificar que el email no esté registrado en otro usuario
+
+    bool emailRepetido = false;
+
+    search_email_arg_t wrapper_arg =
+        {
+            .check = &emailRepetido,
+            .email = email,
+        };
+
+    forEachInABB_InOrder(usuarios, check_email_repetido, &wrapper_arg);
+
+    // Si el email ya está registrado, se envia un mensaje
+    if (emailRepetido)
+    {
+        send_message("El email ya está registrado.");
+        return false;
+    }
+
+    // Liberar la memoria del antiguo valor
+    freem(usuario->email);
+
+    // Actualizar al nuevo valor
+    usuario->email = asprintf(email);
+
+    // Reportar éxito
+    send_message("Email actualizado exitosamente");
+
+    return true;
 }
 
 /* ================================================================ */
@@ -182,8 +346,12 @@ message_handler(actualizar_password)
 {
     init_data_json();
 
-    int argc;
-    const char *argv[] = {""};
+    const char *currentPassword = get_string(get_array_idx(data, 0));
+    const char *newPassword = get_string(get_array_idx(data, 1));
+    const char *confirmPassword = get_string(get_array_idx(data, 2));
+
+    int argc = 3;
+    const char *argv[] = {currentPassword, newPassword, confirmPassword};
     char **msg = arg;
 
     bool success = VibeCast_ActualizarPassword(NULL, argc, argv, msg);
@@ -195,7 +363,7 @@ message_handler(actualizar_password)
     end_data_json();
 }
 
-interfaz(ActualizarPassword)
+static interfaz(ActualizarPassword)
 {
     const char *currentPassword = argv[0];
     const char *newPassword = argv[1];
@@ -258,8 +426,11 @@ message_handler(activar_premium)
 {
     init_data_json();
 
-    int argc;
-    const char *argv[] = {""};
+    const char *duracion = get_string(get_array_idx(data, 0));
+
+    int argc = 1;
+    const char *argv[] = {duracion};
+
     char **msg = arg;
 
     bool success = VibeCast_ActivarPremium(NULL, argc, argv, msg);
@@ -271,7 +442,7 @@ message_handler(activar_premium)
     end_data_json();
 }
 
-interfaz(activarPremium)
+static interfaz(ActivarPremium)
 {
     time_t base = time(NULL);
 
@@ -361,389 +532,4 @@ static bool validar_password(const char *password)
     int rc = pcre2_match(get_password_re(), password, strlen(password), 0, 0, md, NULL);
     pcre2_match_data_free(md);
     return rc >= 0;
-}
-
-/* ========== Validaciones internas ========== */
-
-typedef struct
-{
-    bool *check;
-    const char *email;
-} search_email_arg_t;
-
-static new_operfn(check_email_repetido)
-{
-    search_email_arg_t *argu = arg;
-    Usuario *u = val;
-    if (*argu->check)
-        return FOREACH_BREAK;
-    if (strcmp(u->email, argu->email))
-        return FOREACH_CONTINUE;
-    *argu->check = true;
-    return FOREACH_BREAK;
-}
-
-/* ========== Mensajes generales ========== */
-
-/* ========== Funciones de interfaz ========== */
-
-json_object *usuario_to_json(Usuario *u)
-{
-    if (!u)
-        return NULL;
-
-    json_object *jobj = json_object_new_object();
-
-    json_object_object_add(jobj, "name", json_object_new_string(u->nickname));
-    json_object_object_add(jobj, "username", json_object_new_string(u->username));
-    json_object_object_add(jobj, "email", json_object_new_string(u->email));
-    json_object_object_add(jobj, "country", json_object_new_string(u->pais));
-    json_object_object_add(jobj, "isArtist", json_object_new_boolean(u->artista != NULL));
-
-    // Subobjeto de suscripción
-    json_object *subscription = json_object_new_object();
-
-    const char *tipo_plan = (u->plan == PLAN_PREMIUM) ? "premium" : "freemium";
-    json_object_object_add(subscription, "type", json_object_new_string(tipo_plan));
-    json_object_object_add(subscription, "autoRenewal", json_object_new_boolean(true)); // Asumido
-
-    // Fecha de expiración: 180 días desde hoy
-    time_t now = time(NULL);
-    now += 180 * 24 * 60 * 60;
-    struct tm *exp_date = localtime(&now);
-    char fecha_exp[11];
-    strftime(fecha_exp, sizeof(fecha_exp), "%Y-%m-%d", exp_date);
-    json_object_object_add(subscription, "expiration", json_object_new_string(fecha_exp));
-
-    json_object_object_add(jobj, "subscription", subscription);
-
-    return jobj;
-}
-
-/* ================ Funciones para actualizar datos del usuario ================ */
-
-interfaz(ActualizarNickname)
-{
-    const char *nickname = argv[0];
-
-    // Validar que el campo no sea nulo
-    if (!nickname || !*nickname)
-    {
-        send_message("El nickname no puede estar vacío");
-        return false;
-    }
-
-    // Liberar la memoria del antiguo valor
-    freem(usuario->nickname);
-
-    // Actualizar al nuevo valor
-    usuario->nickname = asprintf(nickname);
-
-    // Reportar éxito
-    send_message("Nickname actualizado exitosamente");
-
-    return true;
-}
-
-interfaz(ActualizarEmail)
-{
-    const char *email = argv[0];
-
-    // Validar que el email no sea nulo
-    if (!email || !*email)
-    {
-        send_message("El email no puede estar vacío");
-        return false;
-    }
-
-    // Validar que el valor haya cambiado
-    if (!strcmp(usuario->email, email))
-    {
-        send_message("El email no ha cambiado.");
-        return false;
-    }
-
-    // Validar formato de email
-    if (!validar_email(email))
-    {
-        send_message("Correo no válido");
-        return false;
-    }
-
-    // Verificar que el email no esté registrado en otro usuario
-
-    bool emailRepetido = false;
-
-    search_email_arg_t wrapper_arg =
-        {
-            .check = &emailRepetido,
-            .email = email,
-        };
-
-    forEachInABB_InOrder(usuarios, check_email_repetido, &wrapper_arg);
-
-    // Si el email ya está registrado, se envia un mensaje
-    if (emailRepetido)
-    {
-        send_message("El email ya está registrado.");
-        return false;
-    }
-
-    // Liberar la memoria del antiguo valor
-    freem(usuario->email);
-
-    // Actualizar al nuevo valor
-    usuario->email = asprintf(email);
-
-    // Reportar éxito
-    send_message("Email actualizado exitosamente");
-
-    return true;
-}
-
-interfaz(ActualizarPais)
-{
-    const char *pais = argv[0];
-
-    // Validar que el campo no sea nulo
-    if (!pais || !*pais)
-    {
-        send_message("El país no puede estar vacío");
-        return false;
-    }
-
-    // Liberar la memoria del antiguo valor
-    freem(usuario->pais);
-
-    // Actualizar al nuevo valor
-    usuario->pais = asprintf(pais);
-
-    // Reportar éxito
-    send_message("Pais actualizado exitosamente");
-
-    return true;
-}
-
-message_handler(crear_cuenta)
-{
-    init_data_json();
-    const char *nickname = get_string(get_array_idx(data, 0));
-    const char *pais = get_string(get_array_idx(data, 1));
-    const char *username = get_string(get_array_idx(data, 2));
-    const char *email = get_string(get_array_idx(data, 3));
-    const char *password = get_string(get_array_idx(data, 4));
-    const char *confirmPassword = get_string(get_array_idx(data, 5));
-
-    const char *datos[] = {email, username, password, confirmPassword, nickname, pais};
-
-    char **msg = arg;
-    bool ok = VibeCast_CrearCuenta(NULL, 6, datos, msg);
-    VibeCast_SendBool(id, ok ? HTTP_CREATED : HTTP_BAD_REQUEST, ok, *msg, ok ? STATE_SUCCESS : STATE_FAILURE);
-    freem(*msg);
-    *msg = NULL;
-}
-
-message_handler(eliminar_cuenta)
-{
-    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
-}
-
-message_handler(obtener_info_usuario)
-{
-    if (!usuario)
-    {
-        VibeCast_SendBool(id, HTTP_UNAUTHORIZED, false, "No hay sesión activa", STATE_FAILURE);
-        return;
-    }
-
-    json_object *jobj = usuario_to_json(usuario);
-
-    VibeCast_SendJSON(id, HTTP_OK, jobj, "Datos del usuario cargados", STATE_SUCCESS);
-
-    // const char *json_str = json_object_to_json_string(jobj);
-    // puts(json_str);
-
-    json_object_put(jobj); // Libera el objeto JSON
-}
-
-message_handler(actualizar_info_usuario)
-{
-    init_data_json();
-
-    const char *nickname = get_string(get_array_idx(data, 0));
-    const char *pais = get_string(get_array_idx(data, 1));
-    const char *email = get_string(get_array_idx(data, 2));
-
-    // Actualizar nickname
-    VibeCast_ActualizarNickname(
-        NULL,
-        1,
-        cast(const char *[], nickname),
-        NULL);
-
-    // Actualizar pais
-    VibeCast_ActualizarPais(
-        NULL,
-        1,
-        cast(const char *[], pais),
-        NULL);
-
-    // Actualizar email
-    VibeCast_ActualizarEmail(
-        NULL,
-        1,
-        cast(const char *[], email),
-        NULL);
-
-    VibeCast_SendText(id, HTTP_OK, "", "Datos actualizados", STATE_SUCCESS);
-}
-
-message_handler(actualizar_password)
-{
-    init_data_json();
-
-    const char *currentPassword = get_string(get_array_idx(data, 0));
-    const char *newPassword = get_string(get_array_idx(data, 1));
-    const char *confirmPassword = get_string(get_array_idx(data, 2));
-
-    char **msg = arg;
-
-    bool success = VibeCast_ActualizarPassword(
-        NULL,
-        3,
-        cast(const char *[],
-             currentPassword,
-             newPassword,
-             confirmPassword),
-        msg);
-
-    VibeCast_SendText(
-        id,
-        HTTP_OK,
-        *msg,
-        "Actualización de contraseña",
-        STATE_BOOL(success));
-}
-
-message_handler(activar_premium)
-{
-    VibeCast_SendNull(id, HTTP_OK, "", STATE_SUCCESS);
-}
-
-/* ==== */
-
-message_handler(activarPremium)
-{
-
-    init_data_json(); // Inicializa el JSON de entrada (aunque no hay argumentos)
-
-    char **msg = arg;
-    bool success = VibeCast_activarPremium(usuario, 0, NULL, msg);
-
-    VibeCast_SendText(
-        id,
-        HTTP_OK,
-        *msg,
-        success ? "Plan activado o renovado" : "Fallo al activar Premium",
-        STATE_BOOL(success));
-
-    puts(*msg);
-    freem(*msg);
-    *msg = NULL;
-}
-//--------------------------------------------------------------------------------//
-
-interfaz(desactivarPremium)
-{
-    if (usuario->plan == PLAN_PREMIUM)
-    {
-        usuario->plan = PLAN_FREEMIUM; // Cambiamos el plan del usuario a freemium
-        usuario->caducidadPremium = 0; // Reseteamos la fecha de caducidad del plan premium
-        send_message("¡Plan Premium desactivado!");
-    }
-    else
-    {
-        send_message("No estás en el plan Premium, no puedes desactivarlo.");
-    }
-
-    return true;
-}
-
-message_handler(desactivarPremium)
-{
-    init_data_json();
-
-    char **msg = arg;
-    bool success = VibeCast_desactivarPremium(usuario, 0, NULL, msg);
-
-    VibeCast_SendText(
-        id,
-        HTTP_OK,
-        *msg,
-        "Plan Freemium activado",
-        STATE_BOOL(success));
-
-    puts(*msg);
-    freem(*msg);
-    *msg = NULL;
-}
-
-//--------------------------------------------------------------------------------//
-
-interfaz(esUsuarioPremium)
-{
-
-    time_t ahora = time(NULL);
-    if (ahora == -1)
-    {
-        send_message("Error al obtener la fecha actual\n");
-        return false;
-    }
-
-    if (usuario->caducidadPremium <= ahora)
-    {
-        send_message("Tu plan Premium ha caducado. Por favor, renueva tu suscripción\n");
-        VibeCast_desactivarPremium(usuario, 0, NULL, NULL); // Desactiva el plan si ha caducado
-        return false;                                       // Retorna false si el usuario no es premium
-    }
-
-    return usuario->plan == PLAN_PREMIUM; // Retorna true si el usuario es premium
-}
-
-message_handler(esUsuarioPremium)
-{
-    VibeCast_SendBool(
-        id,
-        HTTP_OK,
-        usuario->plan == PLAN_PREMIUM,
-        "",
-        STATE_SUCCESS);
-}
-
-//--------------------------------------------------------------------------------//
-interfaz(renovarPremium)
-{
-    VibeCast_activarPremium(usuario, 0, NULL, NULL); // Llama a la función para activar el plan premium
-    send_message("Tu plan Premium ha sido renovado exitosamente\n");
-
-    return true;
-}
-
-message_handler(renovarPremium)
-{
-    init_data_json();
-
-    char **msg = arg;
-    bool success = VibeCast_renovarPremium(usuario, 0, NULL, msg);
-
-    VibeCast_SendText(
-        id,
-        HTTP_OK,
-        *msg,
-        success ? "Renovación exitosa" : "Error al renovar",
-        STATE_BOOL(success));
-
-    puts(*msg);
-    freem(*msg);
-    *msg = NULL;
 }

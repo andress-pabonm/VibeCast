@@ -55,7 +55,7 @@ window.views.historial = {
                     </div>
                 </div>
                 <div class="history-actions">
-                    <span>${formatTime(song.duration)}</span>
+                    <span>${formatTime(item.duration)}</span>
                     <i class="fas fa-play"></i>
                     <i class="fas fa-plus"></i>
                     <i class="fas fa-plus-circle add-to-playlist" title="Añadir a playlist"></i>
