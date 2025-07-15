@@ -167,7 +167,7 @@ message_handler(obtener_info_usuario)
     char **msg = arg;
 
     bool success = VibeCast_ObtenerInfoUsuario(jobj, 0, NULL, msg);
-    VibeCast_SendNull(id, HTTP_OK, *msg, STATE_BOOL(success));
+    VibeCast_SendJSON(id, HTTP_OK, jobj, *msg, STATE_BOOL(success));
 
     freem(*msg);
     *msg = NULL;

@@ -40,7 +40,7 @@ window.views.amigos = {
             <span class="close-modal">&times;</span>
             <h3>Añadir nuevo amigo</h3>
             <input type="text" id="friendUsername" placeholder="Nombre de usuario">
-            <button id="sendRequestBtn">Enviar solicitud</button>
+            <button id="sendRequestBtn">Añadir amigo</button>
         </div>
     </div>
   `,
@@ -57,9 +57,7 @@ window.views.amigos = {
     // Cargar amigos
     async function loadFriends() {
       // Limpiar lista (excepto la plantilla)
-      document
-        .querySelectorAll(".friend-card:not(.template)")
-        .forEach((el) => el.remove());
+      document.querySelectorAll(".friend-card:not(.template)").forEach((el) => el.remove());
 
       try {
         const res = await window.obtener_amigos();
@@ -87,12 +85,12 @@ window.views.amigos = {
       friendCard.classList.remove("template");
       friendCard.style.display = "flex";
 
-      friendCard.querySelector(".friend-name").textContent = friend.name;
+      friendCard.querySelector(".friend-name").textContent = friend.nombre;
 
       // Configurar evento de eliminación
       friendCard.querySelector(".remove").addEventListener("click", async () => {
         try {
-          if (confirm(`¿Eliminar a ${friend.name} de tus amigos?`)) {
+          if (confirm(`¿Eliminar a ${friend.nombre} de tus amigos?`)) {
             const res = await window.eliminar_amigo(friend.id);
 
             if (res.status !== "ok") {
@@ -112,21 +110,21 @@ window.views.amigos = {
     }
 
     // Búsqueda de amigos
-    friendSearch.addEventListener("input", function () {
-      const searchTerm = this.value.toLowerCase();
-      const filteredFriends = friendsData.filter((friend) =>
-        friend.name.toLowerCase().includes(searchTerm)
-      );
+    // friendSearch.addEventListener("input", function () {
+    //   const searchTerm = this.value.toLowerCase();
+    //   const filteredFriends = friendsData.filter((friend) =>
+    //     friend.name.toLowerCase().includes(searchTerm)
+    //   );
 
-      // Limpiar lista (excepto la plantilla)
-      document
-        .querySelectorAll(".friend-card:not(.template)")
-        .forEach((el) => el.remove());
+    //   // Limpiar lista (excepto la plantilla)
+    //   document
+    //     .querySelectorAll(".friend-card:not(.template)")
+    //     .forEach((el) => el.remove());
 
-      filteredFriends.forEach((friend) => {
-        friendsList.appendChild(createFriendElement(friend));
-      });
-    });
+    //   filteredFriends.forEach((friend) => {
+    //     friendsList.appendChild(createFriendElement(friend));
+    //   });
+    // });
 
     addFriendBtn.addEventListener("click", () => {
       addFriendModal.classList.remove("hidden");
@@ -146,7 +144,7 @@ window.views.amigos = {
             throw new Error(res.message);
           }
 
-          console.log(res.message);
+          alert(res.message);
 
           loadFriends();
 
@@ -154,7 +152,7 @@ window.views.amigos = {
           addFriendModal.classList.add("hidden");
         }
       } catch (error) {
-        console.warn(error.message);
+        alert(error.message);
       }
     });
 
