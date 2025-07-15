@@ -453,6 +453,9 @@
     border-radius: 10px;
     padding: 1.5rem;
     margin-bottom: 1rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--morado) var(--gris-oscuro);
+    max-height: 60vh;
 }
 
 .songs-header {
@@ -783,4 +786,76 @@
 #newSongModal button[type="submit"]:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(141, 45, 226, 0.4);
+}
+
+/* Botones de eliminación */
+.danger-btn {
+    background: linear-gradient(45deg, var(--error), #e63946);
+    border: none;
+    padding: 0.75rem;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    flex: 1;
+}
+
+.danger-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 10, 84, 0.4);
+}
+
+.cancel-btn {
+    background: var(--gris-medio) !important;
+    color: var(--blanco) !important;
+    border: none;
+    padding: 0.75rem;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    flex: 1;
+}
+
+.cancel-btn:hover {
+    background: var(--gris-claro) !important;
+}
+
+/* Sección de eliminación en perfil */
+.delete-section {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--gris-medio);
+}
+
+.delete-section h2 {
+    color: var(--error);
+    margin-bottom: 1rem;
+}
+
+.delete-options {
+    display: flex;
+    gap: 1rem;
+}
+
+.delete-option-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.delete-account-btn,
+.delete-artist-btn {
+    background: var(--gris-medio);
+    color: var(--error);
+    border: 1px solid var(--error);
+}
+
+.delete-option-btn:hover {
+    transform: translateY(-2px);
 }

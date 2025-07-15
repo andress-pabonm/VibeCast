@@ -31,6 +31,10 @@ static select_handler(obtenerAlbumId);
 static interfaz(EliminarCancion);
 
 static interfaz(ActualizarCancion);
+static custom_interface(ActualizarNombreCancion, Cancion *cancion, const char *nuevoNombre);
+static custom_interface(ActualizarGeneroCancion, Cancion *cancion, const char *nuevoGenero);
+static custom_interface(ActualizarDuracionCancion, Cancion *cancion, int nuevaDuracion);
+static custom_interface(ActualizarUrlCancion, Cancion *cancion, const char *nuevaURL);
 
 /* ======================================================== */
 // BLOQUE: obtener_info_artista — Cargar artista en perfil
@@ -342,6 +346,15 @@ static interfaz(EliminarAlbum)
         return false;
     }
 
+    if (album->id)
+    {
+        char *condition = asprintf("id = %d", album->id);
+
+        eliminar_registros("Albumes", condition, NULL);
+
+        freem(condition);
+    }
+
     destroyAlbum(album);
 
     send_message("Álbum eliminado");
@@ -621,6 +634,7 @@ static new_cmpfn(cmpAlbumConId)
 message_handler(actualizar_cancion)
 {
     init_data_json();
+
     const char *nombreAlbum = get_string(get_array_idx(data, 0));
     const char *id_cancion = get_string(get_array_idx(data, 1));
     const char *nuevoNombre = get_string(get_array_idx(data, 2));
@@ -668,7 +682,10 @@ static interfaz(ActualizarCancion)
         return false;
     }
 
-    // Actualizar el nombre, genero, duración y url
+    VibeCast_ActualizarNombreCancion(NULL, cancion, nuevoNombre, NULL);
+    VibeCast_ActualizarGeneroCancion(NULL, cancion, nuevoGenero, NULL);
+    VibeCast_ActualizarDuracionCancion(NULL, cancion, nuevaDuracion, NULL);
+    VibeCast_ActualizarUrlCancion(NULL, cancion, nuevaUrl, NULL);
 
     return true;
 }

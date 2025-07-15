@@ -106,6 +106,19 @@ window.views.perfil = {
             </div>
             <div class="song-list" id="albumSongsContainer"></div>
         </section>
+
+        <!-- Sección de eliminación -->
+        <section class="profile-section delete-section">
+          <h2 class="section-title"><i class="fas fa-exclamation-triangle"></i>Zona peligrosa</h2>
+          <div class="delete-options">
+            <button class="delete-option-btn delete-account-btn" id="deleteUserBtn">
+            <i class="fas fa-user-slash"></i> Eliminar cuenta
+            </button>
+            <button class="delete-option-btn delete-artist-btn" id="deleteArtistBtn">
+              <i class="fas fa-microphone-slash"></i> Dejar de ser artista
+            </button>
+          </div>
+        </section>
     </div>
 
     <!-- Modal para nuevo disco -->
@@ -172,6 +185,59 @@ window.views.perfil = {
             <i class="fas fa-save"></i> Guardar canción
           </button>
         </form>
+      </div>
+    </div>
+
+    <!-- Modal para editar cancion -->
+    <div class="modal hidden" id="editCancionModal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3>Editar cancion actual</h3>
+        <form id="editSongForm">
+          <div class="form-group">
+            <label for="song-name">Nombre de la canción</label>
+            <input type="text" id="song-name" placeholder="Nombre de la canción" required />
+          </div>
+          <div class="form-group">
+            <label for="song-genre">Género</label>
+            <input type="text" id="song-genre" placeholder="Género musical" required />
+          </div>
+          <div class="form-group">
+            <label for="song-duration">Duración (segundos)</label>
+            <input type="text" id="song-duration" placeholder="Duración en segundos" required min="1" />
+          </div>
+          <div class="form-group">
+            <label for="song-url">URL de la canción</label>
+            <input type="text" id="song-url" placeholder="url de youtube" required />
+          </div>
+          <button type="submit" class="save-btn">
+            <i class="fas fa-save"></i> Guardar canción
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal para eliminar usuario -->
+    <div class="modal hidden" id="deleteUserModal">
+      <div class="modal-content">
+        <h3>¿Eliminar cuenta permanentemente?</h3>
+        <p>Esta acción eliminará todos tus datos y no se podrán recuperar.</p>
+        <div class="modal-buttons">
+          <button id="confirmDeleteUserBtn" class="danger-btn">Eliminar cuenta</button>
+          <button id="cancelDeleteUserBtn" class="cancel-btn">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para eliminar artista -->
+    <div class="modal hidden" id="deleteArtistModal">
+      <div class="modal-content">
+        <h3>¿Dejar de ser artista?</h3>
+        <p>Esta acción eliminará todos tus álbumes y canciones.</p>
+        <div class="modal-buttons">
+          <button id="confirmDeleteArtistBtn" class="danger-btn">Confirmar</button>
+          <button id="cancelDeleteArtistBtn" class="cancel-btn">Cancelar</button>
+        </div>
       </div>
     </div>
   `,
@@ -242,6 +308,7 @@ window.views.perfil = {
         const newEmail = document.getElementById("edit-email").value.trim();
 
         const res = safeCall(() => window.actualizar_info_usuario(newName, newCountry, newUsername, newEmail));
+        window.location.reload();
 
         if (res.status !== "ok") return;
         window.location.reload();
@@ -259,6 +326,7 @@ window.views.perfil = {
         const pass3 = document.getElementById("confirm-new-password").value;
 
         const res = safeCall(() => window.actualizar_password(pass1, pass2, pass3));
+        window.location.reload();
         console.log(res.message);
       });
     }
@@ -398,6 +466,52 @@ window.views.perfil = {
       setupAlbumEvents();
     }
 
+    function setupDeleteButtons(userData) {
+      // Eliminar usuario
+      document.getElementById("deleteUserBtn")?.addEventListener("click", () => {
+        document.getElementById("deleteUserModal").classList.remove("hidden");
+      });
+
+      document.getElementById("confirmDeleteUserBtn")?.addEventListener("click", async () => {
+        try {
+          const res = await window.eliminar_usuario();
+          if (res.status !== "ok") throw new Error(res.message);
+
+          alert("Tu cuenta ha sido eliminada exitosamente");
+          location.replace("pages/login.html");
+        } catch (error) {
+          alert(error.message);
+        }
+      });
+
+      document.getElementById("cancelDeleteUserBtn")?.addEventListener("click", () => {
+        document.getElementById("deleteUserModal").classList.add("hidden");
+      });
+
+      // Eliminar artista (solo si es artista)
+      if (userData.isArtist) {
+        document.getElementById("deleteArtistBtn")?.addEventListener("click", () => {
+          document.getElementById("deleteArtistModal").classList.remove("hidden");
+        });
+
+        document.getElementById("confirmDeleteArtistBtn")?.addEventListener("click", async () => {
+          try {
+            const res = await window.eliminar_artista();
+            if (res.status !== "ok") throw new Error(res.message);
+
+            alert("Ya no eres artista. Todos tus álbumes y canciones han sido eliminados");
+            window.location.reload();
+          } catch (error) {
+            alert(error.message);
+          }
+        });
+
+        document.getElementById("cancelDeleteArtistBtn")?.addEventListener("click", () => {
+          document.getElementById("deleteArtistModal").classList.add("hidden");
+        });
+      }
+    }
+
     function renderAlbums(albums) {
       const albumsContainer = document.getElementById("albumsContainer");
       albumsContainer.innerHTML = "";
@@ -448,10 +562,42 @@ window.views.perfil = {
           <div class="song-info"><strong>${song.title}</strong><p>${song.artist}</p></div>
           <div class="song-actions">
             <span>${formatTime(song.duration)}</span>
-            <i class="fas fa-play play-btn" title="Reproducir"></i>
-            <i class="fas fa-plus"></i>
+            <i class="fas fa-pen-to-square edit-song-btn" data-id="${song.id}"></i>
+            <i class="fas fa-trash delete-song-btn" style="color: red" data-id="${song.id}"></i>
           </div>
         `;
+
+        // Selecciona el botón de edición correctamente
+        el.querySelector(".edit-song-btn").addEventListener("click", (e) => {
+          e.stopPropagation(); // Previene que el evento se propague al contenedor
+          const modal = document.getElementById("editCancionModal");
+
+          // Usa querySelector en el modal para encontrar los elementos
+          modal.querySelector("#song-name").value = song.title;
+          modal.querySelector("#song-genre").value = song.genre; // Corregido de "geren" a "genre" hy3rgffthhtgfvgbtehnyjrmhgtrfergthytgfd
+          modal.querySelector("#song-duration").value = song.duration;
+          modal.querySelector("#song-url").value = song.url;
+
+          currentSong = song;
+          modal.classList.remove("hidden");
+        });
+
+        el.querySelector(".delete-song-btn").addEventListener("click", async (e) => {
+          e.stopPropagation(); // Previene que el evento se propague al contenedor
+
+          if (confirm(`¿Eliminar la canción "${song.title}" permanentemente?`)) {
+            try {
+              const res = await window.eliminar_cancion(currentAlbumId, song.id);
+              if (res.status !== "ok") throw new Error(res.message);
+
+              alert("Canción eliminada exitosamente");
+              window.location.reload();
+            } catch (error) {
+              alert(error.message);
+            }
+          }
+        });
+
         albumSongsContainer.appendChild(el);
       });
 
@@ -538,7 +684,7 @@ window.views.perfil = {
         document.getElementById("newSongModal").classList.remove("hidden");
       });
 
-      // NEW SONG MODAL HANDLING (added as requested)
+      // NEW SONG MODAL crear cancion
       document.getElementById("newSongForm")?.addEventListener("submit", async (e) => {
         e.preventDefault();
 
@@ -551,8 +697,32 @@ window.views.perfil = {
           const res = await window.crear_cancion(currentAlbumName, title, genre, duration, url);
           if (res.status !== "ok") throw new Error(res.message);
 
-          alert(res.message);
+          console.log(res.message);
           document.getElementById("newSongModal").classList.add("hidden");
+          window.location.reload();
+        } catch (error) {
+          alert(error.message);
+        }
+      });
+
+      // NEW SONG MODAL editar cancion
+      document.getElementById("editSongForm")?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // Usar querySelector en el formulario (e.target) para encontrar los elementos
+        const title = e.target.querySelector("#song-name").value;
+        const genre = e.target.querySelector("#song-genre").value;
+        const duration = e.target.querySelector("#song-duration").value;
+        const url = e.target.querySelector("#song-url").value;
+
+        try {
+          const res = await window.actualizar_cancion(currentAlbumName, currentSong.id, title, genre, duration, url);
+          if (res.status !== "ok") throw new Error(res.message);
+
+          console.log(res.message);
+          document.getElementById("editCancionModal").classList.add("hidden");
+
+          window.location.reload();
         } catch (error) {
           alert(error.message);
         }
@@ -561,19 +731,21 @@ window.views.perfil = {
       // Close modals
       document.querySelectorAll(".close-modal").forEach((btn) => {
         btn.addEventListener("click", () => {
-          ["plansModal", "newAlbumModal", "editAlbumModal", "newSongModal"].forEach((id) => {
-            document.getElementById(id).classList.add("hidden");
-          });
+          ["plansModal", "newAlbumModal", "editAlbumModal", "newSongModal", "editCancionModal",
+            "deleteUserModal", "deleteArtistModal"].forEach((id) => {
+              document.getElementById(id).classList.add("hidden");
+            });
         });
       });
 
-      ["plansModal", "newAlbumModal", "editAlbumModal", "newSongModal"].forEach((id) => {
-        document.getElementById(id).addEventListener("click", (e) => {
-          if (e.target.id === id) {
-            e.target.classList.add("hidden");
-          }
+      ["plansModal", "newAlbumModal", "editAlbumModal", "newSongModal", "editCancionModal",
+        "deleteUserModal", "deleteArtistModal"].forEach((id) => {
+          document.getElementById(id).addEventListener("click", (e) => {
+            if (e.target.id === id) {
+              e.target.classList.add("hidden");
+            }
+          });
         });
-      });
     }
 
     // MAIN INITIALIZATION
@@ -609,6 +781,8 @@ window.views.perfil = {
           if (userData.isArtist) {
             loadArtistData(userData);
           }
+
+          setupDeleteButtons(userData);
         })
         .catch((err) => {
           console.error("Error al cargar perfil:", err);

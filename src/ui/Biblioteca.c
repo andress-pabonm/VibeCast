@@ -97,6 +97,7 @@ new_operfn(getSongJSON)
     json_object_object_add(song_json, "id", json_object_new_int(cancion->id));
     json_object_object_add(song_json, "title", json_object_new_string(cancion->nombre));
     json_object_object_add(song_json, "artist", json_object_new_string(cancion->album->artista->nombre));
+    json_object_object_add(song_json, "genre", json_object_new_string(cancion->genero));
     json_object_object_add(song_json, "duration", json_object_new_int(cancion->duracion));
     json_object_object_add(song_json, "url", json_object_new_string(cancion->url));
 
@@ -340,6 +341,15 @@ static interfaz(AgregarAPlaylist)
 
     insertValueInLista(playlist->canciones, cancion);
 
+    cancion->popularidad++;
+
+    values = asprintf("popularidad = %d", cancion->popularidad);
+    char *condition = asprintf("id = %d", cancion->id);
+    actualizar_registros("Canciones", values, condition, NULL);
+
+    freem(values);
+    freem(condition);
+
     send_message("Canción agregada a playlist.");
     return true;
 }
@@ -394,6 +404,15 @@ static interfaz(EliminarDePlaylist)
         send_message("No fue posible eliminar la canción de la playlist.");
         return false;
     }
+
+    cancion->popularidad--;
+
+    char *values = asprintf("popularidad = %d", cancion->popularidad);
+    condition = asprintf("id = %d", cancion->id);
+    actualizar_registros("Canciones", values, condition, NULL);
+
+    freem(values);
+    freem(condition);
 
     send_message("Canción eliminada de playlist.");
     return true;

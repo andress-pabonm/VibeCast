@@ -25,6 +25,10 @@ static interfaz(EliminarCuenta);
 static interfaz(ObtenerInfoUsuario);
 
 static interfaz(ActualizarInfoUsuario);
+static custom_interface(ActualizarNickname, const char *nickname);
+static custom_interface(ActualizarPais, const char *pais);
+static custom_interface(ActualizarUsername, const char *username);
+static custom_interface(ActualizarEmail, const char *email);
 static new_operfn(check_email_repetido);
 
 static interfaz(ActualizarPassword);
@@ -212,8 +216,13 @@ message_handler(actualizar_info_usuario)
 {
     init_data_json();
 
-    int argc;
-    const char *argv[] = {""};
+    const char *nickname = get_string(get_array_idx(data, 0));
+    const char *pais = get_string(get_array_idx(data, 1));
+    const char *username = get_string(get_array_idx(data, 2));
+    const char *email = get_string(get_array_idx(data, 3));
+
+    int argc = 4;
+    const char *argv[] = {nickname, pais, username, email};
     char **msg = arg;
 
     bool success = VibeCast_ActualizarInfoUsuario(NULL, argc, argv, msg);
@@ -233,6 +242,13 @@ static interfaz(ActualizarInfoUsuario)
     const char *email = argv[3];
 
     char *msgs[4];
+
+    VibeCast_ActualizarNickname(NULL, nickname, NULL);
+    VibeCast_ActualizarPais(NULL, pais, NULL);
+    VibeCast_ActualizarUsername(NULL, username, NULL);
+    VibeCast_ActualizarEmail(NULL, email, NULL);
+
+    send_message("Usuario actualizado");
 
     return true;
 }
@@ -281,7 +297,36 @@ static custom_interface(ActualizarPais, const char *pais)
 
 static custom_interface(ActualizarUsername, const char *username)
 {
-    return false;
+    // Validar que el campo no sea nulo
+    if (!username || !*username)
+    {
+        send_message("El username no puede estar vacío");
+        return false;
+    }
+
+    if (!strcmp(usuario->username, username))
+    {
+        send_message("El username no puede ser igual");
+        return false;
+    }
+
+    if (searchValueInABB(usuarios, username, cmpUsuarioConUsername))
+    {
+        send_message("El nombre del usuario ya existe");
+        return false;
+    }
+
+    deleteValueInABB(usuarios, usuario->username, cmpUsuarioConUsername);
+
+    freem(usuario->username);
+
+    usuario->username = asprintf(username);
+
+    insertValueInABB(usuarios, usuario);
+
+    send_message("Username actualizado");
+
+    return true;
 }
 
 static custom_interface(ActualizarEmail, const char *email)

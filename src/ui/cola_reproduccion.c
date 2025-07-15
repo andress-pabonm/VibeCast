@@ -221,14 +221,25 @@ static bool agregarAHistorial(void *dato, ElementoColaTipo tipo)
         repr->cancion = dato;
         repr->fechaEscuchado = asprintf(buf);
 
+        Cancion *cancion = dato;
+        cancion->reproducciones++;
+
+        values = asprintf("reprducciones = %d", cancion->reproducciones);
+        char *condition = asprintf("id = %d", cancion->id);
+        actualizar_registros("Canciones", values, condition, NULL);
+
+        freem(values);
+        freem(condition);
+
         return insertValueInPila(usuario->historial.reproducciones, repr);
 
     case TIPO_ANUNCIO:
         usuario->historial.cantidadAnuncios++;
 
         values = asprintf("cantidad_anuncios = %d", usuario->historial.cantidadAnuncios);
-        char *condition = asprintf("id = %d", usuario->id);
+        condition = asprintf("id = %d", usuario->id);
         ok = actualizar_registros("Usuarios", values, condition, NULL);
+
         freem(values);
         freem(condition);
 
