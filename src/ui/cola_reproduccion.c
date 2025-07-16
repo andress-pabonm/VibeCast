@@ -252,7 +252,7 @@ static bool agregarAHistorial(void *dato, ElementoColaTipo tipo)
         Anuncio *anuncio = dato;
         condition = asprintf("id = %d", anuncio->id);
         eliminar_registros("Anuncios", condition, NULL);
-        freem(anuncio);
+        freem(condition);
         destroyAnuncio(anuncio);
 
         return ok;
