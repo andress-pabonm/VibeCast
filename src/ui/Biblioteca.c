@@ -388,9 +388,9 @@ static interfaz(EliminarDePlaylist)
     }
 
     Cancion *cancion = deleteValueInLista(playlist->canciones, &id_cancion, cmpCancionConId);
-    if (cancion)
+    if (!cancion)
     {
-        send_message("La canción no está en la playlist.");
+        send_message("La canción no está en la playlist");
         return false;
     }
 

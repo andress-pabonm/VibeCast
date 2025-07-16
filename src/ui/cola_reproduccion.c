@@ -80,7 +80,7 @@ static interfaz(Encolar)
     }
 
     cant_canciones = (cant_canciones + 1) % 3;
-    send_message("Canción '%s' agregada a la cola.", cancion->nombre);
+    send_message("Canción '%s' agregada a la cola", cancion->nombre);
 
     if (!cant_canciones && usuario->plan == PLAN_FREEMIUM)
     {
