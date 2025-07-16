@@ -21,6 +21,8 @@ typedef struct
 static interfaz(CrearCuenta);
 
 static interfaz(EliminarCuenta);
+static new_operfn(eliminarDeAmigos);
+static new_operfn(eliminarCancionesPlaylist);
 
 static interfaz(ObtenerInfoUsuario);
 
@@ -158,7 +160,57 @@ message_handler(eliminar_cuenta)
 
 static interfaz(EliminarCuenta)
 {
+    if (usuario->artista)
+    {
+        send_message("Primero elimina tu perfil de artista");
+        return false;
+    }
+
+    deleteValueInABB(usuarios, usuario->username, cmpUsuarioConUsername);
+    forEachInABB_PreOrder(usuarios, eliminarDeAmigos, NULL);
+    forEachInLista(usuario->playlists, eliminarCancionesPlaylist, NULL);
+
+    char *condition = asprintf("id_usuario = %d", usuario->id);
+    eliminar_registros("Playlists", condition, NULL);
+    eliminar_registros("Reproducciones", condition, NULL);
+    freem(condition);
+
+    condition = asprintf("id_usuario_1 = %d OR id_usuario_2 = %d", usuario->id, usuario->id);
+    eliminar_registros("Amigos", condition, NULL);
+    freem(condition);
+
+    condition = asprintf("id = %d", usuario->id);
+    eliminar_registros("Usuarios", condition, NULL);
+    freem(condition);
+
+    destroyUsuario(usuario);
+    usuario = NULL;
+
+    send_message("Usuario eliminado :), gracias por usar VibeCast\nlamentamos tu partida hacia tu otra aplicacion favorita :'c");
+
     return true;
+}
+
+static new_operfn(eliminarDeAmigos)
+{
+    Usuario *u = val;
+    Lista amigos = u->amigos;
+
+    deleteValueInLista(amigos, usuario->username, cmpUsuarioConUsername);
+
+    return FOREACH_CONTINUE;
+}
+
+static new_operfn(eliminarCancionesPlaylist)
+{
+    Playlist *playlist = val;
+    char *condition = asprintf("id_playlist = %d", playlist->id);
+
+    eliminar_registros("Playlist_Canciones", condition, NULL);
+
+    freem(condition);
+
+    return FOREACH_CONTINUE;
 }
 
 /* ================================================================ */

@@ -237,9 +237,16 @@ static new_operfn(search_wrapper_Lista)
 
 static new_operfn(search_wrapper_Lista_Ref)
 {
+    Nodo *ref = val;
+
+    if (!*ref)
+    {
+        return FOREACH_BREAK;
+    }
+
     search_wrapper_arg_t *wrapper_arg = arg;
 
-    if (wrapper_arg->cmp((*cast(Nodo *, val))->val, wrapper_arg->val))
+    if (wrapper_arg->cmp((*ref)->val, wrapper_arg->val))
         return FOREACH_CONTINUE;
 
     wrapper_arg->fnd = val;

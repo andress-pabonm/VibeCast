@@ -197,7 +197,7 @@ static custom_interface(GenerarTop5Canciones)
 
     Cancion **reproducciones = malloc_cpy(longitud * sizeof(Cancion *), 0); // vector en el heap
 
-    forEachInLista(canciones, obtenerReproducciones, reproducciones);
+    forEachInLista(canciones, copiarLista, reproducciones);
 
     qsort(reproducciones, longitud, sizeof(Cancion *), cmpRepr); // Buffer, tamaño del buffer, tamaño de cada elemento, funcion de comparacion
 
@@ -237,10 +237,10 @@ static new_operfn(obtenerReproducciones)
 
 static new_cmpfn(cmpRepr)
 {
-    const Cancion *n1 = val_1;
-    const Cancion *n2 = val_2;
+    const Cancion *const *n1 = val_1;
+    const Cancion *const *n2 = val_2;
 
-    return n2->reproducciones - n1->reproducciones; // Orden descendente
+    return (*n2)->reproducciones - (*n1)->reproducciones; // Orden descendente
 }
 
 static custom_interface(GenerarTop3Artistas)

@@ -84,6 +84,19 @@ window.views.perfil = {
             </button>
         </section>
 
+        <!-- Sección de eliminación -->
+        <section class="profile-section delete-section">
+          <h2 class="section-title"><i class="fas fa-exclamation-triangle"></i>Zona peligrosa</h2>
+          <div class="delete-options">
+            <button class="delete-option-btn delete-account-btn" id="deleteUserBtn">
+            <i class="fas fa-user-slash"></i> Eliminar cuenta
+            </button>
+            <button class="delete-option-btn delete-artist-btn" id="deleteArtistBtn">
+              <i class="fas fa-microphone-slash"></i> Dejar de ser artista
+            </button>
+          </div>
+        </section>
+
         <!-- Sección de artista -->
         <section class="artist-section hidden" id="artistSection">
             <h2 class="section-title"><i class="fas fa-compact-disc"></i> Tus discos</h2>
@@ -92,6 +105,7 @@ window.views.perfil = {
                 <i class="fas fa-plus"></i> Nuevo disco
             </button>
         </section>
+        
 
         <!-- Sección de Canciones del Álbum -->
         <section class="songs-section hidden" id="albumSongsSection">
@@ -107,18 +121,6 @@ window.views.perfil = {
             <div class="song-list" id="albumSongsContainer"></div>
         </section>
 
-        <!-- Sección de eliminación -->
-        <section class="profile-section delete-section">
-          <h2 class="section-title"><i class="fas fa-exclamation-triangle"></i>Zona peligrosa</h2>
-          <div class="delete-options">
-            <button class="delete-option-btn delete-account-btn" id="deleteUserBtn">
-            <i class="fas fa-user-slash"></i> Eliminar cuenta
-            </button>
-            <button class="delete-option-btn delete-artist-btn" id="deleteArtistBtn">
-              <i class="fas fa-microphone-slash"></i> Dejar de ser artista
-            </button>
-          </div>
-        </section>
     </div>
 
     <!-- Modal para nuevo disco -->
@@ -256,6 +258,11 @@ window.views.perfil = {
 
       if (userData.isArtist) {
         becomeArtistBtn.style.display = "none";
+        // Mostrar el botón de dejar de ser artista
+        const deleteArtistBtn = document.getElementById("deleteArtistBtn");
+        if (deleteArtistBtn) {
+          deleteArtistBtn.style.display = "flex";
+        }
       } else {
         becomeArtistBtn.addEventListener("click", async () => {
           try {
@@ -270,6 +277,15 @@ window.views.perfil = {
 
             alert(res.message);
 
+            // Actualizar el estado y mostrar el botón de dejar de ser artista
+            userData.isArtist = true;
+            becomeArtistBtn.style.display = "none";
+            const deleteArtistBtn = document.getElementById("deleteArtistBtn");
+            if (deleteArtistBtn) {
+              deleteArtistBtn.style.display = "flex";
+            }
+
+            // Recargar para mostrar la sección de artista
             window.location.reload();
           } catch (error) {
             alert(error.message);
@@ -473,14 +489,16 @@ window.views.perfil = {
       });
 
       document.getElementById("confirmDeleteUserBtn")?.addEventListener("click", async () => {
-        try {
-          const res = await window.eliminar_usuario();
-          if (res.status !== "ok") throw new Error(res.message);
+        if (confirm("Seguro desea eliminar su cuenta")) {
+          try {
+            const res = await window.eliminar_cuenta();
+            if (res.status !== "ok") throw new Error(res.message);
 
-          alert("Tu cuenta ha sido eliminada exitosamente");
-          location.replace("pages/login.html");
-        } catch (error) {
-          alert(error.message);
+            alert("Tu cuenta ha sido eliminada exitosamente");
+            location.replace("pages/login.html");
+          } catch (error) {
+            alert(error.message);
+          }
         }
       });
 
@@ -488,27 +506,36 @@ window.views.perfil = {
         document.getElementById("deleteUserModal").classList.add("hidden");
       });
 
-      // Eliminar artista (solo si es artista)
-      if (userData.isArtist) {
-        document.getElementById("deleteArtistBtn")?.addEventListener("click", () => {
-          document.getElementById("deleteArtistModal").classList.remove("hidden");
-        });
+      // Controlar visibilidad del botón "Dejar de ser artista"
+      const deleteArtistBtn = document.getElementById("deleteArtistBtn");
+      if (deleteArtistBtn) {
+        // Mostrar u ocultar basado en isArtist
+        deleteArtistBtn.style.display = userData.isArtist ? "flex" : "none";
 
-        document.getElementById("confirmDeleteArtistBtn")?.addEventListener("click", async () => {
-          try {
-            const res = await window.eliminar_artista();
-            if (res.status !== "ok") throw new Error(res.message);
+        // Configurar eventos solo si es artista
+        if (userData.isArtist) {
+          deleteArtistBtn.addEventListener("click", () => {
+            document.getElementById("deleteArtistModal").classList.remove("hidden");
+          });
 
-            alert("Ya no eres artista. Todos tus álbumes y canciones han sido eliminados");
-            window.location.reload();
-          } catch (error) {
-            alert(error.message);
-          }
-        });
+          document.getElementById("confirmDeleteArtistBtn")?.addEventListener("click", async () => {
+            if (confirm("Seguro desea dejar de ser artista?")) {
+              try {
+                const res = await window.eliminar_artista();
+                if (res.status !== "ok") throw new Error(res.message);
 
-        document.getElementById("cancelDeleteArtistBtn")?.addEventListener("click", () => {
-          document.getElementById("deleteArtistModal").classList.add("hidden");
-        });
+                alert("Ya no eres artista. Todos tus álbumes y canciones han sido eliminados");
+                window.location.reload();
+              } catch (error) {
+                alert(error.message);
+              }
+            }
+          });
+
+          document.getElementById("cancelDeleteArtistBtn")?.addEventListener("click", () => {
+            document.getElementById("deleteArtistModal").classList.add("hidden");
+          });
+        }
       }
     }
 

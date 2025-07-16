@@ -1,6 +1,16 @@
 #include <ui/interfaces.h>
 
 /* ================================================================ */
+// DEFINICION DE ESTRUCTURAS INTERNAS INTERNAS
+/* ================================================================ */
+
+typedef struct
+{
+    Pila temp_historial;
+    const Cancion *cancion;
+} eliminarDeHistorial_arg_t;
+
+/* ================================================================ */
 // DECLARACIONES DE FUNCIONES INTERNAS
 /* ================================================================ */
 
@@ -29,6 +39,8 @@ static select_handler(obteneridCancion);
 static select_handler(obtenerAlbumId);
 
 static interfaz(EliminarCancion);
+static new_operfn(eliminarDeHistoriales);
+static new_operfn(eliminarDeHistorial);
 
 static interfaz(ActualizarCancion);
 static custom_interface(ActualizarNombreCancion, Cancion *cancion, const char *nuevoNombre);
@@ -130,16 +142,6 @@ static interfaz(CrearArtista)
         return false;
     }
 
-    // char *values = asprintf(stringify("%d", "%s"), usuario->id, nombreArtista);
-    // bool ok = nuevo_registro("Artistas", "id_usuario, nombre", values, NULL);
-    // freem(values);
-
-    // if (!ok)
-    // {
-    //     send_message("No fue posible crear el artista.");
-    //     return false;
-    // }
-
     artista = newArtista();
     usuario->artista = artista;
     artista->nombre = asprintf(nombreArtista);
@@ -187,7 +189,7 @@ static interfaz(EliminarArtista)
     destroyArtista(usuario->artista);
     usuario->artista = NULL;
 
-    send_message("Artista eliminado.");
+    send_message("Artista eliminado, gracias por cantar con nosotros");
     return true;
 }
 
@@ -562,7 +564,13 @@ interfaz(EliminarCancion)
         return false;
     }
 
-    char *condition = asprintf("id = %d", cancion->id);
+    forEachInABB_PreOrder(usuarios, eliminarDeHistoriales, cancion);
+
+    char *condition = asprintf("id_cancion = %d", cancion->id);
+    eliminar_registros("Reproducciones", condition, NULL);
+    freem(condition);
+
+    condition = asprintf("id = %d", cancion->id);
     bool ok = eliminar_registros("Canciones", condition, NULL);
     freem(condition);
 
@@ -587,6 +595,35 @@ static new_cmpfn(cmpAlbumConId)
     const int *id = val_2;
 
     return a->id - *id;
+}
+
+static new_operfn(eliminarDeHistoriales)
+{
+    Usuario *u = val;
+    eliminarDeHistorial_arg_t wrapper_arg = {.temp_historial = newPila(), .cancion = arg};
+
+    destroyPila(u->historial.reproducciones, eliminarDeHistorial, &wrapper_arg);
+    u->historial.reproducciones = newPila();
+    destroyPila(wrapper_arg.temp_historial, rehacerHistorial, u->historial.reproducciones);
+
+    return FOREACH_CONTINUE;
+}
+
+static new_operfn(eliminarDeHistorial)
+{
+    eliminarDeHistorial_arg_t *wrapper_arg = arg;
+    Reproduccion *repr = val;
+
+    if (!cmpCancionConId(repr->cancion, &wrapper_arg->cancion->id))
+    {
+        destroyReproduccion(repr);
+    }
+    else
+    {
+        insertValueInPila(wrapper_arg->temp_historial, repr);
+    }
+
+    return FOREACH_CONTINUE;
 }
 
 /* ====================================================== */

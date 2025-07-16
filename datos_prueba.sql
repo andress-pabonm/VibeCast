@@ -137,10 +137,10 @@ INSERT INTO Canciones (id_album, nombre, genero, fecha_publicacion, duracion, ur
 (7, "Todo Esta Ciudad", "Pop","2021-10-29", 317, "7E9-c2Z6adU", 0, 0);
 
 INSERT INTO Anuncios (id_usuario, url) VALUES
-(2, "kIhb5pEo_j0"),
-(2, "70ArCjJS_nA"),
-(2, "hQ1UE5h9N-k"),
-(2, "kIhb5pEo_j0"),
+(2, "kIhb5pEo_j0"), /* ChatGPT */
+(2, "70ArCjJS_nA"), /* DeepSeek */
+(2, "hQ1UE5h9N-k"), /* Juguemos league of legends */
+(2, "kIhb5pEo_j0"), /* albion online es un mmorpg no lineal CAMBIAR EL LINK*/
 (2, "70ArCjJS_nA"),
 (2, "hQ1UE5h9N-k"),
 (2, "kIhb5pEo_j0"),

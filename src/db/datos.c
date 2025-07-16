@@ -82,7 +82,7 @@ select_handler(cargarUsuarios)
     usuario->nickname = asprintf(argv[USUARIO_NICKNAME]);
     usuario->pais = asprintf(argv[USUARIO_PAIS]);
     sscanf(argv[USUARIO_PLAN], "%d", &usuario->plan);
-    sscanf(argv[USUARIO_CADUCIDAD_PREMIUM], "%d", &usuario->caducidadPremium);
+    sscanf(argv[USUARIO_CADUCIDAD_PREMIUM], "%ll", &usuario->caducidadPremium);
     sscanf(argv[USUARIO_TIEMPO_ESCUCHADO], "%d", &usuario->historial.tiempoEscuchado);
     sscanf(argv[USUARIO_CANTIDAD_ANUNCIOS], "%d", &usuario->historial.cantidadAnuncios);
 

@@ -233,7 +233,7 @@ static bool agregarAHistorial(void *dato, ElementoColaTipo tipo)
         usuario->historial.tiempoEscuchado += cancion->duracion;
 
         values = asprintf("tiempo_escuchado = %d", usuario->historial.tiempoEscuchado);
-        char *condition = asprintf("id = %d", usuario->id);
+        condition = asprintf("id = %d", usuario->id);
         actualizar_registros("Usuarios", values, condition, NULL);
         freem(values);
         freem(condition);
