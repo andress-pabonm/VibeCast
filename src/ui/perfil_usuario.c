@@ -541,18 +541,33 @@ message_handler(activar_premium)
 
 static interfaz(ActivarPremium)
 {
-    time_t base = time(NULL);
+    int duracion = atoi(argv[0]);
 
-    if (base == -1)
+    if (!duracion)
     {
-        send_message("Error al obtener la fecha actual\n");
-        return false;
+        usuario->plan = PLAN_FREEMIUM;
+        usuario->caducidadPremium = 0;
+
+        send_message("Ahora eres freemium");
+
+        char *value = asprintf("caducidad_premium = %d, plan = %d", usuario->caducidadPremium, PLAN_FREEMIUM);
+        char *condition = asprintf("id = %d", usuario->id);
+
+        actualizar_registros("Usuarios", value, condition, NULL);
+
+        freem(value);
+        freem(condition);
+
+        return true;
     }
+
+    time_t base;
 
     if (usuario->plan != PLAN_PREMIUM)
     {
+        base = time(NULL);
         usuario->plan = PLAN_PREMIUM;
-        send_message("¡Plan Premium activado!");
+        send_message("¡Plan Premium activado por un mes!");
     }
     else
     {
@@ -560,9 +575,20 @@ static interfaz(ActivarPremium)
         send_message("¡Plan Premium renovado!");
     }
 
-    usuario->caducidadPremium = base + 30 * 24 * 60 * 60; // Tiempo en segundos
+    usuario->caducidadPremium = base + (duracion * 24 * 3600);
+    struct tm *fechaFin = localtime(&usuario->caducidadPremium);
+    datetime_buf_t buff;
+    getDateTime(buff, fechaFin);
     // La fecha es imprime como dia de la semana, mes, dia del mes, hora, minuto, segundo y año
-    send_message("Caduca el: %s", ctime(&usuario->caducidadPremium));
+    send_message("Caduca el: %s", buff);
+
+    char *value = asprintf("caducidad_premium = %d, plan = %d", usuario->caducidadPremium, PLAN_PREMIUM);
+    char *condition = asprintf("id = %d", usuario->id);
+
+    actualizar_registros("Usuarios", value, condition, NULL);
+
+    freem(value);
+    freem(condition);
 
     return true;
 }

@@ -374,13 +374,6 @@ window.views.perfil = {
         period: "por mes",
         features: ["Sin anuncios", "Saltos ilimitados"],
       },
-      {
-        id: "annual",
-        name: "Premium Anual",
-        price: 49.99,
-        period: "por año",
-        features: ["Sin anuncios", "Saltos ilimitados", "12 meses de música"],
-      },
     ];
 
     function setSubscriptionInfo(user) {
@@ -439,22 +432,24 @@ window.views.perfil = {
         container.appendChild(card);
       });
 
-      container.addEventListener("click", (e) => {
+      container.addEventListener("click", async (e) => {
         if (!e.target.classList.contains("select-plan-btn") || e.target.classList.contains("current")) return;
 
         const selected = e.target.getAttribute("data-plan");
         if (confirm(`¿Cambiar al plan ${selected}?`)) {
-          userData.subscription.type = selected;
-          userData.subscription.autoRenewal = selected !== "free";
-          const expiration = new Date();
-          selected === "annual"
-            ? expiration.setFullYear(expiration.getFullYear() + 1)
-            : expiration.setMonth(expiration.getMonth() + 1);
-          userData.subscription.expiration = expiration.toISOString().split("T")[0];
+          try {
+            const res = await window.activar_premium(selected === "annual" ? 365 : selected === "premium" ? 30 : 0);
 
-          setSubscriptionInfo(userData);
-          document.getElementById("plansModal").classList.add("hidden");
-          alert(`Ahora tienes el plan ${selected}`);
+            if (res.status !== "ok")
+              throw new Error(res.message);
+
+            alert(res.message);
+            document.getElementById("plansModal").classList.add("hidden");
+
+            window.location.reload();
+          } catch (error) {
+            alert(error.message);
+          }
         }
       });
     }

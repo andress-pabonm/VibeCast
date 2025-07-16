@@ -535,7 +535,7 @@ message_handler(eliminar_cancion)
     end_data_json();
 }
 
-interfaz(EliminarCancion)
+static interfaz(EliminarCancion)
 {
     int id_album = atoi(argv[0]);
     int id_cancion = atoi(argv[1]);
@@ -595,7 +595,7 @@ interfaz(EliminarCancion)
 
         if (getListaLength(albumes) == 1)
         {
-            condition = asprintf("id = %d", usuario->id);
+            condition = asprintf("id_usuario = %d", usuario->id);
             eliminar_registros("Artistas", condition, NULL);
             freem(condition);
         }
