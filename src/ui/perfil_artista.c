@@ -585,6 +585,22 @@ interfaz(EliminarCancion)
 
     destroyCancion(cancion);
 
+    if (!getListaLength(album->canciones))
+    {
+        char *condition = asprintf("id = %d", album->id);
+        eliminar_registros("Albumes", condition, NULL);
+        freem(condition);
+
+        album->id = 0;
+
+        if (getListaLength(albumes) == 1)
+        {
+            condition = asprintf("id = %d", usuario->id);
+            eliminar_registros("Artistas", condition, NULL);
+            freem(condition);
+        }
+    }
+
     send_message("Canción eliminada.");
     return true;
 }
