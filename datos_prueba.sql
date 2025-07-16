@@ -140,9 +140,11 @@ INSERT INTO Anuncios (id_usuario, url) VALUES
 (2, "kIhb5pEo_j0"), /* ChatGPT */
 (2, "70ArCjJS_nA"), /* DeepSeek */
 (2, "hQ1UE5h9N-k"), /* Juguemos league of legends */
-(2, "kIhb5pEo_j0"), /* albion online es un mmorpg no lineal CAMBIAR EL LINK*/
+(2, "C0fytYVZ_mQ"), /* Albion online es un mmorpg no lineal */
+(2, "kIhb5pEo_j0"),
 (2, "70ArCjJS_nA"),
 (2, "hQ1UE5h9N-k"),
+(2, "C0fytYVZ_mQ"),
 (2, "kIhb5pEo_j0"),
 (2, "70ArCjJS_nA"),
 (2, "hQ1UE5h9N-k"),
@@ -151,9 +153,11 @@ INSERT INTO Anuncios (id_usuario, url) VALUES
 (4, "kIhb5pEo_j0"),
 (4, "70ArCjJS_nA"),
 (4, "hQ1UE5h9N-k"),
+(4, "C0fytYVZ_mQ"),
 (4, "kIhb5pEo_j0"),
 (4, "70ArCjJS_nA"),
 (4, "hQ1UE5h9N-k"),
+(4, "C0fytYVZ_mQ"),
 (4, "kIhb5pEo_j0"),
 (4, "70ArCjJS_nA"),
 (4, "hQ1UE5h9N-k"),
@@ -162,9 +166,11 @@ INSERT INTO Anuncios (id_usuario, url) VALUES
 (8, "kIhb5pEo_j0"),
 (8, "70ArCjJS_nA"),
 (8, "hQ1UE5h9N-k"),
+(8, "C0fytYVZ_mQ"),
 (8, "kIhb5pEo_j0"),
 (8, "70ArCjJS_nA"),
 (8, "hQ1UE5h9N-k"),
+(8, "C0fytYVZ_mQ"),
 (8, "kIhb5pEo_j0"),
 (8, "70ArCjJS_nA"),
 (8, "hQ1UE5h9N-k"),
@@ -179,7 +185,6 @@ INSERT INTO Anuncios (id_usuario, url) VALUES
 (10, "kIhb5pEo_j0"),
 (10, "70ArCjJS_nA"),
 (10, "hQ1UE5h9N-k"),
-(10, "C0fytYVZ_mQ"),
 
 (14, "kIhb5pEo_j0"),
 (14, "70ArCjJS_nA"),
@@ -190,7 +195,6 @@ INSERT INTO Anuncios (id_usuario, url) VALUES
 (14, "kIhb5pEo_j0"),
 (14, "70ArCjJS_nA"),
 (14, "hQ1UE5h9N-k"),
-(14, "C0fytYVZ_mQ"),
 
 (16, "kIhb5pEo_j0"),
 (16, "70ArCjJS_nA"),
