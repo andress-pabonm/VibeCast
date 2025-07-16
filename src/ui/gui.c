@@ -70,10 +70,10 @@ static void centrarVentana(HWND hwnd)
 
 static webview_t w = NULL;
 
-bool VibeCast_InitGUI()
+bool VibeCast_InitGUI(const char *ruta)
 {
     // Crear la ventana
-    w = webview_create(1, NULL);       // Crea la ventana con opción para Debug (Inspecionar)
+    w = webview_create(0, NULL);       // Crea la ventana con opción para Debug (Inspecionar)
     HWND hwnd = webview_get_window(w); // Obtiene el controlador nativo de la ventana
 
     // Configuración inicial de la ventana
@@ -94,13 +94,21 @@ bool VibeCast_InitGUI()
     // Maximizar la ventana
     setMaximized(hwnd);
 
+    char *iconRuta = asprintf("%sassets/icon/favicon.ico", ruta);
+
     // Ícono de la ventana
-    setIcon(hwnd, path_to("assets/icon/favicon.ico"));
+    setIcon(hwnd, iconRuta);
+
+    freem(iconRuta);
 
     VibeCast_InitBindings();
 
+    char *paginaRuta = asprintf("%sui/pages/login.html", ruta);
+
     // Ir a la primera interfaz
-    webview_navigate(w, INTERFAZ("login.html"));
+    webview_navigate(w, paginaRuta);
+
+    freem(paginaRuta);
 
     return true;
 }

@@ -6,8 +6,8 @@
 
 /* Funciones principales */
 
-bool VibeCast_InitGUI();    // Inicializar la interfaz gráfica
-bool VibeCast_RunGUI();     // Para ejecutar la interfaz gráfica
-bool VibeCast_DestroyGUI(); // Liberar la memoria de la interfaz gráfica
+bool VibeCast_InitGUI(const char *ruta); // Inicializar la interfaz gráfica
+bool VibeCast_RunGUI();                  // Para ejecutar la interfaz gráfica
+bool VibeCast_DestroyGUI();              // Liberar la memoria de la interfaz gráfica
 
 #endif // VIBECAST_GUI_H

@@ -12,12 +12,22 @@
 
 AppResult VibeCast_AppInit(void **appstate, int argc, const char *argv[])
 {
+    char *ruta = asprintf(argv[0]);
+
+    char *slash = strrchr(ruta, '\\');
+    slash[1] = '\0';
+    puts(ruta);
+
     // Inicializar la interfaz gráfica
-    if (!VibeCast_InitGUI())
+    if (!VibeCast_InitGUI(ruta))
     {
         puts("Error al inicializar la interfaz gráfica.");
+        freem(ruta);
+
         return VIBECAST_APP_FAILURE;
     }
+
+    freem(ruta);
 
     puts("Interfaz gráfica inicializada");
 
