@@ -140,7 +140,7 @@ INSERT INTO Anuncios (id_usuario, url) VALUES
 (2, "kIhb5pEo_j0"), /* ChatGPT */
 (2, "70ArCjJS_nA"), /* DeepSeek */
 (2, "hQ1UE5h9N-k"), /* Juguemos league of legends */
-(2, "C0fytYVZ_mQ"), /* albion online es un mmorpg no lineal CAMBIAR EL LINK*/
+(2, "C0fytYVZ_mQ"), /* Albion online es un mmorpg no lineal */
 (2, "kIhb5pEo_j0"),
 (2, "70ArCjJS_nA"),
 (2, "hQ1UE5h9N-k"),
